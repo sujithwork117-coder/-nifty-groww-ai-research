@@ -4,10 +4,17 @@ from .safety import ExecutionLock
 from .groww_auth import authenticate
 from .strategies import level_to_level_events,ekalayava_events,prepare
 from .learning import enrich_events,build_report,save_report
+def verify_read_only():
+    ExecutionLock(CFG).assert_paper_only()
+    groww=authenticate()
+    profile=groww.get_user_profile()
+    print("Groww authentication: SUCCESS")
+    print("Read-only API: SUCCESS")
+    print("Active segments:",profile.get("active_segments"))
+    print("Order execution: DISABLED")
+
 def smoke():
-    ExecutionLock(CFG).assert_paper_only();g=authenticate();p=g.get_user_profile()
-    print("Authenticated. Active segments:",p.get("active_segments"))
-    print("Execution lock: ENABLED");print("Order placement: NOT IMPLEMENTED")
+    verify_read_only()
 def run_csv(path):
     ExecutionLock(CFG).assert_paper_only()
     d=pd.read_csv(path);d.timestamp=pd.to_datetime(d.timestamp,utc=True).dt.tz_convert("Asia/Kolkata")
