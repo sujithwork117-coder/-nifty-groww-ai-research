@@ -1,6 +1,9 @@
 import pandas as pd
 
 from .strategies import level_to_level_events
+from .config import CFG
+from .journal import append_event
+from .safety import ExecutionLock
 
 def simulate_level(df,event):
     d=df[df.timestamp>event.timestamp].sort_values("timestamp")
@@ -31,6 +34,15 @@ def backtest_level_to_level(df,contract=None,sl_points=4,start="09:15",end="11:0
         row["before_10"]=row["timestamp"].hour<10
         results.append(row)
     return pd.DataFrame(results)
+
+def run_paper_level_to_level(df,contract=None,config=CFG,journal_path=None):
+    ExecutionLock(config).assert_paper_only()
+    trades=backtest_level_to_level(df,contract,config.level_sl_points,config.level_entry_start,config.level_entry_end)
+    for _,trade in trades.iterrows():
+        record=trade.to_dict();record["signal"]="LEVEL_TO_LEVEL";record["pnl_points"]=record.get("points_gained_lost")
+        record["reason_for_exit"]=record.get("outcome")
+        if journal_path:append_event(record,journal_path,config.model_version)
+    return trades
 
 def analyze_ekalayava(df,contract=None,start="09:15",end="15:15",horizon_bars=78):
     contract=contract or {}
