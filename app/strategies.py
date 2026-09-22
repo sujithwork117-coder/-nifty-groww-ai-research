@@ -11,7 +11,7 @@ def level_to_level_events(df,sl_points=4,start="09:15",end="11:00"):
         armed=False;entered=False
         for _,r in d.iterrows():
             if r.time<start or r.time>end:continue
-            if not armed and r.low<r.opening_low:armed=True;continue
+            if not armed and r.red and r.low<r.opening_low:armed=True;continue
             if armed and not entered and r.green:
                 events.append({"date":str(date),"timestamp":r.timestamp,"strategy":"LEVEL_TO_LEVEL",
                     "entry":float(r.close),"sl":float(r.opening_low-sl_points),"target":float(r.opening_high),
@@ -26,10 +26,10 @@ def ekalayava_events(df,start="09:15",end="15:15"):
         swing_seen=None
         for _,r in d.iterrows():
             if r.time<start or r.time>end:continue
-            if r.swing_high:swing_seen=float(r.high)
-            if swing_seen is not None and r.high>swing_seen and r.close>r.opening_high:
+            if swing_seen is not None and r.high>swing_seen and r.close<r.opening_high:
                 events.append({"date":str(date),"timestamp":r.timestamp,"strategy":"EKALAYAVA","entry":float(r.close),
                     "opening_high":float(r.opening_high),"opening_low":float(r.opening_low),
-                    "swing_high":swing_seen,"candle_type":r.candle_type})
+                    "swing_high":swing_seen,"target":float(r.opening_high),"candle_type":r.candle_type})
                 break
+            if r.swing_high:swing_seen=float(r.high)
     return __import__("pandas").DataFrame(events)

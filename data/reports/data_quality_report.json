@@ -986,5 +986,5 @@
   },
   "contract_count": 35,
   "timezone": "Asia/Kolkata for trading dates and entry-hour reporting",
-  "lookahead": "Only candles after each entry timestamp are used for outcomes and MFE/MAE"
+  "lookahead": "Only completed candles available before each decision are used"
 }

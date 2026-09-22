@@ -1,6 +1,11 @@
 {
   "contracts_considered": 35,
   "contracts_with_history": 24,
-  "level_setups": 104,
-  "ekalayava_setups": 95
+  "level_setups": 99,
+  "ekalayava_setups": 149,
+  "target_rule": "Both strategies target opening candle high",
+  "strategy_rules": {
+    "level_to_level": "red breakdown then first green candle",
+    "ekalayava": "causal swing breakout before opening high"
+  }
 }

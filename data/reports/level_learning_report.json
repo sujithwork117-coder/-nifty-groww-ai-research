@@ -1,20 +1,20 @@
 {
-  "events": 104,
+  "events": 99,
   "date_min": "2026-08-24",
   "date_max": "2026-09-22",
   "train": {
-    "n": 72,
-    "target_rate": 0.4722222222222222,
-    "sl_rate": 0.4166666666666667,
-    "avg_mfe": 25.327777777777776,
-    "avg_mae": -22.158333333333328
+    "n": 69,
+    "target_rate": 0.43478260869565216,
+    "sl_rate": 0.4492753623188406,
+    "avg_mfe": 25.463043478260875,
+    "avg_mae": -20.10724637681159
   },
   "validation": {
-    "n": 32,
-    "target_rate": 0.21875,
-    "sl_rate": 0.78125,
-    "avg_mfe": 37.0,
-    "avg_mae": -89.8078125
+    "n": 30,
+    "target_rate": 0.23333333333333334,
+    "sl_rate": 0.7666666666666667,
+    "avg_mfe": 39.461666666666666,
+    "avg_mae": -89.075
   },
   "classifier": {
     "enabled": true,
@@ -30,7 +30,7 @@
       "upper_wick",
       "range"
     ],
-    "validation_accuracy": 0.375
+    "validation_accuracy": 0.2
   },
   "anti_overfit": "Chronological validation; validation data is not used for fitting."
 }

@@ -1,11 +1,11 @@
 {
   "model_version": "v001",
-  "sample_size": 199,
+  "sample_size": 248,
   "training_statistics": {
-    "n": 139
+    "n": 173
   },
   "validation_statistics": {
-    "n": 60
+    "n": 75
   },
   "feature_set": [
     "entry_hour",
@@ -21,7 +21,7 @@
   ],
   "date_range": {
     "min": "2026-08-24 03:55:00+00:00",
-    "max": "2026-09-22 06:10:00+00:00"
+    "max": "2026-09-22 05:25:00+00:00"
   },
   "insufficient_samples": false,
   "chronological_split": true,
