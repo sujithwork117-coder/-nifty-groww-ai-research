@@ -42,14 +42,29 @@ def build_report(events):
         o.update(avg_mfe=float(d.mfe.mean()),avg_mae=float(d.mae.mean()))
         return o
     clf={"enabled":False}
-    cols=[c for c in ["mfe","mae","entry_hour","entry_minute","entry_before_10"] if c in tr]
+    cols=[c for c in ["entry_hour","entry_minute","entry_before_10","entry_after_10","weekday",
+                      "volatility_10","premium_change","lower_wick","upper_wick","range"] if c in tr]
     if "outcome" in tr and len(tr)>=30 and tr.outcome.nunique()>1 and len(va)>=10:
         m=RandomForestClassifier(n_estimators=200,random_state=42,min_samples_leaf=5,class_weight="balanced")
-        m.fit(tr[cols],tr.outcome.astype(str));pred=m.predict(va[cols])
+        train_features=tr[cols].apply(pd.to_numeric,errors="coerce").fillna(0)
+        validation_features=va[cols].apply(pd.to_numeric,errors="coerce").fillna(0)
+        m.fit(train_features,tr.outcome.astype(str));pred=m.predict(validation_features)
         clf={"enabled":True,"features":cols,"validation_accuracy":float(accuracy_score(va.outcome.astype(str),pred))}
-    return {"events":len(events),"date_min":str(events.date.min()),"date_max":str(events.date.max()),
+    date_values=events["date"] if "date" in events else events["timestamp"]
+    return {"events":len(events),"date_min":str(date_values.min()),"date_max":str(date_values.max()),
             "train":stats(tr),"validation":stats(va),"classifier":clf,
             "anti_overfit":"Chronological validation; validation data is not used for fitting."}
+
+def anti_overfit_report(events,model_version="v001",min_train=30,min_validation=10):
+    train,validation=split_time(events)
+    feature_set=[column for column in ("entry_hour","entry_minute","entry_before_10","entry_after_10","weekday",
+                                       "volatility_10","premium_change","lower_wick","upper_wick","range") if column in events]
+    return {"model_version":model_version,"sample_size":int(len(events)),"training_statistics":{"n":int(len(train))},
+            "validation_statistics":{"n":int(len(validation))},"feature_set":feature_set,
+            "date_range":{"min":str(events.timestamp.min()) if not events.empty else None,
+                           "max":str(events.timestamp.max()) if not events.empty else None},
+            "insufficient_samples":len(train)<min_train or len(validation)<min_validation,
+            "chronological_split":True,"future_features_excluded":not any(column in feature_set for column in ("mfe","mae"))}
 
 def setup_quality_report(events):
     if events.empty:return {"events":0,"groups":{}}
