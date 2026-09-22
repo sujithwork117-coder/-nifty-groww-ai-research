@@ -31,6 +31,20 @@ def backtest_level_to_level(df,contract=None,sl_points=4,start="09:15",end="11:0
         row["before_10"]=row["timestamp"].hour<10
         results.append(row)
     return pd.DataFrame(results)
+
+def analyze_ekalayava(df,contract=None,start="09:15",end="15:15",horizon_bars=78):
+    contract=contract or {}
+    events=__import__("app.strategies",fromlist=["ekalayava_events"]).ekalayava_events(df,start,end)
+    results=[]
+    for _,event in events.iterrows():
+        path=simulate_path(df,event,horizon_bars)
+        row=event.to_dict()
+        row.update({"symbol":contract.get("symbol"),"expiry":contract.get("expiry"),
+                    "strike":contract.get("strike"),"option_type":contract.get("option_type"),
+                    "itm_rank":contract.get("itm_rank"),"breakout_timestamp":event.timestamp,
+                    "confirmation_timestamp":event.timestamp,**path})
+        results.append(row)
+    return pd.DataFrame(results)
 def simulate_path(df,event,horizon_bars=78):
     d=df[df.timestamp>event.timestamp].sort_values("timestamp").head(horizon_bars);entry=float(event.entry)
     if d.empty:return {"mfe":0.0,"mae":0.0}
