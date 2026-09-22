@@ -1,14 +1,36 @@
 from dataclasses import dataclass
 from dotenv import load_dotenv
 import os
+from pathlib import Path
 load_dotenv()
+
+def _secret_file_values(path="secrets.txt"):
+    values={}
+    secret_file=Path(path)
+    if not secret_file.exists():return values
+    for raw_line in secret_file.read_text(encoding="utf-8").splitlines():
+        line=raw_line.strip()
+        if not line or line.startswith("#"):continue
+        if "=" in line:
+            key,value=line.split("=",1);key=key.strip();value=value.strip()
+            if key in {"GROWW_API_KEY","GROWW_API_SECRET","GROWW_TOTP"}:values[key]=value
+        elif " - " in line:
+            label,value=line.split(" - ",1);label=label.strip().lower().replace(" ","_")
+            key={"api_key":"GROWW_API_KEY","api_secret":"GROWW_API_SECRET","totp":"GROWW_TOTP"}.get(label)
+            if key:values[key]=value.strip()
+    return values
+
+_secret_values=_secret_file_values()
+def _credential(name):
+    return os.getenv(name) or _secret_values.get(name,"")
+
 def _csv(name, cast=str):
     return [cast(x.strip()) for x in os.getenv(name, "").split(",") if x.strip()]
 @dataclass(frozen=True)
 class Config:
-    api_key: str=os.getenv("GROWW_API_KEY","")
-    api_secret: str=os.getenv("GROWW_API_SECRET","")
-    totp: str=os.getenv("GROWW_TOTP","")
+    api_key: str=_credential("GROWW_API_KEY")
+    api_secret: str=_credential("GROWW_API_SECRET")
+    totp: str=_credential("GROWW_TOTP")
     underlying: str=os.getenv("UNDERLYING","NIFTY")
     exchange: str=os.getenv("EXCHANGE","NSE")
     segment_fno: str=os.getenv("SEGMENT_FNO","FNO")
