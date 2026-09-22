@@ -30,6 +30,7 @@ pytest -q
 python -m app.main --auth
 python -m app.main --smoke
 python -m app.main --csv data/raw/sample.csv
+python -m app.main --history data/raw/nifty_5m.csv
 
 ## Groww Cloud
 Upload the project or copy the relevant script into the Groww Strategy environment. Use only secure credential fields if Groww provides them. Do not hardcode secrets. Use paper/observation settings only.
