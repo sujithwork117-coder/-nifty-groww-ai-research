@@ -6,18 +6,29 @@ from sklearn.metrics import accuracy_score
 def enrich_events(events,candles):
     rows=[]
     for _,e in events.iterrows():
-        d=candles[candles.date==e.date].sort_values("timestamp");f=d[d.timestamp>e.timestamp].head(78)
+        d=candles[candles.date.astype(str)==str(e.date)].sort_values("timestamp");f=d[d.timestamp>e.timestamp].head(78)
         if f.empty:continue
-        r=e.to_dict();r.update({"mfe":float(f.high.max()-e.entry),"mae":float(f.low.min()-e.entry),
-            "entry_hour":e.timestamp.hour,"entry_minute":e.timestamp.minute,"entry_before_10":e.timestamp.hour<10})
+        r=e.to_dict();entry_rows=d[d.timestamp==e.timestamp]
+        entry=entry_rows.iloc[0] if not entry_rows.empty else None
+        r.update({"mfe":float(f.high.max()-e.entry),"mae":float(f.low.min()-e.entry),
+            "entry_hour":e.timestamp.hour,"entry_minute":e.timestamp.minute,
+            "entry_before_10":e.timestamp.hour<10,"entry_after_10":e.timestamp.hour>=10,
+            "weekday":e.timestamp.weekday()})
+        if entry is not None:
+            for field in ("volatility_10","premium_change","candle_type","lower_wick","upper_wick","range"):
+                if field in entry:r[field]=entry[field]
+            r["rejection_characteristic"]=entry.get("candle_type")
+            r["breakout_characteristic"]=bool(entry.get("above_opening_high",False))
         if "target" in e and pd.notna(e.get("target")):
             outcome="OPEN"
+            exit_time=None
             for _,z in f.iterrows():
                 sl=z.low<=e.sl;tg=z.high>=e.target
-                if sl and tg:outcome="AMBIGUOUS_SL_FIRST";break
-                if sl:outcome="SL";break
-                if tg:outcome="TARGET";break
-            r["outcome"]=outcome
+                if sl and tg:outcome="AMBIGUOUS_SL_FIRST";exit_time=z.timestamp;break
+                if sl:outcome="SL";exit_time=z.timestamp;break
+                if tg:outcome="TARGET";exit_time=z.timestamp;break
+            r.update({"outcome":outcome,"false_breakout":outcome in ("SL","AMBIGUOUS_SL_FIRST"),
+                      "time_to_target_minutes":((exit_time-e.timestamp).total_seconds()/60 if outcome=="TARGET" else None)})
         rows.append(r)
     return pd.DataFrame(rows)
 def split_time(events,frac=.70):
