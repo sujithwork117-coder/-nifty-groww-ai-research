@@ -8,6 +8,7 @@ def _csv(name, cast=str):
 class Config:
     api_key: str=os.getenv("GROWW_API_KEY","")
     api_secret: str=os.getenv("GROWW_API_SECRET","")
+    totp: str=os.getenv("GROWW_TOTP","")
     underlying: str=os.getenv("UNDERLYING","NIFTY")
     exchange: str=os.getenv("EXCHANGE","NSE")
     segment_fno: str=os.getenv("SEGMENT_FNO","FNO")

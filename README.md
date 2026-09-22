@@ -16,7 +16,9 @@ The engine records setup frequency, timing, candle structure, premium movement, 
 ITM ranks are explicitly 2 and 3 by default. OTM and deeper ITM are excluded. Expiry is not silently invented; research should enumerate Groww's available NIFTY expiries and label results. Set an explicit expiry later if the final strategy needs one.
 
 ## Groww authentication
-Create `.env` from `.env.example`, then set GROWW_API_KEY and GROWW_API_SECRET. Never commit `.env`.
+Create `.env` from `.env.example`, then set `GROWW_API_KEY` and exactly one of
+`GROWW_API_SECRET` or `GROWW_TOTP`, according to the credential type configured
+for your Groww API key. Never commit `.env` or print access tokens.
 
 ## Install
 python3 -m venv .venv
@@ -25,6 +27,7 @@ pip install -r requirements.txt
 
 ## Local test
 pytest -q
+python -m app.main --auth
 python -m app.main --smoke
 python -m app.main --csv data/raw/sample.csv
 

@@ -19,9 +19,9 @@ def run_csv(path):
         if not ev.empty:ev.to_csv(f"data/reports/{name}_events.csv",index=False)
         print(name,report)
 def main():
-    p=argparse.ArgumentParser();p.add_argument("--smoke",action="store_true");p.add_argument("--csv")
+    p=argparse.ArgumentParser();p.add_argument("--smoke",action="store_true");p.add_argument("--auth",action="store_true");p.add_argument("--csv")
     a=p.parse_args()
-    if a.smoke:smoke()
+    if a.smoke or a.auth:smoke()
     elif a.csv:run_csv(a.csv)
     else:p.print_help()
 if __name__=="__main__":main()
