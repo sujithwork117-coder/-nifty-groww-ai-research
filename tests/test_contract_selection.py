@@ -34,3 +34,4 @@ def test_discovery_retrieves_expiries_and_contracts():
     groww.get_contracts.assert_called_once_with(exchange="NSE",underlying_symbol="NIFTY",expiry_date="2026-09-24")
     assert len(selected)==4
     assert {item["expiry"] for item in selected} == {"2026-09-24"}
+    assert {item["underlying"] for item in selected} == {"NIFTY"}

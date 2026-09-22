@@ -52,5 +52,5 @@ def discover_itm_contracts(groww,underlying_price,underlying="NIFTY",expiry_date
     result=[]
     for expiry in selected:
         contracts=_items(groww.get_contracts(exchange=groww.EXCHANGE_NSE,underlying_symbol=underlying,expiry_date=expiry),"contracts")
-        result.extend(select_itm_contracts(contracts,underlying_price,itm_ranks,option_types,expiry))
+        result.extend({**contract,"underlying":underlying} for contract in select_itm_contracts(contracts,underlying_price,itm_ranks,option_types,expiry))
     return result

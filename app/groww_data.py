@@ -1,5 +1,6 @@
 from datetime import timedelta
 from pathlib import Path
+import re
 import pandas as pd
 from tenacity import retry,stop_after_attempt,wait_exponential
 
@@ -58,6 +59,18 @@ def save_historical(df,path):
     destination.parent.mkdir(parents=True,exist_ok=True)
     validated.to_csv(destination,index=False)
     return destination
+
+def save_option_historical(groww,contracts,start,end,output_dir="data/raw/options",chunk_days=14):
+    output=Path(output_dir);output.mkdir(parents=True,exist_ok=True);saved=[]
+    for contract in contracts:
+        candles=get_historical(groww,contract["symbol"],start,end,chunk_days,groww.SEGMENT_FNO)
+        for field in ("underlying","expiry","strike","option_type","itm_rank"):
+            candles[field]=contract.get(field)
+        filename=re.sub(r"[^A-Za-z0-9_.-]+","_",contract["symbol"])+".csv"
+        destination=output/filename
+        candles.to_csv(destination,index=False)
+        saved.append(destination)
+    return saved
 
 def get_expiries(groww,underlying="NIFTY",year=None,month=None):
     kw={"exchange":groww.EXCHANGE_NSE,"underlying_symbol":underlying}
