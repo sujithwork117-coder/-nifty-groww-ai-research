@@ -3,7 +3,7 @@ import pandas as pd
 from app.paper import analyze_ekalayava
 
 
-def test_ekalayava_analysis_records_setup_without_target():
+def test_ekalayava_analysis_targets_opening_high():
     candles=pd.DataFrame([
         {"timestamp":pd.Timestamp("2026-09-01 09:15",tz="Asia/Kolkata"),"open":100,"high":105,"low":100,"close":103},
         {"timestamp":pd.Timestamp("2026-09-01 09:20",tz="Asia/Kolkata"),"open":104,"high":106,"low":101,"close":102},
@@ -19,7 +19,8 @@ def test_ekalayava_analysis_records_setup_without_target():
     assert len(result)==1
     row=result.iloc[0]
     assert row.strategy=="EKALAYAVA"
-    assert "target" not in result
+    assert row.target==105
+    assert row.outcome=="TARGET"
     assert row.breakout_timestamp==row.confirmation_timestamp==row.timestamp
     assert row.mfe==4
     assert row.mae==-1

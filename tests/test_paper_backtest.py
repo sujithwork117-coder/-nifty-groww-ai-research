@@ -20,6 +20,7 @@ def test_level_backtest_returns_deterministic_result_and_metadata():
     assert row.time_to_exit_minutes==5
     assert bool(row.before_10) is True
     assert row.option_type=="CE"
+    assert row.target==110
 
 
 def test_level_backtest_marks_same_candle_ambiguity_as_sl_first():

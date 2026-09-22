@@ -7,7 +7,7 @@
     "target_rate": 0.4722222222222222,
     "sl_rate": 0.4166666666666667,
     "avg_mfe": 25.327777777777776,
-    "avg_mae": -22.158333333333335
+    "avg_mae": -22.158333333333328
   },
   "validation": {
     "n": 32,
@@ -30,35 +30,7 @@
       "upper_wick",
       "range"
     ],
-    "validation_accuracy": 0.4375
+    "validation_accuracy": 0.375
   },
-  "anti_overfit": {
-    "model_version": "v001",
-    "sample_size": 104,
-    "training_statistics": {
-      "n": 72
-    },
-    "validation_statistics": {
-      "n": 32
-    },
-    "feature_set": [
-      "entry_hour",
-      "entry_minute",
-      "entry_before_10",
-      "entry_after_10",
-      "weekday",
-      "volatility_10",
-      "premium_change",
-      "lower_wick",
-      "upper_wick",
-      "range"
-    ],
-    "date_range": {
-      "min": "2026-08-24 03:55:00+00:00",
-      "max": "2026-09-22 04:40:00+00:00"
-    },
-    "insufficient_samples": false,
-    "chronological_split": true,
-    "future_features_excluded": true
-  }
+  "anti_overfit": "Chronological validation; validation data is not used for fitting."
 }

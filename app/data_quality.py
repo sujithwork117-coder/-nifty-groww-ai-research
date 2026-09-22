@@ -14,13 +14,16 @@ def quality_report(df,interval_minutes=5,contract_column=None):
     duplicate_count=int(valid["timestamp"].duplicated().sum())
     invalid_ohlc_count=int(_invalid_ohlc(valid).sum()) if all(column in valid for column in OHLC) else len(valid)
     ordered=valid.sort_values("timestamp")
-    gaps=ordered["timestamp"].diff().dropna()
-    interval_seconds=interval_minutes*60
-    missing_intervals=int(((gaps.dt.total_seconds()/interval_seconds).round()-1).clip(lower=0).sum())
     local_dates=ordered["timestamp"].dt.tz_convert("Asia/Kolkata").dt.date
+    interval_seconds=interval_minutes*60
+    missing_intervals=0
+    for _,day in ordered.groupby(local_dates):
+        gaps=day["timestamp"].diff().dropna()
+        missing_intervals+=int(((gaps.dt.total_seconds()/interval_seconds).round()-1).clip(lower=0).sum())
     report={"total_candles":int(len(x)),"trading_dates":sorted({str(value) for value in local_dates}),
             "missing_intervals":missing_intervals,"duplicate_count":duplicate_count,
-            "invalid_ohlc_count":invalid_ohlc_count,"contract_count":0,"date_min":None,"date_max":None}
+            "invalid_ohlc_count":invalid_ohlc_count,"contract_count":0,"date_min":None,"date_max":None,
+            "timezone":"Asia/Kolkata for trading dates; timestamps stored timezone-aware"}
     if not ordered.empty:
         report["date_min"]=str(ordered.timestamp.min())
         report["date_max"]=str(ordered.timestamp.max())

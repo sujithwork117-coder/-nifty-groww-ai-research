@@ -1,18 +1,5 @@
 {
   "contracts_considered": 35,
-  "empty_contracts": [
-    "NSE-NIFTY-04Aug26-23000-CE",
-    "NSE-NIFTY-04Aug26-23200-CE",
-    "NSE-NIFTY-04Aug26-23500-PE",
-    "NSE-NIFTY-04Aug26-23550-PE",
-    "NSE-NIFTY-11Aug26-23050-CE",
-    "NSE-NIFTY-11Aug26-23100-CE",
-    "NSE-NIFTY-11Aug26-23950-PE",
-    "NSE-NIFTY-11Aug26-24000-PE",
-    "NSE-NIFTY-18Aug26-22500-CE",
-    "NSE-NIFTY-18Aug26-23400-PE",
-    "NSE-NIFTY-18Aug26-23450-PE"
-  ],
   "contracts_with_history": 24,
   "level_setups": 104,
   "ekalayava_setups": 95
