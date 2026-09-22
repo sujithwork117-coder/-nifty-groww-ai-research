@@ -70,5 +70,32 @@ def setup_quality_report(events):
         groups[dimension]=grouped
     return {"events":int(len(events)),"groups":groups,
             "note":"Factual historical distributions; no composite setup score or profitability claim."}
+
+def build_research_report(events,data_quality=None):
+    x=events.copy()
+    report={"total_setups":int(len(x)),"data_quality":data_quality or {}}
+    if x.empty:return report
+    if "outcome" in x:
+        report.update({"valid_setups":int((x.outcome!="OPEN").sum()),
+                       "skipped_setups":int((x.outcome=="OPEN").sum()),
+                       "ambiguous_setups":int((x.outcome=="AMBIGUOUS_SL_FIRST").sum()),
+                       "target_hits":int((x.outcome=="TARGET").sum()),
+                       "sl_hits":int(x.outcome.isin(["SL","AMBIGUOUS_SL_FIRST"]).sum())})
+    else:report["valid_setups"]=int(len(x))
+    for source,target in (("points_gained_lost","average_points"),("mfe","maximum_favorable_excursion"),
+                          ("mae","maximum_adverse_excursion"),("time_to_exit_minutes","average_holding_time_minutes")):
+        if source in x:
+            values=pd.to_numeric(x[source],errors="coerce").dropna()
+            if not values.empty:
+                if target.startswith("average"):report[target]=float(values.mean())
+                elif target=="maximum_adverse_excursion":report[target]=float(values.min())
+                elif target.endswith("excursion"):report[target]=float(values.max())
+    if "points_gained_lost" in x:
+        values=pd.to_numeric(x.points_gained_lost,errors="coerce").dropna()
+        if not values.empty:report["median_points"]=float(values.median())
+    for dimension in ("entry_hour","entry_before_10","option_type","itm_rank","strategy","false_breakout"):
+        if dimension in x:report[f"{dimension}_distribution"]={str(k):int(v) for k,v in x[dimension].value_counts(dropna=False).items()}
+    report["setup_quality"]=setup_quality_report(x)
+    return report
 def save_report(report,path):
     Path(path).parent.mkdir(parents=True,exist_ok=True);Path(path).write_text(json.dumps(report,indent=2,default=str))
