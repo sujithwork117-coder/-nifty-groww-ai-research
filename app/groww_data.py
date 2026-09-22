@@ -7,12 +7,23 @@ from tenacity import retry,stop_after_attempt,wait_exponential
 OHLC_COLUMNS=["open","high","low","close"]
 DATA_COLUMNS=["timestamp",*OHLC_COLUMNS,"volume","oi"]
 
+def _groww_symbol(exchange,symbol):
+    return symbol if "-" in symbol else f"{exchange}-{symbol}"
+
+def _parse_timestamp(value):
+    if isinstance(value,(int,float)):
+        return pd.to_datetime(value,unit="s",utc=True).tz_convert("Asia/Kolkata")
+    parsed=pd.to_datetime(value)
+    if parsed.tzinfo is None:
+        return parsed.tz_localize("Asia/Kolkata")
+    return parsed.tz_convert("Asia/Kolkata")
+
 def _df(payload):
     candles=payload.get("candles",payload) if isinstance(payload,dict) else payload
     rows=[]
     for c in candles or []:
         if len(c)>=5:
-            rows.append({"timestamp":pd.to_datetime(c[0],unit="s",utc=True).tz_convert("Asia/Kolkata"),
+            rows.append({"timestamp":_parse_timestamp(c[0]),
                          "open":float(c[1]),"high":float(c[2]),"low":float(c[3]),"close":float(c[4]),
                          "volume":float(c[5]) if len(c)>5 and c[5] is not None else None,
                          "oi":float(c[6]) if len(c)>6 and c[6] is not None else None})
@@ -38,7 +49,7 @@ def validate_candles(df):
 @retry(stop=stop_after_attempt(4),wait=wait_exponential(multiplier=1,min=1,max=8))
 def _fetch(groww,symbol,start,end,segment):
     return groww.get_historical_candles(exchange=groww.EXCHANGE_NSE,segment=segment,
-        groww_symbol=symbol,start_time=start.strftime("%Y-%m-%d %H:%M:%S"),
+        groww_symbol=_groww_symbol(groww.EXCHANGE_NSE,symbol),start_time=start.strftime("%Y-%m-%d %H:%M:%S"),
         end_time=end.strftime("%Y-%m-%d %H:%M:%S"),candle_interval="5minute")
 
 def get_historical(groww,symbol,start,end,chunk_days=14,segment=None):
@@ -85,4 +96,5 @@ def live_quote(groww,trading_symbol):
     return groww.get_quote(exchange=groww.EXCHANGE_NSE,segment=groww.SEGMENT_FNO,trading_symbol=trading_symbol)
 
 def live_ltp(groww,symbols):
-    return groww.get_ltp(segment=groww.SEGMENT_FNO,exchange_trading_symbols=tuple(symbols))
+    ltp_symbols=tuple(symbol.replace("-","_").upper() for symbol in symbols)
+    return groww.get_ltp(segment=groww.SEGMENT_FNO,exchange_trading_symbols=ltp_symbols)

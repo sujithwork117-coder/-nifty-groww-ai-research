@@ -1,0 +1,8 @@
+{
+  "read_only_connection": "authenticated",
+  "ltp_snapshot": "blocked_by_groww_symbol_validation",
+  "signals": 0,
+  "evaluated": 0,
+  "execution": "DISABLED",
+  "detail": "Groww rejected the available option symbols for the live LTP/quote endpoint; no live paper signal was fabricated."
+}

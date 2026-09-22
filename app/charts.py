@@ -3,6 +3,7 @@ from pathlib import Path
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+import pandas as pd
 
 def save_setup_chart(candles,event,path,title=None):
     x=candles.sort_values("timestamp").copy()
@@ -18,7 +19,9 @@ def save_setup_chart(candles,event,path,title=None):
     for field,label,color in (("timestamp","entry","tab:green"),("breakout_timestamp","breakout","tab:purple"),
                               ("exit_time","exit","tab:red")):
         value=event_values.get(field)
-        if value is not None:axis.axvline(value,label=label,color=color,linestyle=":",linewidth=1)
+        if value is not None:
+            value=pd.to_datetime(value,utc=True)
+            axis.axvline(value,label=label,color=color,linestyle=":",linewidth=1)
     axis.set_title(title or str(event_values.get("strategy","setup")))
     axis.set_xlabel("timestamp");axis.set_ylabel("premium")
     axis.legend(loc="best");figure.autofmt_xdate();figure.tight_layout();figure.savefig(destination,dpi=120)

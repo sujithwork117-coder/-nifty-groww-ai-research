@@ -29,9 +29,10 @@ def market_open_now():
     return n.weekday()<5 and "09:15"<=n.strftime("%H:%M")<="15:30"
 def observe_ltp(groww,symbols,poll_seconds=5,on_tick=None):
     ExecutionLock(CFG).assert_paper_only()
+    ltp_symbols=tuple(symbol.replace("-","_").upper() for symbol in symbols)
     while market_open_now():
         try:
-            payload=groww.get_ltp(segment=groww.SEGMENT_FNO,exchange_trading_symbols=tuple(symbols))
+            payload=groww.get_ltp(segment=groww.SEGMENT_FNO,exchange_trading_symbols=ltp_symbols)
             tick={"ts":datetime.now(IST).isoformat(),"ltp":payload}
             if on_tick:on_tick(tick)
         except Exception as e:print("[LIVE WARN]",e)

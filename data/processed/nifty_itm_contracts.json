@@ -1,0 +1,297 @@
+{
+  "underlying": "NIFTY",
+  "underlying_price": 23329.0,
+  "expiries": [
+    "2026-08-04",
+    "2026-08-11",
+    "2026-08-18",
+    "2026-08-25",
+    "2026-09-01",
+    "2026-09-08",
+    "2026-09-15",
+    "2026-09-22",
+    "2026-09-29"
+  ],
+  "contracts": [
+    {
+      "symbol": "NSE-NIFTY-04Aug26-23200-CE",
+      "expiry": "2026-08-04",
+      "strike": 23200.0,
+      "option_type": "CE",
+      "itm_rank": 2,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-04Aug26-23500-PE",
+      "expiry": "2026-08-04",
+      "strike": 23500.0,
+      "option_type": "PE",
+      "itm_rank": 2,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-04Aug26-23000-CE",
+      "expiry": "2026-08-04",
+      "strike": 23000.0,
+      "option_type": "CE",
+      "itm_rank": 3,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-04Aug26-23550-PE",
+      "expiry": "2026-08-04",
+      "strike": 23550.0,
+      "option_type": "PE",
+      "itm_rank": 3,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-11Aug26-23100-CE",
+      "expiry": "2026-08-11",
+      "strike": 23100.0,
+      "option_type": "CE",
+      "itm_rank": 2,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-11Aug26-23950-PE",
+      "expiry": "2026-08-11",
+      "strike": 23950.0,
+      "option_type": "PE",
+      "itm_rank": 2,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-11Aug26-23050-CE",
+      "expiry": "2026-08-11",
+      "strike": 23050.0,
+      "option_type": "CE",
+      "itm_rank": 3,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-11Aug26-24000-PE",
+      "expiry": "2026-08-11",
+      "strike": 24000.0,
+      "option_type": "PE",
+      "itm_rank": 3,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-18Aug26-22500-CE",
+      "expiry": "2026-08-18",
+      "strike": 22500.0,
+      "option_type": "CE",
+      "itm_rank": 2,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-18Aug26-23400-PE",
+      "expiry": "2026-08-18",
+      "strike": 23400.0,
+      "option_type": "PE",
+      "itm_rank": 2,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-18Aug26-23450-PE",
+      "expiry": "2026-08-18",
+      "strike": 23450.0,
+      "option_type": "PE",
+      "itm_rank": 3,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-25Aug26-23250-CE",
+      "expiry": "2026-08-25",
+      "strike": 23250.0,
+      "option_type": "CE",
+      "itm_rank": 2,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-25Aug26-23400-PE",
+      "expiry": "2026-08-25",
+      "strike": 23400.0,
+      "option_type": "PE",
+      "itm_rank": 2,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-25Aug26-23200-CE",
+      "expiry": "2026-08-25",
+      "strike": 23200.0,
+      "option_type": "CE",
+      "itm_rank": 3,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-25Aug26-23450-PE",
+      "expiry": "2026-08-25",
+      "strike": 23450.0,
+      "option_type": "PE",
+      "itm_rank": 3,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-01Sep26-23200-CE",
+      "expiry": "2026-09-01",
+      "strike": 23200.0,
+      "option_type": "CE",
+      "itm_rank": 2,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-01Sep26-23500-PE",
+      "expiry": "2026-09-01",
+      "strike": 23500.0,
+      "option_type": "PE",
+      "itm_rank": 2,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-01Sep26-23100-CE",
+      "expiry": "2026-09-01",
+      "strike": 23100.0,
+      "option_type": "CE",
+      "itm_rank": 3,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-01Sep26-23550-PE",
+      "expiry": "2026-09-01",
+      "strike": 23550.0,
+      "option_type": "PE",
+      "itm_rank": 3,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-08Sep26-23250-CE",
+      "expiry": "2026-09-08",
+      "strike": 23250.0,
+      "option_type": "CE",
+      "itm_rank": 2,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-08Sep26-23500-PE",
+      "expiry": "2026-09-08",
+      "strike": 23500.0,
+      "option_type": "PE",
+      "itm_rank": 2,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-08Sep26-23200-CE",
+      "expiry": "2026-09-08",
+      "strike": 23200.0,
+      "option_type": "CE",
+      "itm_rank": 3,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-08Sep26-23600-PE",
+      "expiry": "2026-09-08",
+      "strike": 23600.0,
+      "option_type": "PE",
+      "itm_rank": 3,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-15Sep26-23050-CE",
+      "expiry": "2026-09-15",
+      "strike": 23050.0,
+      "option_type": "CE",
+      "itm_rank": 2,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-15Sep26-23550-PE",
+      "expiry": "2026-09-15",
+      "strike": 23550.0,
+      "option_type": "PE",
+      "itm_rank": 2,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-15Sep26-22900-CE",
+      "expiry": "2026-09-15",
+      "strike": 22900.0,
+      "option_type": "CE",
+      "itm_rank": 3,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-15Sep26-23700-PE",
+      "expiry": "2026-09-15",
+      "strike": 23700.0,
+      "option_type": "PE",
+      "itm_rank": 3,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-22Sep26-23200-CE",
+      "expiry": "2026-09-22",
+      "strike": 23200.0,
+      "option_type": "CE",
+      "itm_rank": 2,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-22Sep26-23400-PE",
+      "expiry": "2026-09-22",
+      "strike": 23400.0,
+      "option_type": "PE",
+      "itm_rank": 2,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-22Sep26-23150-CE",
+      "expiry": "2026-09-22",
+      "strike": 23150.0,
+      "option_type": "CE",
+      "itm_rank": 3,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-22Sep26-23550-PE",
+      "expiry": "2026-09-22",
+      "strike": 23550.0,
+      "option_type": "PE",
+      "itm_rank": 3,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-29Sep26-22400-CE",
+      "expiry": "2026-09-29",
+      "strike": 22400.0,
+      "option_type": "CE",
+      "itm_rank": 2,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-29Sep26-23950-PE",
+      "expiry": "2026-09-29",
+      "strike": 23950.0,
+      "option_type": "PE",
+      "itm_rank": 2,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-29Sep26-22350-CE",
+      "expiry": "2026-09-29",
+      "strike": 22350.0,
+      "option_type": "CE",
+      "itm_rank": 3,
+      "underlying": "NIFTY"
+    },
+    {
+      "symbol": "NSE-NIFTY-29Sep26-24050-PE",
+      "expiry": "2026-09-29",
+      "strike": 24050.0,
+      "option_type": "PE",
+      "itm_rank": 3,
+      "underlying": "NIFTY"
+    }
+  ]
+}

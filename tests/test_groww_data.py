@@ -3,7 +3,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from app.groww_data import save_historical, validate_candles
+from app.groww_data import _parse_timestamp, save_historical, validate_candles
 
 
 def candles():
@@ -18,6 +18,12 @@ def test_validate_candles_sorts_and_normalizes_timestamps():
 
     assert result["timestamp"].is_monotonic_increasing
     assert str(result.loc[0, "timestamp"]) == "2026-01-01 09:15:00+00:00"
+
+
+def test_parse_timestamp_treats_naive_groww_time_as_ist():
+    result=_parse_timestamp("2026-09-22T09:15:00")
+
+    assert str(result)=="2026-09-22 09:15:00+05:30"
 
 
 def test_validate_candles_rejects_invalid_ohlc():
