@@ -1,0 +1,64 @@
+{
+  "events": 104,
+  "date_min": "2026-08-24",
+  "date_max": "2026-09-22",
+  "train": {
+    "n": 72,
+    "target_rate": 0.4722222222222222,
+    "sl_rate": 0.4166666666666667,
+    "avg_mfe": 25.327777777777776,
+    "avg_mae": -22.158333333333335
+  },
+  "validation": {
+    "n": 32,
+    "target_rate": 0.21875,
+    "sl_rate": 0.78125,
+    "avg_mfe": 37.0,
+    "avg_mae": -89.8078125
+  },
+  "classifier": {
+    "enabled": true,
+    "features": [
+      "entry_hour",
+      "entry_minute",
+      "entry_before_10",
+      "entry_after_10",
+      "weekday",
+      "volatility_10",
+      "premium_change",
+      "lower_wick",
+      "upper_wick",
+      "range"
+    ],
+    "validation_accuracy": 0.4375
+  },
+  "anti_overfit": {
+    "model_version": "v001",
+    "sample_size": 104,
+    "training_statistics": {
+      "n": 72
+    },
+    "validation_statistics": {
+      "n": 32
+    },
+    "feature_set": [
+      "entry_hour",
+      "entry_minute",
+      "entry_before_10",
+      "entry_after_10",
+      "weekday",
+      "volatility_10",
+      "premium_change",
+      "lower_wick",
+      "upper_wick",
+      "range"
+    ],
+    "date_range": {
+      "min": "2026-08-24 03:55:00+00:00",
+      "max": "2026-09-22 04:40:00+00:00"
+    },
+    "insufficient_samples": false,
+    "chronological_split": true,
+    "future_features_excluded": true
+  }
+}
