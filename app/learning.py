@@ -50,5 +50,25 @@ def build_report(events):
     return {"events":len(events),"date_min":str(events.date.min()),"date_max":str(events.date.max()),
             "train":stats(tr),"validation":stats(va),"classifier":clf,
             "anti_overfit":"Chronological validation; validation data is not used for fitting."}
+
+def setup_quality_report(events):
+    if events.empty:return {"events":0,"groups":{}}
+    dimensions=["entry_before_10","option_type","itm_rank","entry_hour","weekday",
+                "volatility_10","premium_change","candle_type","rejection_characteristic",
+                "false_breakout"]
+    groups={}
+    for dimension in dimensions:
+        if dimension not in events:continue
+        grouped=[]
+        for value,subset in events.groupby(dimension,dropna=False):
+            row={"value":None if pd.isna(value) else str(value),"n":int(len(subset)),
+                 "avg_mfe":float(subset.mfe.mean()) if "mfe" in subset else None,
+                 "avg_mae":float(subset.mae.mean()) if "mae" in subset else None}
+            if "outcome" in subset:row["target_rate"]=float((subset.outcome=="TARGET").mean())
+            if "time_to_target_minutes" in subset:row["avg_time_to_target_minutes"]=float(subset.time_to_target_minutes.mean())
+            grouped.append(row)
+        groups[dimension]=grouped
+    return {"events":int(len(events)),"groups":groups,
+            "note":"Factual historical distributions; no composite setup score or profitability claim."}
 def save_report(report,path):
     Path(path).parent.mkdir(parents=True,exist_ok=True);Path(path).write_text(json.dumps(report,indent=2,default=str))
