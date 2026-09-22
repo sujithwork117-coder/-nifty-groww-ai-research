@@ -57,6 +57,20 @@ def analyze_ekalayava(df,contract=None,start="09:15",end="15:15",horizon_bars=78
                     "confirmation_timestamp":event.timestamp,**path})
         results.append(row)
     return pd.DataFrame(results)
+
+def evaluate_paper_signal(candles,signal,horizon_bars=78):
+    future=candles[candles.timestamp>pd.Timestamp(signal["timestamp"])].sort_values("timestamp").head(horizon_bars)
+    entry=float(signal["entry"]);result={"signal_timestamp":signal["timestamp"],"entry":entry,
+            "symbol":signal.get("symbol"),"execution":"DISABLED","mfe":0.0,"mae":0.0,"outcome":"OPEN"}
+    if future.empty:return result
+    result["mfe"]=float(future.high.max()-entry);result["mae"]=float(future.low.min()-entry)
+    for _,row in future.iterrows():
+        hit_sl="sl" in signal and row.low<=signal["sl"]
+        hit_target="target" in signal and row.high>=signal["target"]
+        if hit_sl and hit_target:result["outcome"]="AMBIGUOUS_SL_FIRST";result["exit_timestamp"]=row.timestamp;break
+        if hit_sl:result["outcome"]="SL";result["exit_timestamp"]=row.timestamp;break
+        if hit_target:result["outcome"]="TARGET";result["exit_timestamp"]=row.timestamp;break
+    return result
 def simulate_path(df,event,horizon_bars=78):
     d=df[df.timestamp>event.timestamp].sort_values("timestamp").head(horizon_bars);entry=float(event.entry)
     if d.empty:return {"mfe":0.0,"mae":0.0}
