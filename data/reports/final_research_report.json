@@ -1,0 +1,1100 @@
+{
+  "total_setups": 104,
+  "data_quality": {
+    "underlying": {
+      "total_candles": 1764,
+      "trading_dates": [
+        "2026-08-24",
+        "2026-08-25",
+        "2026-08-26",
+        "2026-08-27",
+        "2026-08-28",
+        "2026-08-31",
+        "2026-09-01",
+        "2026-09-02",
+        "2026-09-03",
+        "2026-09-04",
+        "2026-09-07",
+        "2026-09-08",
+        "2026-09-09",
+        "2026-09-10",
+        "2026-09-11",
+        "2026-09-15",
+        "2026-09-16",
+        "2026-09-17",
+        "2026-09-18",
+        "2026-09-21",
+        "2026-09-22"
+      ],
+      "missing_intervals": 6672,
+      "duplicate_count": 0,
+      "invalid_ohlc_count": 0,
+      "contract_count": 0,
+      "date_min": "2026-08-24 03:30:00+00:00",
+      "date_max": "2026-09-22 10:25:00+00:00"
+    },
+    "contracts": {
+      "NSE-NIFTY-01Sep26-23100-CE": {
+        "total_candles": 43,
+        "trading_dates": [
+          "2026-08-24",
+          "2026-08-27",
+          "2026-08-28",
+          "2026-08-31",
+          "2026-09-01"
+        ],
+        "missing_intervals": 2254,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": "2026-08-24 09:55:00+00:00",
+        "date_max": "2026-09-01 09:15:00+00:00",
+        "contract_file": "NSE-NIFTY-01Sep26-23100-CE.csv",
+        "missing_against_underlying": 1721,
+        "option_only_intervals": 0,
+        "matched_intervals": 43
+      },
+      "NSE-NIFTY-01Sep26-23200-CE": {
+        "total_candles": 122,
+        "trading_dates": [
+          "2026-08-24",
+          "2026-08-25",
+          "2026-08-26",
+          "2026-08-27",
+          "2026-08-28",
+          "2026-08-31",
+          "2026-09-01"
+        ],
+        "missing_intervals": 2236,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": "2026-08-24 05:40:00+00:00",
+        "date_max": "2026-09-01 10:05:00+00:00",
+        "contract_file": "NSE-NIFTY-01Sep26-23200-CE.csv",
+        "missing_against_underlying": 1642,
+        "option_only_intervals": 0,
+        "matched_intervals": 122
+      },
+      "NSE-NIFTY-01Sep26-23500-PE": {
+        "total_candles": 541,
+        "trading_dates": [
+          "2026-08-24",
+          "2026-08-25",
+          "2026-08-26",
+          "2026-08-27",
+          "2026-08-28",
+          "2026-08-31",
+          "2026-09-01"
+        ],
+        "missing_intervals": 1840,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": "2026-08-24 03:45:00+00:00",
+        "date_max": "2026-09-01 10:05:00+00:00",
+        "contract_file": "NSE-NIFTY-01Sep26-23500-PE.csv",
+        "missing_against_underlying": 1223,
+        "option_only_intervals": 0,
+        "matched_intervals": 541
+      },
+      "NSE-NIFTY-01Sep26-23550-PE": {
+        "total_candles": 540,
+        "trading_dates": [
+          "2026-08-24",
+          "2026-08-25",
+          "2026-08-26",
+          "2026-08-27",
+          "2026-08-28",
+          "2026-08-31",
+          "2026-09-01"
+        ],
+        "missing_intervals": 1841,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": "2026-08-24 03:45:00+00:00",
+        "date_max": "2026-09-01 10:05:00+00:00",
+        "contract_file": "NSE-NIFTY-01Sep26-23550-PE.csv",
+        "missing_against_underlying": 1224,
+        "option_only_intervals": 0,
+        "matched_intervals": 540
+      },
+      "NSE-NIFTY-04Aug26-23000-CE": {
+        "total_candles": 0,
+        "trading_dates": [],
+        "missing_intervals": 0,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": null,
+        "date_max": null,
+        "contract_file": "NSE-NIFTY-04Aug26-23000-CE.csv",
+        "missing_against_underlying": 1764,
+        "option_only_intervals": 0,
+        "matched_intervals": 0
+      },
+      "NSE-NIFTY-04Aug26-23200-CE": {
+        "total_candles": 0,
+        "trading_dates": [],
+        "missing_intervals": 0,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": null,
+        "date_max": null,
+        "contract_file": "NSE-NIFTY-04Aug26-23200-CE.csv",
+        "missing_against_underlying": 1764,
+        "option_only_intervals": 0,
+        "matched_intervals": 0
+      },
+      "NSE-NIFTY-04Aug26-23500-PE": {
+        "total_candles": 0,
+        "trading_dates": [],
+        "missing_intervals": 0,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": null,
+        "date_max": null,
+        "contract_file": "NSE-NIFTY-04Aug26-23500-PE.csv",
+        "missing_against_underlying": 1764,
+        "option_only_intervals": 0,
+        "matched_intervals": 0
+      },
+      "NSE-NIFTY-04Aug26-23550-PE": {
+        "total_candles": 0,
+        "trading_dates": [],
+        "missing_intervals": 0,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": null,
+        "date_max": null,
+        "contract_file": "NSE-NIFTY-04Aug26-23550-PE.csv",
+        "missing_against_underlying": 1764,
+        "option_only_intervals": 0,
+        "matched_intervals": 0
+      },
+      "NSE-NIFTY-08Sep26-23200-CE": {
+        "total_candles": 343,
+        "trading_dates": [
+          "2026-08-25",
+          "2026-08-26",
+          "2026-08-27",
+          "2026-08-28",
+          "2026-08-31",
+          "2026-09-01",
+          "2026-09-02",
+          "2026-09-03",
+          "2026-09-04",
+          "2026-09-07",
+          "2026-09-08"
+        ],
+        "missing_intervals": 3735,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": "2026-08-25 06:20:00+00:00",
+        "date_max": "2026-09-08 10:05:00+00:00",
+        "contract_file": "NSE-NIFTY-08Sep26-23200-CE.csv",
+        "missing_against_underlying": 1421,
+        "option_only_intervals": 0,
+        "matched_intervals": 343
+      },
+      "NSE-NIFTY-08Sep26-23250-CE": {
+        "total_candles": 101,
+        "trading_dates": [
+          "2026-09-04",
+          "2026-09-07",
+          "2026-09-08"
+        ],
+        "missing_intervals": 1128,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": "2026-09-04 03:45:00+00:00",
+        "date_max": "2026-09-08 10:05:00+00:00",
+        "contract_file": "NSE-NIFTY-08Sep26-23250-CE.csv",
+        "missing_against_underlying": 1663,
+        "option_only_intervals": 0,
+        "matched_intervals": 101
+      },
+      "NSE-NIFTY-08Sep26-23500-PE": {
+        "total_candles": 931,
+        "trading_dates": [
+          "2026-08-24",
+          "2026-08-25",
+          "2026-08-26",
+          "2026-08-27",
+          "2026-08-28",
+          "2026-08-31",
+          "2026-09-01",
+          "2026-09-02",
+          "2026-09-03",
+          "2026-09-04",
+          "2026-09-07",
+          "2026-09-08"
+        ],
+        "missing_intervals": 3466,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": "2026-08-24 03:45:00+00:00",
+        "date_max": "2026-09-08 10:05:00+00:00",
+        "contract_file": "NSE-NIFTY-08Sep26-23500-PE.csv",
+        "missing_against_underlying": 833,
+        "option_only_intervals": 0,
+        "matched_intervals": 931
+      },
+      "NSE-NIFTY-08Sep26-23600-PE": {
+        "total_candles": 932,
+        "trading_dates": [
+          "2026-08-24",
+          "2026-08-25",
+          "2026-08-26",
+          "2026-08-27",
+          "2026-08-28",
+          "2026-08-31",
+          "2026-09-01",
+          "2026-09-02",
+          "2026-09-03",
+          "2026-09-04",
+          "2026-09-07",
+          "2026-09-08"
+        ],
+        "missing_intervals": 3466,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": "2026-08-24 03:45:00+00:00",
+        "date_max": "2026-09-08 10:10:00+00:00",
+        "contract_file": "NSE-NIFTY-08Sep26-23600-PE.csv",
+        "missing_against_underlying": 832,
+        "option_only_intervals": 0,
+        "matched_intervals": 932
+      },
+      "NSE-NIFTY-11Aug26-23050-CE": {
+        "total_candles": 0,
+        "trading_dates": [],
+        "missing_intervals": 0,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": null,
+        "date_max": null,
+        "contract_file": "NSE-NIFTY-11Aug26-23050-CE.csv",
+        "missing_against_underlying": 1764,
+        "option_only_intervals": 0,
+        "matched_intervals": 0
+      },
+      "NSE-NIFTY-11Aug26-23100-CE": {
+        "total_candles": 0,
+        "trading_dates": [],
+        "missing_intervals": 0,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": null,
+        "date_max": null,
+        "contract_file": "NSE-NIFTY-11Aug26-23100-CE.csv",
+        "missing_against_underlying": 1764,
+        "option_only_intervals": 0,
+        "matched_intervals": 0
+      },
+      "NSE-NIFTY-11Aug26-23950-PE": {
+        "total_candles": 0,
+        "trading_dates": [],
+        "missing_intervals": 0,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": null,
+        "date_max": null,
+        "contract_file": "NSE-NIFTY-11Aug26-23950-PE.csv",
+        "missing_against_underlying": 1764,
+        "option_only_intervals": 0,
+        "matched_intervals": 0
+      },
+      "NSE-NIFTY-11Aug26-24000-PE": {
+        "total_candles": 0,
+        "trading_dates": [],
+        "missing_intervals": 0,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": null,
+        "date_max": null,
+        "contract_file": "NSE-NIFTY-11Aug26-24000-PE.csv",
+        "missing_against_underlying": 1764,
+        "option_only_intervals": 0,
+        "matched_intervals": 0
+      },
+      "NSE-NIFTY-15Sep26-22900-CE": {
+        "total_candles": 295,
+        "trading_dates": [
+          "2026-09-03",
+          "2026-09-07",
+          "2026-09-08",
+          "2026-09-09",
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-15"
+        ],
+        "missing_intervals": 3238,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": "2026-09-03 03:45:00+00:00",
+        "date_max": "2026-09-15 10:05:00+00:00",
+        "contract_file": "NSE-NIFTY-15Sep26-22900-CE.csv",
+        "missing_against_underlying": 1469,
+        "option_only_intervals": 0,
+        "matched_intervals": 295
+      },
+      "NSE-NIFTY-15Sep26-23050-CE": {
+        "total_candles": 300,
+        "trading_dates": [
+          "2026-09-09",
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-15"
+        ],
+        "missing_intervals": 1504,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": "2026-09-09 03:50:00+00:00",
+        "date_max": "2026-09-15 10:05:00+00:00",
+        "contract_file": "NSE-NIFTY-15Sep26-23050-CE.csv",
+        "missing_against_underlying": 1464,
+        "option_only_intervals": 0,
+        "matched_intervals": 300
+      },
+      "NSE-NIFTY-15Sep26-23550-PE": {
+        "total_candles": 838,
+        "trading_dates": [
+          "2026-08-28",
+          "2026-08-31",
+          "2026-09-01",
+          "2026-09-02",
+          "2026-09-03",
+          "2026-09-04",
+          "2026-09-07",
+          "2026-09-08",
+          "2026-09-09",
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-15"
+        ],
+        "missing_intervals": 4380,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": "2026-08-28 07:20:00+00:00",
+        "date_max": "2026-09-15 10:05:00+00:00",
+        "contract_file": "NSE-NIFTY-15Sep26-23550-PE.csv",
+        "missing_against_underlying": 926,
+        "option_only_intervals": 0,
+        "matched_intervals": 838
+      },
+      "NSE-NIFTY-15Sep26-23700-PE": {
+        "total_candles": 1224,
+        "trading_dates": [
+          "2026-08-24",
+          "2026-08-25",
+          "2026-08-26",
+          "2026-08-27",
+          "2026-08-28",
+          "2026-08-31",
+          "2026-09-01",
+          "2026-09-02",
+          "2026-09-03",
+          "2026-09-04",
+          "2026-09-07",
+          "2026-09-08",
+          "2026-09-09",
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-15"
+        ],
+        "missing_intervals": 5189,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": "2026-08-24 03:45:00+00:00",
+        "date_max": "2026-09-15 10:05:00+00:00",
+        "contract_file": "NSE-NIFTY-15Sep26-23700-PE.csv",
+        "missing_against_underlying": 540,
+        "option_only_intervals": 0,
+        "matched_intervals": 1224
+      },
+      "NSE-NIFTY-18Aug26-22500-CE": {
+        "total_candles": 0,
+        "trading_dates": [],
+        "missing_intervals": 0,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": null,
+        "date_max": null,
+        "contract_file": "NSE-NIFTY-18Aug26-22500-CE.csv",
+        "missing_against_underlying": 1764,
+        "option_only_intervals": 0,
+        "matched_intervals": 0
+      },
+      "NSE-NIFTY-18Aug26-23400-PE": {
+        "total_candles": 0,
+        "trading_dates": [],
+        "missing_intervals": 0,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": null,
+        "date_max": null,
+        "contract_file": "NSE-NIFTY-18Aug26-23400-PE.csv",
+        "missing_against_underlying": 1764,
+        "option_only_intervals": 0,
+        "matched_intervals": 0
+      },
+      "NSE-NIFTY-18Aug26-23450-PE": {
+        "total_candles": 0,
+        "trading_dates": [],
+        "missing_intervals": 0,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": null,
+        "date_max": null,
+        "contract_file": "NSE-NIFTY-18Aug26-23450-PE.csv",
+        "missing_against_underlying": 1764,
+        "option_only_intervals": 0,
+        "matched_intervals": 0
+      },
+      "NSE-NIFTY-22Sep26-23150-CE": {
+        "total_candles": 606,
+        "trading_dates": [
+          "2026-09-09",
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-15",
+          "2026-09-16",
+          "2026-09-17",
+          "2026-09-18",
+          "2026-09-21",
+          "2026-09-22"
+        ],
+        "missing_intervals": 3215,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": "2026-09-09 03:45:00+00:00",
+        "date_max": "2026-09-22 10:05:00+00:00",
+        "contract_file": "NSE-NIFTY-22Sep26-23150-CE.csv",
+        "missing_against_underlying": 1158,
+        "option_only_intervals": 0,
+        "matched_intervals": 606
+      },
+      "NSE-NIFTY-22Sep26-23200-CE": {
+        "total_candles": 720,
+        "trading_dates": [
+          "2026-09-07",
+          "2026-09-08",
+          "2026-09-09",
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-15",
+          "2026-09-16",
+          "2026-09-17",
+          "2026-09-18",
+          "2026-09-21",
+          "2026-09-22"
+        ],
+        "missing_intervals": 3643,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": "2026-09-07 06:40:00+00:00",
+        "date_max": "2026-09-22 10:10:00+00:00",
+        "contract_file": "NSE-NIFTY-22Sep26-23200-CE.csv",
+        "missing_against_underlying": 1044,
+        "option_only_intervals": 0,
+        "matched_intervals": 720
+      },
+      "NSE-NIFTY-22Sep26-23400-PE": {
+        "total_candles": 1200,
+        "trading_dates": [
+          "2026-08-28",
+          "2026-08-31",
+          "2026-09-01",
+          "2026-09-02",
+          "2026-09-03",
+          "2026-09-04",
+          "2026-09-07",
+          "2026-09-08",
+          "2026-09-09",
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-15",
+          "2026-09-16",
+          "2026-09-17",
+          "2026-09-18",
+          "2026-09-21",
+          "2026-09-22"
+        ],
+        "missing_intervals": 6076,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": "2026-08-28 03:55:00+00:00",
+        "date_max": "2026-09-22 10:10:00+00:00",
+        "contract_file": "NSE-NIFTY-22Sep26-23400-PE.csv",
+        "missing_against_underlying": 564,
+        "option_only_intervals": 0,
+        "matched_intervals": 1200
+      },
+      "NSE-NIFTY-22Sep26-23550-PE": {
+        "total_candles": 1064,
+        "trading_dates": [
+          "2026-08-28",
+          "2026-08-31",
+          "2026-09-01",
+          "2026-09-02",
+          "2026-09-03",
+          "2026-09-04",
+          "2026-09-07",
+          "2026-09-08",
+          "2026-09-09",
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-15",
+          "2026-09-16",
+          "2026-09-17",
+          "2026-09-18",
+          "2026-09-21",
+          "2026-09-22"
+        ],
+        "missing_intervals": 6170,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": "2026-08-28 07:20:00+00:00",
+        "date_max": "2026-09-22 10:05:00+00:00",
+        "contract_file": "NSE-NIFTY-22Sep26-23550-PE.csv",
+        "missing_against_underlying": 700,
+        "option_only_intervals": 0,
+        "matched_intervals": 1064
+      },
+      "NSE-NIFTY-25Aug26-23200-CE": {
+        "total_candles": 69,
+        "trading_dates": [
+          "2026-08-24",
+          "2026-08-25"
+        ],
+        "missing_intervals": 293,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": "2026-08-24 04:00:00+00:00",
+        "date_max": "2026-08-25 10:05:00+00:00",
+        "contract_file": "NSE-NIFTY-25Aug26-23200-CE.csv",
+        "missing_against_underlying": 1695,
+        "option_only_intervals": 0,
+        "matched_intervals": 69
+      },
+      "NSE-NIFTY-25Aug26-23250-CE": {
+        "total_candles": 7,
+        "trading_dates": [
+          "2026-08-24",
+          "2026-08-25"
+        ],
+        "missing_intervals": 335,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": "2026-08-24 05:45:00+00:00",
+        "date_max": "2026-08-25 10:10:00+00:00",
+        "contract_file": "NSE-NIFTY-25Aug26-23250-CE.csv",
+        "missing_against_underlying": 1757,
+        "option_only_intervals": 0,
+        "matched_intervals": 7
+      },
+      "NSE-NIFTY-25Aug26-23400-PE": {
+        "total_candles": 155,
+        "trading_dates": [
+          "2026-08-24",
+          "2026-08-25"
+        ],
+        "missing_intervals": 211,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": "2026-08-24 03:45:00+00:00",
+        "date_max": "2026-08-25 10:10:00+00:00",
+        "contract_file": "NSE-NIFTY-25Aug26-23400-PE.csv",
+        "missing_against_underlying": 1609,
+        "option_only_intervals": 0,
+        "matched_intervals": 155
+      },
+      "NSE-NIFTY-25Aug26-23450-PE": {
+        "total_candles": 154,
+        "trading_dates": [
+          "2026-08-24",
+          "2026-08-25"
+        ],
+        "missing_intervals": 211,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": "2026-08-24 03:45:00+00:00",
+        "date_max": "2026-08-25 10:05:00+00:00",
+        "contract_file": "NSE-NIFTY-25Aug26-23450-PE.csv",
+        "missing_against_underlying": 1610,
+        "option_only_intervals": 0,
+        "matched_intervals": 154
+      },
+      "NSE-NIFTY-29Sep26-22350-CE": {
+        "total_candles": 7,
+        "trading_dates": [
+          "2026-09-02",
+          "2026-09-03",
+          "2026-09-07",
+          "2026-09-11",
+          "2026-09-22"
+        ],
+        "missing_intervals": 5788,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": "2026-09-02 06:35:00+00:00",
+        "date_max": "2026-09-22 09:25:00+00:00",
+        "contract_file": "NSE-NIFTY-29Sep26-22350-CE.csv",
+        "missing_against_underlying": 1757,
+        "option_only_intervals": 0,
+        "matched_intervals": 7
+      },
+      "NSE-NIFTY-29Sep26-22400-CE": {
+        "total_candles": 31,
+        "trading_dates": [
+          "2026-09-01",
+          "2026-09-02",
+          "2026-09-03",
+          "2026-09-07",
+          "2026-09-09",
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-15",
+          "2026-09-17",
+          "2026-09-18",
+          "2026-09-21",
+          "2026-09-22"
+        ],
+        "missing_intervals": 6018,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": "2026-09-01 09:15:00+00:00",
+        "date_max": "2026-09-22 09:15:00+00:00",
+        "contract_file": "NSE-NIFTY-29Sep26-22400-CE.csv",
+        "missing_against_underlying": 1733,
+        "option_only_intervals": 0,
+        "matched_intervals": 31
+      },
+      "NSE-NIFTY-29Sep26-23950-PE": {
+        "total_candles": 1299,
+        "trading_dates": [
+          "2026-08-24",
+          "2026-08-25",
+          "2026-08-26",
+          "2026-08-27",
+          "2026-08-28",
+          "2026-08-31",
+          "2026-09-01",
+          "2026-09-02",
+          "2026-09-03",
+          "2026-09-04",
+          "2026-09-07",
+          "2026-09-08",
+          "2026-09-09",
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-15",
+          "2026-09-16",
+          "2026-09-17",
+          "2026-09-18",
+          "2026-09-21",
+          "2026-09-22"
+        ],
+        "missing_intervals": 7130,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": "2026-08-24 03:45:00+00:00",
+        "date_max": "2026-09-22 10:05:00+00:00",
+        "contract_file": "NSE-NIFTY-29Sep26-23950-PE.csv",
+        "missing_against_underlying": 465,
+        "option_only_intervals": 0,
+        "matched_intervals": 1299
+      },
+      "NSE-NIFTY-29Sep26-24050-PE": {
+        "total_candles": 1245,
+        "trading_dates": [
+          "2026-08-24",
+          "2026-08-25",
+          "2026-08-26",
+          "2026-08-27",
+          "2026-08-28",
+          "2026-08-31",
+          "2026-09-01",
+          "2026-09-02",
+          "2026-09-03",
+          "2026-09-04",
+          "2026-09-07",
+          "2026-09-08",
+          "2026-09-09",
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-15",
+          "2026-09-16",
+          "2026-09-17",
+          "2026-09-18",
+          "2026-09-21",
+          "2026-09-22"
+        ],
+        "missing_intervals": 7184,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 1,
+        "date_min": "2026-08-24 03:45:00+00:00",
+        "date_max": "2026-09-22 10:05:00+00:00",
+        "contract_file": "NSE-NIFTY-29Sep26-24050-PE.csv",
+        "missing_against_underlying": 519,
+        "option_only_intervals": 0,
+        "matched_intervals": 1245
+      }
+    },
+    "alignment": {
+      "NSE-NIFTY-01Sep26-23100-CE": {
+        "left_only": 1721,
+        "both": 43,
+        "right_only": 0
+      },
+      "NSE-NIFTY-01Sep26-23200-CE": {
+        "left_only": 1642,
+        "both": 122,
+        "right_only": 0
+      },
+      "NSE-NIFTY-01Sep26-23500-PE": {
+        "left_only": 1223,
+        "both": 541,
+        "right_only": 0
+      },
+      "NSE-NIFTY-01Sep26-23550-PE": {
+        "left_only": 1224,
+        "both": 540,
+        "right_only": 0
+      },
+      "NSE-NIFTY-04Aug26-23000-CE": {
+        "left_only": 1764,
+        "right_only": 0,
+        "both": 0
+      },
+      "NSE-NIFTY-04Aug26-23200-CE": {
+        "left_only": 1764,
+        "right_only": 0,
+        "both": 0
+      },
+      "NSE-NIFTY-04Aug26-23500-PE": {
+        "left_only": 1764,
+        "right_only": 0,
+        "both": 0
+      },
+      "NSE-NIFTY-04Aug26-23550-PE": {
+        "left_only": 1764,
+        "right_only": 0,
+        "both": 0
+      },
+      "NSE-NIFTY-08Sep26-23200-CE": {
+        "left_only": 1421,
+        "both": 343,
+        "right_only": 0
+      },
+      "NSE-NIFTY-08Sep26-23250-CE": {
+        "left_only": 1663,
+        "both": 101,
+        "right_only": 0
+      },
+      "NSE-NIFTY-08Sep26-23500-PE": {
+        "both": 931,
+        "left_only": 833,
+        "right_only": 0
+      },
+      "NSE-NIFTY-08Sep26-23600-PE": {
+        "both": 932,
+        "left_only": 832,
+        "right_only": 0
+      },
+      "NSE-NIFTY-11Aug26-23050-CE": {
+        "left_only": 1764,
+        "right_only": 0,
+        "both": 0
+      },
+      "NSE-NIFTY-11Aug26-23100-CE": {
+        "left_only": 1764,
+        "right_only": 0,
+        "both": 0
+      },
+      "NSE-NIFTY-11Aug26-23950-PE": {
+        "left_only": 1764,
+        "right_only": 0,
+        "both": 0
+      },
+      "NSE-NIFTY-11Aug26-24000-PE": {
+        "left_only": 1764,
+        "right_only": 0,
+        "both": 0
+      },
+      "NSE-NIFTY-15Sep26-22900-CE": {
+        "left_only": 1469,
+        "both": 295,
+        "right_only": 0
+      },
+      "NSE-NIFTY-15Sep26-23050-CE": {
+        "left_only": 1464,
+        "both": 300,
+        "right_only": 0
+      },
+      "NSE-NIFTY-15Sep26-23550-PE": {
+        "left_only": 926,
+        "both": 838,
+        "right_only": 0
+      },
+      "NSE-NIFTY-15Sep26-23700-PE": {
+        "both": 1224,
+        "left_only": 540,
+        "right_only": 0
+      },
+      "NSE-NIFTY-18Aug26-22500-CE": {
+        "left_only": 1764,
+        "right_only": 0,
+        "both": 0
+      },
+      "NSE-NIFTY-18Aug26-23400-PE": {
+        "left_only": 1764,
+        "right_only": 0,
+        "both": 0
+      },
+      "NSE-NIFTY-18Aug26-23450-PE": {
+        "left_only": 1764,
+        "right_only": 0,
+        "both": 0
+      },
+      "NSE-NIFTY-22Sep26-23150-CE": {
+        "left_only": 1158,
+        "both": 606,
+        "right_only": 0
+      },
+      "NSE-NIFTY-22Sep26-23200-CE": {
+        "left_only": 1044,
+        "both": 720,
+        "right_only": 0
+      },
+      "NSE-NIFTY-22Sep26-23400-PE": {
+        "both": 1200,
+        "left_only": 564,
+        "right_only": 0
+      },
+      "NSE-NIFTY-22Sep26-23550-PE": {
+        "both": 1064,
+        "left_only": 700,
+        "right_only": 0
+      },
+      "NSE-NIFTY-25Aug26-23200-CE": {
+        "left_only": 1695,
+        "both": 69,
+        "right_only": 0
+      },
+      "NSE-NIFTY-25Aug26-23250-CE": {
+        "left_only": 1757,
+        "both": 7,
+        "right_only": 0
+      },
+      "NSE-NIFTY-25Aug26-23400-PE": {
+        "left_only": 1609,
+        "both": 155,
+        "right_only": 0
+      },
+      "NSE-NIFTY-25Aug26-23450-PE": {
+        "left_only": 1610,
+        "both": 154,
+        "right_only": 0
+      },
+      "NSE-NIFTY-29Sep26-22350-CE": {
+        "left_only": 1757,
+        "both": 7,
+        "right_only": 0
+      },
+      "NSE-NIFTY-29Sep26-22400-CE": {
+        "left_only": 1733,
+        "both": 31,
+        "right_only": 0
+      },
+      "NSE-NIFTY-29Sep26-23950-PE": {
+        "both": 1299,
+        "left_only": 465,
+        "right_only": 0
+      },
+      "NSE-NIFTY-29Sep26-24050-PE": {
+        "both": 1245,
+        "left_only": 519,
+        "right_only": 0
+      }
+    },
+    "contract_count": 35,
+    "timezone": "Asia/Kolkata normalized; alignment uses exact timestamps",
+    "lookahead": "Signals and alignment use only candles at or before each decision timestamp"
+  },
+  "valid_setups": 99,
+  "skipped_setups": 5,
+  "ambiguous_setups": 1,
+  "target_hits": 42,
+  "sl_hits": 57,
+  "average_points": 3.8424242424242427,
+  "average_holding_time_minutes": 119.34343434343434,
+  "median_points": 1.0,
+  "entry_hour_distribution": {
+    "4": 81,
+    "3": 19,
+    "5": 4
+  },
+  "option_type_distribution": {
+    "PE": 78,
+    "CE": 26
+  },
+  "itm_rank_distribution": {
+    "2": 53,
+    "3": 51
+  },
+  "strategy_distribution": {
+    "LEVEL_TO_LEVEL": 104
+  },
+  "setup_quality": {
+    "events": 104,
+    "groups": {
+      "option_type": [
+        {
+          "value": "CE",
+          "n": 26,
+          "avg_mfe": null,
+          "avg_mae": null,
+          "target_rate": 0.3076923076923077
+        },
+        {
+          "value": "PE",
+          "n": 78,
+          "avg_mfe": null,
+          "avg_mae": null,
+          "target_rate": 0.4358974358974359
+        }
+      ],
+      "itm_rank": [
+        {
+          "value": "2",
+          "n": 53,
+          "avg_mfe": null,
+          "avg_mae": null,
+          "target_rate": 0.4716981132075472
+        },
+        {
+          "value": "3",
+          "n": 51,
+          "avg_mfe": null,
+          "avg_mae": null,
+          "target_rate": 0.3333333333333333
+        }
+      ],
+      "entry_hour": [
+        {
+          "value": "3",
+          "n": 19,
+          "avg_mfe": null,
+          "avg_mae": null,
+          "target_rate": 0.47368421052631576
+        },
+        {
+          "value": "4",
+          "n": 81,
+          "avg_mfe": null,
+          "avg_mae": null,
+          "target_rate": 0.37037037037037035
+        },
+        {
+          "value": "5",
+          "n": 4,
+          "avg_mfe": null,
+          "avg_mae": null,
+          "target_rate": 0.75
+        }
+      ],
+      "candle_type": [
+        {
+          "value": "lower_rejection",
+          "n": 18,
+          "avg_mfe": null,
+          "avg_mae": null,
+          "target_rate": 0.4444444444444444
+        },
+        {
+          "value": "normal",
+          "n": 27,
+          "avg_mfe": null,
+          "avg_mae": null,
+          "target_rate": 0.4074074074074074
+        },
+        {
+          "value": "strong_green",
+          "n": 53,
+          "avg_mfe": null,
+          "avg_mae": null,
+          "target_rate": 0.37735849056603776
+        },
+        {
+          "value": "upper_rejection",
+          "n": 6,
+          "avg_mfe": null,
+          "avg_mae": null,
+          "target_rate": 0.5
+        }
+      ]
+    },
+    "note": "Factual historical distributions; no composite setup score or profitability claim."
+  },
+  "ekalayava_setups": 95,
+  "charts_created": 6,
+  "paper_journal": "data/processed/paper_journal.csv",
+  "live_monitor": {
+    "read_only_connection": "authenticated",
+    "ltp_snapshot": "blocked_by_groww_symbol_validation",
+    "signals": 0,
+    "evaluated": 0,
+    "execution": "DISABLED",
+    "detail": "Groww rejected the available option symbols for the live LTP/quote endpoint; no live paper signal was fabricated."
+  },
+  "steps_executed": [
+    "15D",
+    "15E",
+    "15F",
+    "15G",
+    "15H",
+    "15I",
+    "15J",
+    "15K",
+    "15L",
+    "15M",
+    "15N",
+    "15O",
+    "15P",
+    "15Q",
+    "15R"
+  ]
+}
