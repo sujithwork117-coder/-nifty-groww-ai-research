@@ -18,7 +18,7 @@ class FakeProvider:
             return json.dumps({
                 "hypothesis": "PE and CE outcomes differ by entry time",
                 "strategy_scope": ["LEVEL_TO_LEVEL", "EKALAYAVA"],
-                "dataset_period": "2026-09-14 to 2026-09-18",
+                "dataset_period": "2026-07-23 to 2026-09-23",
                 "comparison_dimension": "option_type and entry_hour",
                 "required_metrics": [],
                 "required_groupings": ["option_type", "entry_hour"],
@@ -37,8 +37,8 @@ class FakeProvider:
 
 
 def test_autonomous_loop_uses_ai_plan_and_decision(tmp_path, monkeypatch):
-    selection = {"start": "2026-09-14", "end": "2026-09-18",
-                 "trading_dates": ["2026-09-14", "2026-09-15", "2026-09-16", "2026-09-17", "2026-09-18"],
+    selection = {"start": "2026-07-23", "end": "2026-09-23",
+                 "trading_dates": ["2026-07-23", "2026-09-23"],
                  "option_files": ["a", "b", "c", "d"]}
     result = {"setup_count": 4, "valid_setups": 4, "target_hits": 1, "sl_hits": 3,
               "lookahead_check": "PASS"}

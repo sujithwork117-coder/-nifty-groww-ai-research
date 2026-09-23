@@ -11,7 +11,7 @@ from .weekly_experiment import run_baseline_week, select_latest_completed_week
 
 
 class ResearchAgent:
-    """Coordinate inspect/run/validate/save steps for one bounded experiment."""
+    """Coordinate inspect/run/validate/save steps for one requested-period experiment."""
 
     def __init__(self, state=None, config=CFG):
         self.state = state or ResearchState()
@@ -53,10 +53,8 @@ class ResearchAgent:
         selection = select_latest_completed_week(dataset, option_dir)
         context = {
             "dataset": dataset,
-            "selected_period": {"start": str(selection["start"]), "end": str(selection["end"]),
+            "requested_period": {"start": str(selection["start"]), "end": str(selection["end"]),
                                 "trading_dates": [str(date) for date in selection["trading_dates"]]},
-            "latest_completed_week": {"start": str(selection["start"]), "end": str(selection["end"]),
-                                      "trading_dates": [str(date) for date in selection["trading_dates"]]},
             "option_file_count": len(selection["option_files"]),
             "canonical_strategies": ["LEVEL_TO_LEVEL", "EKALAYAVA"],
             "eligible_contracts": "NIFTY ITM rank 2 and 3 for both CE and PE",
@@ -73,7 +71,7 @@ class ResearchAgent:
             "Missing option candles are unavailable data and must never be interpolated or fabricated. "
             "The previous SMA experiment is invalid/inconclusive and must not be used as canonical evidence.",
             "Generate exactly one structured ExperimentSpec. Do not return prose outside JSON. "
-            "dataset_period must describe the selected bounded period, not the full source-data window. "
+            "dataset_period must be 2026-07-23 through 2026-09-23, with actual coverage reported separately. "
             "Required JSON keys: hypothesis, strategy_scope, dataset_period, comparison_dimension, "
             "required_metrics, required_groupings, statistical_test, minimum_data_requirements, reason. "
             "Use only supported metrics and groupings; statistical_test must be null. "
@@ -111,7 +109,7 @@ class ResearchAgent:
             raise TimeoutError("Autonomous research runtime limit exceeded before experiment")
         experiment_id = self.state.start_experiment(
             spec.hypothesis, dataset, strategy_version="baseline-v1",
-            experiment_spec=spec.as_dict(), selected_week=context["latest_completed_week"]
+            experiment_spec=spec.as_dict(), selected_period=context["requested_period"]
         )
         failures = 0
         while True:

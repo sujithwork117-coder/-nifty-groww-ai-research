@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
 import re
 
@@ -15,71 +15,78 @@ def _trading_dates(path):
     return sorted(timestamps.dt.tz_convert("Asia/Kolkata").dt.date.unique())
 
 
-def select_latest_completed_week(underlying_path, option_dir):
-    dates = _trading_dates(underlying_path)
-    weeks = {}
-    for date in dates:
-        monday = date - timedelta(days=date.weekday())
-        weeks.setdefault(monday, []).append(date)
-    candidates = []
-    for monday, week_dates in weeks.items():
-        friday = monday + timedelta(days=4)
-        if len(week_dates) >= 5 and max(week_dates) >= friday:
-            candidates.append((monday, friday, sorted(week_dates)))
-    if not candidates:
-        raise RuntimeError("INSUFFICIENT DATA: no completed Monday-Friday trading week")
-    monday, friday, dates = max(candidates)
+REQUESTED_START = date(2026, 7, 23)
+REQUESTED_END = date(2026, 9, 23)
+
+
+def _option_dates(path):
+    frame = pd.read_csv(path, usecols=["timestamp"])
+    if frame.empty:
+        return set()
+    return set(pd.to_datetime(frame.timestamp, utc=True).dt.tz_convert("Asia/Kolkata").dt.date)
+
+
+def _expiry_date(value):
+    return datetime.strptime(value.title(), "%d%b%y").date()
+
+
+def select_requested_period(underlying_path, option_dir, start=REQUESTED_START, end=REQUESTED_END):
+    source_dates = _trading_dates(underlying_path)
+    dates = [value for value in source_dates if start <= value <= end]
+    if not dates:
+        raise RuntimeError("INSUFFICIENT DATA: no underlying trading dates in requested period")
     underlying = pd.read_csv(underlying_path)
     underlying["timestamp"] = pd.to_datetime(underlying["timestamp"], utc=True)
     local = underlying["timestamp"].dt.tz_convert("Asia/Kolkata")
-    opening = underlying[local.dt.date == dates[0]].sort_values("timestamp")
-    if opening.empty:
-        raise RuntimeError("INSUFFICIENT DATA: selected week has no opening underlying candle")
-    underlying_open = float(opening.iloc[0]["open"])
+    opening_prices = {}
+    for trading_date in dates:
+        opening = underlying[local.dt.date == trading_date].sort_values("timestamp")
+        if not opening.empty:
+            opening_prices[trading_date] = float(opening.iloc[0]["open"])
     options = sorted(Path(option_dir).glob("*.csv"))
-    usable = []
-    for path in options:
-        frame = pd.read_csv(path, usecols=["timestamp"])
-        if frame.empty:
-            continue
-        local = pd.to_datetime(frame.timestamp, utc=True).dt.tz_convert("Asia/Kolkata").dt.date
-        if set(dates).intersection(local):
-            usable.append(path)
-    grouped = {}
-    for path in usable:
-        metadata = _contract_metadata(path)
-        grouped.setdefault((metadata["expiry"], metadata["option_type"]), []).append(path)
-    eligible = []
-    for (expiry, option_type), paths in grouped.items():
-        declared_ranks = {_file_itm_rank(path) for path in paths}
-        if declared_ranks.issubset({2, 3}) and None not in declared_ranks:
-            eligible.extend(paths)
-            continue
-        paths = [path for path in paths if (
-            option_type == "CE" and _contract_metadata(path)["strike"] < underlying_open
-        ) or (
-            option_type == "PE" and _contract_metadata(path)["strike"] > underlying_open
-        )]
-        paths.sort(key=lambda path: _contract_metadata(path)["strike"], reverse=option_type == "CE")
-        eligible.extend(paths[1:3])
-    if len(eligible) < 4:
-        raise RuntimeError("INSUFFICIENT DATA: fewer than four option files cover the latest completed week")
-    eligible = sorted(eligible)
+    option_dates = {path: _option_dates(path) for path in options}
+    eligible_by_date = {}
     contract_eligibility = []
-    for path in eligible:
-        metadata = _contract_metadata(path)
-        same_type = [candidate for candidate in eligible
-                     if _contract_metadata(candidate)["expiry"] == metadata["expiry"]
-                     and _contract_metadata(candidate)["option_type"] == metadata["option_type"]]
-        same_type.sort(key=lambda candidate: _contract_metadata(candidate)["strike"],
-                       reverse=metadata["option_type"] == "CE")
-        rank = _file_itm_rank(path) or same_type.index(path) + 2
-        contract_eligibility.append({"date": str(dates[0]), "underlying_price": underlying_open,
-                                     "expiry": metadata["expiry"], "option_type": metadata["option_type"],
-                                     "strike": metadata["strike"], "itm_rank": rank,
-                                     "eligible": rank in (2, 3)})
-    return {"start": monday, "end": friday, "trading_dates": dates, "option_files": eligible,
-            "contract_eligibility": contract_eligibility, "underlying_open": underlying_open}
+    for trading_date in dates:
+        price = opening_prices.get(trading_date)
+        candidates = [path for path in options if trading_date in option_dates[path]]
+        by_type = {"CE": [], "PE": []}
+        for path in candidates:
+            metadata = _contract_metadata(path)
+            if price is None or _expiry_date(metadata["expiry"]) < trading_date:
+                continue
+            if metadata["option_type"] == "CE" and metadata["strike"] < price:
+                by_type["CE"].append(path)
+            if metadata["option_type"] == "PE" and metadata["strike"] > price:
+                by_type["PE"].append(path)
+        selected = []
+        for option_type, paths in by_type.items():
+            paths.sort(key=lambda path: (_expiry_date(_contract_metadata(path)["expiry"]),
+                                         -_contract_metadata(path)["strike"] if option_type == "CE"
+                                         else _contract_metadata(path)["strike"]))
+            nearest_expiry = _expiry_date(_contract_metadata(paths[0])["expiry"]) if paths else None
+            paths = [path for path in paths if _expiry_date(_contract_metadata(path)["expiry"]) == nearest_expiry]
+            paths.sort(key=lambda path: _contract_metadata(path)["strike"], reverse=option_type == "CE")
+            for rank, path in enumerate(paths[1:3], start=2):
+                selected.append(path)
+                metadata = _contract_metadata(path)
+                coverage = quality_report(_load_week(path, [trading_date]))
+                contract_eligibility.append({"date": str(trading_date), "underlying_price": price,
+                    "expiry": metadata["expiry"], "option_type": option_type, "strike": metadata["strike"],
+                    "itm_rank": rank, "expected_itm_relationship": "CE strike < underlying" if option_type == "CE" else "PE strike > underlying",
+                    "actual_relationship": True, "data_coverage": coverage,
+                    "missing_intervals": coverage["missing_intervals"], "eligible": True})
+        eligible_by_date[trading_date] = selected
+    eligible = sorted(set(path for paths in eligible_by_date.values() for path in paths))
+    return {"start": start, "end": end, "requested_start": start, "requested_end": end,
+            "trading_dates": dates, "option_files": eligible, "eligible_by_date": eligible_by_date,
+            "contract_eligibility": contract_eligibility, "underlying_open": next(iter(opening_prices.values()), None),
+            "underlying_dates": dates, "source_underlying_dates": source_dates}
+
+
+def select_latest_completed_week(underlying_path, option_dir):
+    """Compatibility name retained for callers; selection is now the requested period."""
+    return select_requested_period(underlying_path, option_dir)
 
 
 def _load_week(path, dates):
@@ -111,34 +118,35 @@ def run_baseline_week(underlying_path, option_dir, selection):
     underlying = _load_week(underlying_path, selection["trading_dates"])
     quality = {"underlying": quality_report(underlying), "options": {}}
     rows = []
-    opening_price = float(underlying.sort_values("timestamp").iloc[0]["open"])
     eligibility = []
-    for path in selection["option_files"]:
-        option = _load_week(path, selection["trading_dates"])
-        quality["options"][path.name] = quality_report(option)
-        if option.empty:
+    missing_data = []
+    for trading_date in selection["trading_dates"]:
+        day_underlying = _load_week(underlying_path, [trading_date])
+        if day_underlying.empty:
+            missing_data.append({"date": str(trading_date), "dataset": "underlying", "reason": "no candles"})
             continue
-        metadata = {"symbol": path.stem, **_contract_metadata(path)}
-        group_paths = [candidate for candidate in selection["option_files"]
-                   if _contract_metadata(candidate)["expiry"] == metadata["expiry"]
-                   and _contract_metadata(candidate)["option_type"] == metadata["option_type"]]
-        group_paths.sort(key=lambda candidate: _contract_metadata(candidate)["strike"],
-                 reverse=metadata["option_type"] == "CE")
-        metadata["itm_rank"] = group_paths.index(path) + 2
-        is_itm = (metadata["option_type"] == "CE" and metadata["strike"] < opening_price) or \
-             (metadata["option_type"] == "PE" and metadata["strike"] > opening_price)
-        eligibility.append({"date": str(selection["start"]), "underlying_price": opening_price,
-                    "expiry": metadata["expiry"], "option_type": metadata["option_type"],
-                    "strike": metadata["strike"], "itm_rank": metadata["itm_rank"],
-                    "expected_itm_relationship": "CE strike < underlying" if metadata["option_type"] == "CE" else "PE strike > underlying",
-                    "actual_relationship": is_itm, "data_coverage": quality["options"][path.name],
-                    "eligible": bool(is_itm and metadata["itm_rank"] in (2, 3))})
-        level = backtest_level_to_level(option, metadata)
-        eka = analyze_ekalayava(option, metadata)
-        for strategy, events in (("LEVEL_TO_LEVEL", level), ("EKALAYAVA", eka)):
-            for event in events.to_dict("records"):
-                event["strategy"] = strategy
-                rows.append(event)
+        opening_price = float(day_underlying.sort_values("timestamp").iloc[0]["open"])
+        for path in selection.get("eligible_by_date", {}).get(trading_date, selection["option_files"]):
+            option = _load_week(path, [trading_date])
+            coverage_key = f"{trading_date}:{path.name}"
+            quality["options"][coverage_key] = quality_report(option)
+            if option.empty:
+                missing_data.append({"date": str(trading_date), "contract": path.name, "reason": "no candles"})
+                continue
+            metadata = {"symbol": path.stem, **_contract_metadata(path)}
+            matching = [item for item in selection.get("contract_eligibility", [])
+                        if item["date"] == str(trading_date) and item["strike"] == metadata["strike"]
+                        and item["option_type"] == metadata["option_type"]]
+            metadata["itm_rank"] = matching[0]["itm_rank"] if matching else None
+            if metadata["itm_rank"] not in (2, 3):
+                continue
+            eligibility.extend(matching)
+            level = backtest_level_to_level(option, metadata)
+            eka = analyze_ekalayava(option, metadata)
+            for strategy, events in (("LEVEL_TO_LEVEL", level), ("EKALAYAVA", eka)):
+                for event in events.to_dict("records"):
+                    event["strategy"] = strategy
+                    rows.append(event)
     events = pd.DataFrame(rows)
     outcomes = events.outcome.value_counts().to_dict() if not events.empty else {}
     points = pd.to_numeric(events.points_gained_lost, errors="coerce") if "points_gained_lost" in events else pd.Series(dtype=float)
@@ -184,9 +192,22 @@ def run_baseline_week(underlying_path, option_dir, selection):
         "by_option_type": distribution("option_type"), "by_itm_rank": distribution("itm_rank"),
         "by_entry_hour": distribution("entry_hour"),
     }
+    actual_dates = sorted({str(value) for value in selection["trading_dates"]
+                           if value in selection.get("source_underlying_dates", selection["trading_dates"])})
     result = {
         "week": {"start": str(selection["start"]), "end": str(selection["end"]),
                  "trading_dates": [str(value) for value in selection["trading_dates"]]},
+        "requested_period": {"start": str(selection.get("requested_start", selection["start"])),
+                              "end": str(selection.get("requested_end", selection["end"]))},
+        "actual_data_period": {"start": actual_dates[0] if actual_dates else None,
+                               "end": actual_dates[-1] if actual_dates else None},
+        "trading_day_coverage": {"requested": [str(value) for value in selection.get("source_underlying_dates", selection["trading_dates"])
+                                                   if selection.get("requested_start", selection["start"]) <= value <= selection.get("requested_end", selection["end"])],
+                                  "available": actual_dates},
+        "option_data_coverage": quality["options"],
+        "missing_data": missing_data,
+        "contract_count": len({(item["expiry"], item["option_type"], item["strike"])
+                    for item in eligibility}),
         "dataset": str(underlying_path), "strategy_version": "baseline-v1",
         "setup_count": int(len(events)), "valid_setups": int((events.outcome != "OPEN").sum()) if not events.empty else 0,
         "skipped_setups": int((events.outcome == "OPEN").sum()) if not events.empty else 0,
@@ -209,7 +230,7 @@ def run_baseline_week(underlying_path, option_dir, selection):
         "by_entry_hour": distribution("entry_hour"),
         "data_quality": quality,
         "lookahead_check": "PASS: deterministic engine uses completed candles and future candles only after entry",
-        "development_validation": "INSUFFICIENT OUT-OF-SAMPLE DATA: one completed week is reserved for this bounded demo",
+        "development_validation": "Coverage is reported from the requested period; missing source data is not substituted.",
         "contract_eligibility": eligibility,
         "metrics": metrics,
     }

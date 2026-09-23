@@ -99,6 +99,14 @@ def validate_experiment_spec(payload, dataset, selection):
         raise ExperimentSpecError(f"EXPERIMENT_SPEC_INVALID: forbidden data or strategy treatment {forbidden}")
     if not Path(dataset).is_file():
         raise ExperimentSpecError(f"EXPERIMENT_SPEC_INVALID: dataset does not exist: {dataset}")
+    requested_start = selection.get("requested_start", selection.get("start"))
+    requested_end = selection.get("requested_end", selection.get("end"))
+    if requested_start is not None and requested_end is not None:
+        period = spec.dataset_period.replace(" ", "")
+        if str(requested_start) not in period or str(requested_end) not in period:
+            raise ExperimentSpecError(
+                f"EXPERIMENT_SPEC_INVALID: dataset_period must cover {requested_start} through {requested_end}"
+            )
     if len(selection.get("option_files", [])) < 4:
         raise ExperimentSpecError("EXPERIMENT_SPEC_INVALID: fewer than four eligible option contracts")
     eligibility = selection.get("contract_eligibility", [])
