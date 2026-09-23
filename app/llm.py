@@ -63,16 +63,23 @@ def build_llm_provider(environ=None):
             "Missing LLM configuration: set RESEARCH_LLM_PROVIDER and "
             "RESEARCH_LLM_API_KEY before running --autonomous."
         )
-    if provider not in {"openai", "openai-compatible", "anthropic"}:
+    if provider not in {"openai", "openai-compatible", "anthropic", "groq"}:
         raise LLMConfigurationError(f"Unsupported RESEARCH_LLM_PROVIDER: {provider}")
     api_key = environ.get("RESEARCH_LLM_API_KEY", "").strip()
     if not api_key:
         raise LLMConfigurationError("Missing LLM configuration: set RESEARCH_LLM_API_KEY.")
-    default_url = "https://api.anthropic.com/v1/messages" if provider == "anthropic" else \
-        "https://api.openai.com/v1/chat/completions"
+    if provider == "anthropic":
+        default_url = "https://api.anthropic.com/v1/messages"
+        default_model = "claude-3-5-sonnet-latest"
+    elif provider == "groq":
+        default_url = "https://api.groq.com/openai/v1/chat/completions"
+        default_model = "openai/gpt-oss-20b"
+    else:
+        default_url = "https://api.openai.com/v1/chat/completions"
+        default_model = "gpt-4o-mini"
     return HTTPChatProvider(
         provider=provider,
-        model=environ.get("RESEARCH_LLM_MODEL", "claude-3-5-sonnet-latest" if provider == "anthropic" else "gpt-4o-mini"),
+        model=environ.get("RESEARCH_LLM_MODEL", default_model),
         api_key=api_key,
         base_url=environ.get("RESEARCH_LLM_BASE_URL", default_url),
         temperature=float(environ.get("RESEARCH_LLM_TEMPERATURE", "0.2")),

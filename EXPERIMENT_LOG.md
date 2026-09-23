@@ -17,4 +17,4 @@ The machine-readable experiment history is stored as JSON Lines in `data/agent_s
 - Dataset: read-only Groww snapshot for 2026-09-21 through 2026-09-23, through 15:25 IST.
 - Coverage: 240 underlying candles and four current 2nd/3rd ITM contracts; zero invalid OHLC rows and zero duplicates.
 - Result: 19 setups, 13 valid, 6 open/skipped, 6 targets, 7 SL outcomes; lookahead check passed.
-- AI status: blocked because no `RESEARCH_LLM_PROVIDER` or `RESEARCH_LLM_API_KEY` is configured.
+- AI status: real Groq call was attempted using the key in [llmkey.md](llmkey.md), but the provider returned `HTTP 403 Forbidden`; the autonomous experiment remained externally blocked and no AI interpretation was recorded.
