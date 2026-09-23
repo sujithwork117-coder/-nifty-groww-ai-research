@@ -2,10 +2,18 @@ from datetime import timedelta
 from pathlib import Path
 import re
 import pandas as pd
-from tenacity import retry,stop_after_attempt,wait_exponential
+from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
 
 OHLC_COLUMNS=["open","high","low","close"]
 DATA_COLUMNS=["timestamp",*OHLC_COLUMNS,"volume","oi"]
+
+
+class GrowwRateLimitError(RuntimeError):
+    pass
+
+
+def _is_rate_limit_error(error):
+    return "rate limit" in str(error).lower() or "too many requests" in str(error).lower()
 
 def _groww_symbol(exchange,symbol):
     return symbol if "-" in symbol else f"{exchange}-{symbol}"
@@ -46,7 +54,8 @@ def validate_candles(df):
     if not x["timestamp"].is_monotonic_increasing: raise ValueError("Candles are not chronological")
     return x[DATA_COLUMNS]
 
-@retry(stop=stop_after_attempt(4),wait=wait_exponential(multiplier=1,min=1,max=8))
+@retry(retry=retry_if_exception(_is_rate_limit_error), reraise=True,
+    stop=stop_after_attempt(5), wait=wait_exponential(multiplier=2, min=2, max=30))
 def _fetch(groww,symbol,start,end,segment):
     return groww.get_historical_candles(exchange=groww.EXCHANGE_NSE,segment=segment,
         groww_symbol=_groww_symbol(groww.EXCHANGE_NSE,symbol),start_time=start.strftime("%Y-%m-%d %H:%M:%S"),
@@ -58,7 +67,10 @@ def get_historical(groww,symbol,start,end,chunk_days=14,segment=None):
     while cur<end:
         nxt=min(cur+timedelta(days=chunk_days),end)
         try: out.append(_df(_fetch(groww,symbol,cur,nxt,segment)))
-        except Exception as e: print("[WARN]",symbol,e)
+        except Exception as e:
+            if _is_rate_limit_error(e):
+                raise GrowwRateLimitError(f"rate-limited request for {symbol} [{cur}, {nxt}]: {e}") from e
+            print("[WARN]",symbol,e)
         cur=nxt
     if not out: return pd.DataFrame(columns=DATA_COLUMNS)
     merged=pd.concat(out,ignore_index=True).drop_duplicates("timestamp")
@@ -71,24 +83,65 @@ def save_historical(df,path):
     validated.to_csv(destination,index=False)
     return destination
 
-def save_option_historical(groww,contracts,start,end,output_dir="data/raw/options",chunk_days=14):
+def _option_file_complete(path,start,end):
+    if not path.is_file() or path.stat().st_size == 0:
+        return False
+    try:
+        frame=validate_candles(pd.read_csv(path))
+    except (OSError, ValueError, pd.errors.EmptyDataError):
+        return False
+    if frame.empty:
+        return False
+    local=frame["timestamp"].dt.tz_convert("Asia/Kolkata").dt.date
+    return local.min() <= start.date() and local.max() >= end.date()
+
+
+def save_option_historical(groww,contracts,start,end,output_dir="data/raw/options",chunk_days=14,report=None):
     output=Path(output_dir);output.mkdir(parents=True,exist_ok=True);saved=[]
+    report=report if report is not None else {}
+    report.setdefault("successful",[]);report.setdefault("skipped",[])
+    report.setdefault("empty",[]);report.setdefault("failed",[])
     for contract in contracts:
-        candles=get_historical(groww,contract["symbol"],start,end,chunk_days,groww.SEGMENT_FNO)
-        for field in ("underlying","expiry","strike","option_type","itm_rank"):
-            candles[field]=contract.get(field)
         filename=re.sub(r"[^A-Za-z0-9_.-]+","_",contract["symbol"])+".csv"
         destination=output/filename
+        if _option_file_complete(destination,start,end):
+            report["skipped"].append(contract["symbol"])
+            saved.append(destination)
+            continue
+        try:
+            candles=get_historical(groww,contract["symbol"],start,end,chunk_days,groww.SEGMENT_FNO)
+        except GrowwRateLimitError as error:
+            report["failed"].append({"symbol":contract["symbol"],"error":str(error)})
+            raise
+        except Exception as error:
+            report["failed"].append({"symbol":contract["symbol"],"error":str(error)})
+            continue
+        if candles.empty:
+            report["empty"].append(contract["symbol"])
+            continue
+        if destination.is_file() and destination.stat().st_size:
+            try:
+                existing=validate_candles(pd.read_csv(destination))
+                candles=validate_candles(pd.concat([existing,candles],ignore_index=True).drop_duplicates("timestamp"))
+            except (OSError, ValueError, pd.errors.EmptyDataError):
+                pass
+        for field in ("underlying","expiry","strike","option_type","itm_rank"):
+            candles[field]=contract.get(field)
         candles.to_csv(destination,index=False)
         saved.append(destination)
+        report["successful"].append(contract["symbol"])
     return saved
 
+@retry(retry=retry_if_exception(_is_rate_limit_error), reraise=True,
+    stop=stop_after_attempt(5), wait=wait_exponential(multiplier=2, min=2, max=30))
 def get_expiries(groww,underlying="NIFTY",year=None,month=None):
     kw={"exchange":groww.EXCHANGE_NSE,"underlying_symbol":underlying}
     if year is not None: kw["year"]=year
     if month is not None: kw["month"]=month
     return groww.get_expiries(**kw)
 
+@retry(retry=retry_if_exception(_is_rate_limit_error), reraise=True,
+    stop=stop_after_attempt(5), wait=wait_exponential(multiplier=2, min=2, max=30))
 def get_contracts(groww,expiry_date,underlying="NIFTY"):
     return groww.get_contracts(exchange=groww.EXCHANGE_NSE,underlying_symbol=underlying,expiry_date=expiry_date)
 
