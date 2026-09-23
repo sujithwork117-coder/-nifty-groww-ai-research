@@ -41,22 +41,35 @@ class ResearchAgent:
         return result
 
     def run_autonomous(self, provider=None, max_experiments=1, max_failures=1,
-                       max_retries=0, max_runtime_seconds=900, dry_run=False):
+                       max_retries=0, max_runtime_seconds=900, dry_run=False,
+                       dataset="data/raw/nifty_5m.csv", option_dir="data/raw/options",
+                       report_dir="data/reports"):
         if max_experiments != 1:
             raise ValueError("The bounded demo supports exactly one experiment")
         self.state.assert_safe(self.config)
         started = time.monotonic()
         provider = provider or build_llm_provider()
-        selection = select_latest_completed_week("data/raw/nifty_5m.csv", "data/raw/options")
+        selection = select_latest_completed_week(dataset, option_dir)
         context = {
             "latest_completed_week": {"start": str(selection["start"]), "end": str(selection["end"]),
                                       "trading_dates": [str(date) for date in selection["trading_dates"]]},
             "option_file_count": len(selection["option_files"]),
+            "canonical_strategies": ["LEVEL_TO_LEVEL", "EKALAYAVA"],
+            "eligible_contracts": "NIFTY ITM rank 2 and 3 for both CE and PE",
+            "timeframe": "completed 5-minute candles in Asia/Kolkata",
+            "missing_option_candles": "mark unavailable; never interpolate or fabricate",
+            "prior_experiment": "Discard the previous SMA experiment as invalid/inconclusive for canonical project research.",
             "baseline": "baseline-v1 Level-to-Level and Ekalayava; no strategy changes",
         }
         plan = self._json_reply(provider.complete(
-            "You are a cautious quantitative research scientist. Return JSON only.",
+            "You are a cautious quantitative research scientist. Return JSON only. "
+            "The canonical project rules are Level-to-Level and Ekalayava for NIFTY options. "
+            "Do not propose SMA, momentum, EMA, RSI, MACD, or other unapproved strategy changes. "
+            "Use only ITM rank 2 and 3 CE/PE contracts. Use completed 5-minute candles in Asia/Kolkata. "
+            "Missing option candles are unavailable data and must never be interpolated or fabricated. "
+            "The previous SMA experiment is invalid/inconclusive and must not be used as canonical evidence.",
             "Generate one falsifiable hypothesis and select one bounded experiment from the available context. "
+            "The experiment must test the unchanged canonical strategies, not invent a new strategy. "
             "Do not claim certainty. Required JSON keys: hypothesis, experiment, rationale, next_question. "
             f"Context: {json.dumps(context, sort_keys=True)}"
         ))
@@ -68,13 +81,13 @@ class ResearchAgent:
         if time.monotonic() - started > max_runtime_seconds:
             raise TimeoutError("Autonomous research runtime limit exceeded before experiment")
         experiment_id = self.state.start_experiment(
-            plan["hypothesis"], "data/raw/nifty_5m.csv", strategy_version="baseline-v1",
+            plan["hypothesis"], dataset, strategy_version="baseline-v1",
             ai_plan=plan, selected_week=context["latest_completed_week"], experiment=plan["experiment"]
         )
         failures = 0
         while True:
             try:
-                result = run_baseline_week("data/raw/nifty_5m.csv", "data/raw/options", selection)
+                result = run_baseline_week(dataset, option_dir, selection)
                 break
             except Exception as error:
                 failures += 1
@@ -86,7 +99,10 @@ class ResearchAgent:
             self.state.finish_experiment(experiment_id, "FAILED", error="runtime limit exceeded")
             raise TimeoutError("Autonomous research runtime limit exceeded")
         interpretation = self._json_reply(provider.complete(
-            "You are a cautious quantitative research scientist. Return JSON only.",
+            "You are a cautious quantitative research scientist. Return JSON only. "
+            "Evaluate only the canonical NIFTY Level-to-Level and Ekalayava result. "
+            "Treat missing option candles as a limitation; do not assume interpolation. "
+            "The previous SMA experiment is invalid/inconclusive and is not evidence.",
             "Interpret this actual deterministic experiment result. Required JSON keys: decision, "
             "supported_evidence, contradictory_evidence, data_limitations, strategy_change_proposed, "
             "next_question. decision must be ACCEPT, REJECT, NEED_MORE_DATA, or INVESTIGATE. "
@@ -95,9 +111,15 @@ class ResearchAgent:
         decision = interpretation.get("decision")
         if decision not in {"ACCEPT", "REJECT", "NEED_MORE_DATA", "INVESTIGATE"}:
             raise RuntimeError(f"LLM returned unsupported decision: {decision}")
-        report_path = Path("data/reports") / f"ai_experiment_{experiment_id}.json"
+        report_path = Path(report_dir) / f"ai_experiment_{experiment_id}.json"
         report_path.parent.mkdir(parents=True, exist_ok=True)
-        report = {"experiment_id": experiment_id, "plan": plan, "result": result,
+        report = {"experiment_id": experiment_id,
+                  "research_lineage": {
+                      "canonical_rules": "NIFTY Level-to-Level + Ekalayava",
+                      "discarded_experiment": "Previous SMA experiment marked invalid/inconclusive",
+                      "missing_option_candles": "unavailable; no interpolation or fabrication",
+                  },
+                  "plan": plan, "result": result,
                   "interpretation": interpretation, "provider": provider.provider,
                   "model": provider.model}
         report_path.write_text(json.dumps(report, indent=2, sort_keys=True, default=str) + "\n")

@@ -13,7 +13,21 @@
     "strategy_change_proposed": "None at this stage; additional data collection and detailed per\u2011strategy performance metrics are required before any strategy adjustment.",
     "supported_evidence": []
   },
-  "report": "data/runs/canonical_groww_20260923_145708/reports/ai_experiment_EXP-425143a757.json",
+  "model": "openai/gpt-oss-20b",
+  "plan": {
+    "experiment": "1. Retrieve all completed 5\u2011minute candles for eligible contracts (ITM rank 2 and 3 CE/PE) for each trading day in the week 2026\u201109\u201107 to 2026\u201109\u201111. 2. Apply the LEVEL_TO_LEVEL strategy to each day's candles and record the daily profit or loss. 3. Apply the EKALAYAVA strategy to the same day's candles and record the daily profit or loss. 4. Compute the average daily profit for each strategy over the five trading days. 5. Perform a paired t\u2011test (or non\u2011parametric equivalent if assumptions fail) to determine if the mean difference in daily profits is statistically significant at the 5% level.",
+    "hypothesis": "The LEVEL_TO_LEVEL strategy produces a statistically higher average daily profit than the EKALAYAVA strategy when applied to NIFTY ITM rank 2 and 3 CE/PE contracts using completed 5\u2011minute candles for the week of 2026\u201109\u201107 to 2026\u201109\u201111.",
+    "next_question": "Do we have access to the full set of completed 5\u2011minute candles for all eligible contracts during the specified week, and are there any days with missing candles that should be excluded from the analysis?",
+    "rationale": "Both strategies are canonical and unchanged; comparing their average daily profits over the same data set directly tests their relative effectiveness without introducing new variables. The bounded timeframe and use of only completed candles ensure reproducibility and avoid data fabrication."
+  },
+  "provider": "groq",
+  "research_lineage": {
+    "canonical_rules": "NIFTY Level-to-Level + Ekalayava",
+    "current_experiment_status": "CANONICAL_LEVEL_TO_LEVEL_EKALAYAVA",
+    "discarded_experiment": "Previous SMA experiment marked invalid/inconclusive",
+    "missing_option_candles": "unavailable; no interpolation or fabrication",
+    "previous_sma_status": "DISCARDED_INVALID_INCONCLUSIVE"
+  },
   "result": {
     "ambiguous_setups": 0,
     "average_holding_time_minutes": 23.6,
@@ -157,6 +171,9 @@
       ]
     }
   },
-  "status": "NEED_MORE_DATA",
-  "updated_at": "2026-09-23T14:57:40.296180+00:00"
+  "safety": {
+    "execution_allowed": false,
+    "groww_read_only": true,
+    "paper_only": true
+  }
 }
