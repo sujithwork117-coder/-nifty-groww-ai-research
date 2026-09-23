@@ -1,180 +1,84 @@
-TASK: RESUME AND COMPLETE HISTORICAL OPTION DATA DOWNLOAD
+Do NOT run the research experiment yet.
 
-Do NOT run the AI research experiment.
-Do NOT change the Level-to-Level strategy.
-Do NOT change the Ekalayava strategy.
-Do NOT modify the underlying NIFTY download logic unless absolutely required for compatibility.
+We now have:
 
-CURRENT VERIFIED STATE:
-
-Underlying NIFTY data is already complete:
-2026-07-23 through 2026-09-23
-3,687 candles
+Underlying:
+2026-07-23 → 2026-09-23
 44 trading days
-5-minute candles
+complete
 
-DO NOT REDOWNLOAD THE UNDERLYING DATA.
+Options:
+127 files
+116 non-empty
+11 empty legacy files
+expiries covered: 2026-07-28 → 2026-09-29
+timestamps exist across all 44 trading days
 
-The option download was attempted but stopped because Groww returned a rate-limit error.
+However, validation reports:
+17,364 missing option intervals across option files.
 
-Current option state:
-- 35 option files total
-- 24 non-empty
-- 11 empty
-- existing coverage approximately 2026-08-24 through 2026-09-22
-- option discovery/download only reached contracts through the 2026-09-01 expiry
-- July option data is still missing
-- later September option contracts are still missing
+I need a DATA COMPLETENESS IMPACT ANALYSIS ONLY.
 
-OBJECTIVE:
+Do NOT modify strategy rules.
+Do NOT interpolate.
+Do NOT forward-fill.
+Do NOT fabricate candles.
+Do NOT run the research experiment.
 
-Complete the option historical dataset for the requested period:
+Determine exactly where the 17,364 missing intervals occur.
 
-2026-07-23 through 2026-09-23
+For every option contract, calculate/report:
+- contract
+- expiry
+- CE/PE
+- strike
+- first timestamp
+- last timestamp
+- number of actual candles
+- expected 5-minute intervals for its available trading dates
+- missing interval count
+- missing dates
+- missing time ranges
 
-using the EXISTING Groww API functions and actual Groww contracts.
+Then determine specifically which missing intervals matter for our canonical experiment:
 
-IMPORTANT:
-
-1. DO NOT fabricate candles.
-2. DO NOT interpolate missing candles.
-3. DO NOT forward-fill missing option prices.
-4. DO NOT invent contracts.
-5. DO NOT change strategy rules.
-6. DO NOT run the research experiment.
-7. DO NOT redownload option files that are already complete.
-8. Reuse valid existing option data wherever possible.
-
-RATE-LIMIT REQUIREMENT:
-
-The downloader MUST be resumable and rate-limit-safe.
-
-If Groww returns a rate-limit exception:
-
-- catch the rate-limit condition explicitly
-- stop/pause safely
-- use exponential backoff with a reasonable maximum delay
-- retry the same request rather than skipping it
-- do not continue hammering the API
-- preserve all successfully downloaded data
-- resume from the failed contract/request
-- do not restart the entire historical download unnecessarily
-
-If the API continues returning rate-limit errors after reasonable retries:
-
-- stop cleanly
-- report exactly which contract/date/request failed
-- preserve everything already downloaded
-- make it possible to run the downloader again later and resume
-
-IMPORTANT:
-Do not attempt to bypass Groww's rate limits.
-Do not increase request concurrency.
-Prefer sequential/throttled requests.
-
-RESUME BEHAVIOUR:
-
-Before requesting an option contract:
-
-1. Check whether the corresponding local file already exists.
-2. Check whether it contains valid data.
-3. If complete for the requested date range, skip it.
-4. If partially available, retrieve only the missing period if the existing downloader/API supports this safely.
-5. If empty because the previous request failed, retry it.
-6. Record successful, skipped, empty, and failed contracts.
-
-CONTRACT SELECTION:
-
-Use the existing:
-- discover_itm_contracts(...)
-- save_option_historical(...)
-- contract_selection.py
-- groww_data.py
-
-Use actual Groww contracts for each applicable expiry.
-
-For every trading day, retrieve the eligible:
-- ITM2 CE
-- ITM3 CE
-- ITM2 PE
-- ITM3 PE
-
-using the existing canonical contract-selection logic.
-
-Do not invent strike mappings.
-
-DATE RANGE:
-
-Explicitly use:
-
-START = 2026-07-23
-END = 2026-09-23
-
-Do not use a rolling 30-day default.
-
-Do not rely on the current date to determine the start date.
-
-VALIDATION AFTER DOWNLOAD:
-
-After the option download finishes, produce a clear report containing:
-
-1. Requested period
-2. Actual option-data coverage
-3. Number of option files
-4. Non-empty files
-5. Empty files
-6. Contracts successfully downloaded
-7. Contracts skipped because already complete
-8. Contracts that failed
-9. Missing trading days
-10. Missing option intervals
-11. Expiries covered
-12. Expiries still missing
-13. Rate-limit events encountered
-14. Whether the entire requested option dataset is complete enough for the two-month experiment
-
-CRITICAL:
-
-Do NOT say the two-month dataset is complete merely because files exist.
-
-Verify the actual timestamps/date coverage inside the option files.
-
-The final report must clearly distinguish:
-
-REQUESTED:
+NIFTY
+5-minute
+ITM2 and ITM3
+CE and PE
+Level-to-Level
+Ekalayava
 2026-07-23 → 2026-09-23
 
-UNDERLYING:
+For each trading day, identify the actual contracts that would be selected by the existing canonical ITM2/ITM3 contract-selection logic.
+
+Then classify each required contract/day as:
+
 COMPLETE
+PARTIAL
+MISSING
 
-OPTIONS:
-COMPLETE / PARTIAL / INCOMPLETE
+Most importantly, determine:
 
-If options remain incomplete, do NOT run the research experiment.
+1. How many trading days have complete required option coverage?
+2. How many have partial coverage?
+3. How many have no usable required option data?
+4. On how many days do the missing intervals overlap the relevant strategy trading window?
+5. Could any potential L2L/Ekalayava setup be affected by the missing intervals?
+6. Are the 11 empty files actually relevant contracts or merely legacy/unneeded files?
+7. What percentage of the actual required strategy dataset is complete?
 
-SAFETY:
+Do not treat "some timestamps exist on all 44 days" as complete coverage.
 
-Keep:
-EXECUTION_ALLOWED=false
-PAPER_ONLY=true
-GROWW_READ_ONLY=true
+The final answer must clearly state:
 
-No order placement, modification, or cancellation.
+OPTION DATA STATUS:
+COMPLETE / PARTIAL / INSUFFICIENT
 
-TESTING:
+and explain why.
 
-After implementation:
-- run the existing tests
-- add only minimal tests necessary for rate-limit handling/resume behaviour
-- do not spend effort on unrelated refactoring
+If the missing intervals do NOT affect the required strategy contracts/windows, say so with evidence.
 
-FINAL OUTPUT:
+If they DO affect them, identify exactly which dates/contracts are affected.
 
-Tell me:
-- what files were changed
-- number of tests passed
-- option coverage achieved
-- remaining missing data
-- whether the two-month experiment is now safe to run
-
-DO NOT RUN THE TWO-MONTH RESEARCH EXPERIMENT.
+Do NOT run the two-month backtest.
