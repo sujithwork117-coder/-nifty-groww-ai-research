@@ -1,37 +1,180 @@
-Now execute the historical data download only.
+TASK: RESUME AND COMPLETE HISTORICAL OPTION DATA DOWNLOAD
 
-Do NOT modify any files.
 Do NOT run the AI research experiment.
-Do NOT change strategy logic.
+Do NOT change the Level-to-Level strategy.
+Do NOT change the Ekalayava strategy.
+Do NOT modify the underlying NIFTY download logic unless absolutely required for compatibility.
 
-Use the existing downloader/functions you just identified.
+CURRENT VERIFIED STATE:
 
-Retrieve the requested historical period:
-2026-07-23 through 2026-09-23.
+Underlying NIFTY data is already complete:
+2026-07-23 through 2026-09-23
+3,687 candles
+44 trading days
+5-minute candles
 
-For NIFTY underlying:
-- use the existing historical downloader
-- retrieve the complete requested period
-- use 5-minute candles
+DO NOT REDOWNLOAD THE UNDERLYING DATA.
 
-For options:
-- use the existing discover_itm_contracts() and save_option_historical()
-- retrieve the actual eligible NIFTY ITM2/ITM3 CE/PE contracts for each applicable expiry/day
-- use the actual Groww contracts
-- do not fabricate or interpolate missing candles
+The option download was attempted but stopped because Groww returned a rate-limit error.
 
-The goal is ONLY to populate the historical dataset for:
-2026-07-23 → 2026-09-23.
+Current option state:
+- 35 option files total
+- 24 non-empty
+- 11 empty
+- existing coverage approximately 2026-08-24 through 2026-09-22
+- option discovery/download only reached contracts through the 2026-09-01 expiry
+- July option data is still missing
+- later September option contracts are still missing
 
-After downloading, validate and report:
-1. actual underlying coverage
-2. actual option coverage
-3. missing trading days
-4. empty option files
-5. failed API requests, if any
-6. number of contracts downloaded
-7. whether 2026-07-23 through 2026-09-23 is now genuinely available.
+OBJECTIVE:
 
-If any Groww request fails, show the actual failure rather than hiding it.
+Complete the option historical dataset for the requested period:
 
-Do NOT run the research experiment yet.
+2026-07-23 through 2026-09-23
+
+using the EXISTING Groww API functions and actual Groww contracts.
+
+IMPORTANT:
+
+1. DO NOT fabricate candles.
+2. DO NOT interpolate missing candles.
+3. DO NOT forward-fill missing option prices.
+4. DO NOT invent contracts.
+5. DO NOT change strategy rules.
+6. DO NOT run the research experiment.
+7. DO NOT redownload option files that are already complete.
+8. Reuse valid existing option data wherever possible.
+
+RATE-LIMIT REQUIREMENT:
+
+The downloader MUST be resumable and rate-limit-safe.
+
+If Groww returns a rate-limit exception:
+
+- catch the rate-limit condition explicitly
+- stop/pause safely
+- use exponential backoff with a reasonable maximum delay
+- retry the same request rather than skipping it
+- do not continue hammering the API
+- preserve all successfully downloaded data
+- resume from the failed contract/request
+- do not restart the entire historical download unnecessarily
+
+If the API continues returning rate-limit errors after reasonable retries:
+
+- stop cleanly
+- report exactly which contract/date/request failed
+- preserve everything already downloaded
+- make it possible to run the downloader again later and resume
+
+IMPORTANT:
+Do not attempt to bypass Groww's rate limits.
+Do not increase request concurrency.
+Prefer sequential/throttled requests.
+
+RESUME BEHAVIOUR:
+
+Before requesting an option contract:
+
+1. Check whether the corresponding local file already exists.
+2. Check whether it contains valid data.
+3. If complete for the requested date range, skip it.
+4. If partially available, retrieve only the missing period if the existing downloader/API supports this safely.
+5. If empty because the previous request failed, retry it.
+6. Record successful, skipped, empty, and failed contracts.
+
+CONTRACT SELECTION:
+
+Use the existing:
+- discover_itm_contracts(...)
+- save_option_historical(...)
+- contract_selection.py
+- groww_data.py
+
+Use actual Groww contracts for each applicable expiry.
+
+For every trading day, retrieve the eligible:
+- ITM2 CE
+- ITM3 CE
+- ITM2 PE
+- ITM3 PE
+
+using the existing canonical contract-selection logic.
+
+Do not invent strike mappings.
+
+DATE RANGE:
+
+Explicitly use:
+
+START = 2026-07-23
+END = 2026-09-23
+
+Do not use a rolling 30-day default.
+
+Do not rely on the current date to determine the start date.
+
+VALIDATION AFTER DOWNLOAD:
+
+After the option download finishes, produce a clear report containing:
+
+1. Requested period
+2. Actual option-data coverage
+3. Number of option files
+4. Non-empty files
+5. Empty files
+6. Contracts successfully downloaded
+7. Contracts skipped because already complete
+8. Contracts that failed
+9. Missing trading days
+10. Missing option intervals
+11. Expiries covered
+12. Expiries still missing
+13. Rate-limit events encountered
+14. Whether the entire requested option dataset is complete enough for the two-month experiment
+
+CRITICAL:
+
+Do NOT say the two-month dataset is complete merely because files exist.
+
+Verify the actual timestamps/date coverage inside the option files.
+
+The final report must clearly distinguish:
+
+REQUESTED:
+2026-07-23 → 2026-09-23
+
+UNDERLYING:
+COMPLETE
+
+OPTIONS:
+COMPLETE / PARTIAL / INCOMPLETE
+
+If options remain incomplete, do NOT run the research experiment.
+
+SAFETY:
+
+Keep:
+EXECUTION_ALLOWED=false
+PAPER_ONLY=true
+GROWW_READ_ONLY=true
+
+No order placement, modification, or cancellation.
+
+TESTING:
+
+After implementation:
+- run the existing tests
+- add only minimal tests necessary for rate-limit handling/resume behaviour
+- do not spend effort on unrelated refactoring
+
+FINAL OUTPUT:
+
+Tell me:
+- what files were changed
+- number of tests passed
+- option coverage achieved
+- remaining missing data
+- whether the two-month experiment is now safe to run
+
+DO NOT RUN THE TWO-MONTH RESEARCH EXPERIMENT.
