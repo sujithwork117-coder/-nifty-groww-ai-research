@@ -1,0 +1,211 @@
+{
+  "report_version": "live_intraday_2026-09-23_3",
+  "generated_at_utc": "2026-09-23T08:10:56.908671+00:00",
+  "analysis_date": "2026-09-23",
+  "market_status": "LIVE_READ_ONLY_PAPER_ONLY",
+  "completed_candle_cutoff_ist": "2026-09-23T13:35:00+05:30",
+  "data_source": {
+    "underlying": "data/raw/live_2026-09-23_nifty_5m.csv",
+    "options": "data/raw/live_2026-09-23_options",
+    "interval": "5minute",
+    "timezone": "Asia/Kolkata"
+  },
+  "safety": {
+    "execution_allowed": false,
+    "paper_only": true,
+    "orders_submitted": false
+  },
+  "underlying": {
+    "candle_count": 53,
+    "quality": {
+      "total_candles": 53,
+      "trading_dates": [
+        "2026-09-23"
+      ],
+      "missing_intervals": 0,
+      "duplicate_count": 0,
+      "invalid_ohlc_count": 0,
+      "contract_count": 0,
+      "date_min": "2026-09-23 03:45:00+00:00",
+      "date_max": "2026-09-23 08:05:00+00:00",
+      "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware"
+    },
+    "last_close": 23424.3
+  },
+  "contracts": [
+    {
+      "symbol": "NSE-NIFTY-29Sep26-23250-CE",
+      "expiry": "2026-09-29",
+      "strike": 23250.0,
+      "option_type": "CE",
+      "itm_rank": 3,
+      "candle_count": 53,
+      "last_candle_ist": "2026-09-23T13:35:00+05:30",
+      "quality": {
+        "total_candles": 53,
+        "trading_dates": [
+          "2026-09-23"
+        ],
+        "missing_intervals": 0,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 0,
+        "date_min": "2026-09-23 03:45:00+00:00",
+        "date_max": "2026-09-23 08:05:00+00:00",
+        "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware"
+      },
+      "level_to_level": {
+        "setup_count": 0,
+        "signals": []
+      },
+      "ekalayava": {
+        "setup_count": 0,
+        "signals": [],
+        "sl_rule": "UNDEFINED / REQUIRES RULE"
+      }
+    },
+    {
+      "symbol": "NSE-NIFTY-29Sep26-23350-CE",
+      "expiry": "2026-09-29",
+      "strike": 23350.0,
+      "option_type": "CE",
+      "itm_rank": 2,
+      "candle_count": 53,
+      "last_candle_ist": "2026-09-23T13:35:00+05:30",
+      "quality": {
+        "total_candles": 53,
+        "trading_dates": [
+          "2026-09-23"
+        ],
+        "missing_intervals": 0,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 0,
+        "date_min": "2026-09-23 03:45:00+00:00",
+        "date_max": "2026-09-23 08:05:00+00:00",
+        "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware"
+      },
+      "level_to_level": {
+        "setup_count": 0,
+        "signals": []
+      },
+      "ekalayava": {
+        "setup_count": 0,
+        "signals": [],
+        "sl_rule": "UNDEFINED / REQUIRES RULE"
+      }
+    },
+    {
+      "symbol": "NSE-NIFTY-29Sep26-23500-PE",
+      "expiry": "2026-09-29",
+      "strike": 23500.0,
+      "option_type": "PE",
+      "itm_rank": 2,
+      "candle_count": 53,
+      "last_candle_ist": "2026-09-23T13:35:00+05:30",
+      "quality": {
+        "total_candles": 53,
+        "trading_dates": [
+          "2026-09-23"
+        ],
+        "missing_intervals": 0,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 0,
+        "date_min": "2026-09-23 03:45:00+00:00",
+        "date_max": "2026-09-23 08:05:00+00:00",
+        "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware"
+      },
+      "level_to_level": {
+        "setup_count": 1,
+        "signals": [
+          {
+            "date": "2026-09-23",
+            "timestamp": "2026-09-23T04:50:00+00:00",
+            "strategy": "LEVEL_TO_LEVEL",
+            "entry": 158.25,
+            "sl": 154.9,
+            "target": 192.75,
+            "opening_high": 192.75,
+            "opening_low": 158.9,
+            "candle_type": "normal",
+            "outcome": "SL",
+            "exit_timestamp": "2026-09-23T04:55:00+00:00",
+            "mfe": 3.9000000000000057,
+            "mae": -33.75,
+            "entry_time_ist": "2026-09-23T10:20:00+05:30",
+            "before_10_ist": false
+          }
+        ]
+      },
+      "ekalayava": {
+        "setup_count": 0,
+        "signals": [],
+        "sl_rule": "UNDEFINED / REQUIRES RULE"
+      }
+    },
+    {
+      "symbol": "NSE-NIFTY-29Sep26-23550-PE",
+      "expiry": "2026-09-29",
+      "strike": 23550.0,
+      "option_type": "PE",
+      "itm_rank": 3,
+      "candle_count": 53,
+      "last_candle_ist": "2026-09-23T13:35:00+05:30",
+      "quality": {
+        "total_candles": 53,
+        "trading_dates": [
+          "2026-09-23"
+        ],
+        "missing_intervals": 0,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 0,
+        "date_min": "2026-09-23 03:45:00+00:00",
+        "date_max": "2026-09-23 08:05:00+00:00",
+        "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware"
+      },
+      "level_to_level": {
+        "setup_count": 1,
+        "signals": [
+          {
+            "date": "2026-09-23",
+            "timestamp": "2026-09-23T04:50:00+00:00",
+            "strategy": "LEVEL_TO_LEVEL",
+            "entry": 189.2,
+            "sl": 185.45,
+            "target": 227.05,
+            "opening_high": 227.05,
+            "opening_low": 189.45,
+            "candle_type": "normal",
+            "outcome": "SL",
+            "exit_timestamp": "2026-09-23T04:55:00+00:00",
+            "mfe": 4.800000000000011,
+            "mae": -38.29999999999998,
+            "entry_time_ist": "2026-09-23T10:20:00+05:30",
+            "before_10_ist": false
+          }
+        ]
+      },
+      "ekalayava": {
+        "setup_count": 0,
+        "signals": [],
+        "sl_rule": "UNDEFINED / REQUIRES RULE"
+      }
+    }
+  ],
+  "summary": {
+    "eligible_contracts": 4,
+    "level_to_level_setups": 2,
+    "ekalayava_setups": 0,
+    "level_to_level_outcomes": {
+      "SL": 2
+    },
+    "ekalayava_outcomes": {}
+  },
+  "strategy_rules": {
+    "level_to_level": "opening-low red breakdown then first subsequent green completed 5-minute candle; SL opening_low - 4 points; target opening_high",
+    "ekalayava": "after opening-low breakdown and causal recovery, swing-high breakout before opening_high; target opening_high; SL undefined / requires explicit rule",
+    "lookahead": "Only completed candles through the common cutoff are used; open outcomes are not force-closed."
+  }
+}
