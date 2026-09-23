@@ -1,0 +1,341 @@
+{
+  "experiment_id": "EXP-f661dafc2b",
+  "interpretation": {
+    "contradictory_evidence": "None \u2013 the data set only reflects baseline\u2011v1 performance; no momentum\u2011based results are present to compare against.",
+    "data_limitations": "\u2022 Only one completed week of out\u2011of\u2011sample data is available, limiting statistical power.\n\u2022 Several option contracts have missing intervals (up to 97 missing candles) which could bias performance metrics.\n\u2022 The dataset is restricted to 5\u2011minute NIFTY candles; higher\u2011frequency or alternative timeframes are not represented.\n\u2022 The experiment uses deterministic engine with look\u2011ahead check PASS, but the small sample size may not capture market regime changes.\n\u2022 No explicit calculation of daily returns or percentage gains is provided; points are a proxy but not directly convertible to % return without additional assumptions.",
+    "decision": "NEED_MORE_DATA",
+    "next_question": "What specific momentum indicators (e.g., moving\u2011average crossovers, RSI thresholds, or price\u2011action patterns) should be incorporated, and over what time horizon should the new strategy be evaluated to reliably estimate its impact on daily returns?",
+    "strategy_change_proposed": "To test the hypothesis, implement a momentum\u2011based overlay on baseline\u2011v1 and run the same deterministic engine over a larger, multi\u2011week out\u2011of\u2011sample period. Record daily returns in percentage terms, compare mean daily return to baseline, and evaluate whether the increase meets the \u22652% threshold. Include a robust statistical test (e.g., paired t\u2011test) to assess significance.",
+    "supported_evidence": "Baseline\u2011v1 achieved 56 valid setups over a single week (2026\u201109\u201107 to 2026\u201109\u201111) with an average of 5.62 points per trade, median 6.65 points, and a target hit rate of 44/56 (\u224878.6%). The maximum drawdown was 21.7 points and the longest losing streak was 2 trades. These figures provide a benchmark for any new strategy but do not include any momentum\u2011based component."
+  },
+  "report": "data/reports/ai_experiment_EXP-f661dafc2b.json",
+  "result": {
+    "ambiguous_setups": 0,
+    "average_holding_time_minutes": 42.67857142857143,
+    "average_mae": -75.434375,
+    "average_mfe": 64.3390625,
+    "average_points": 5.618750000000001,
+    "by_entry_hour": {
+      "10": 27,
+      "11": 1,
+      "12": 2,
+      "9": 34
+    },
+    "by_itm_rank": {
+      "2": 34,
+      "3": 30
+    },
+    "by_option_type": {
+      "CE": 22,
+      "PE": 42
+    },
+    "by_strategy": {
+      "EKALAYAVA": 40,
+      "LEVEL_TO_LEVEL": 24
+    },
+    "data_quality": {
+      "options": {
+        "NSE-NIFTY-08Sep26-23200-CE.csv": {
+          "contract_count": 0,
+          "date_max": "2026-09-08 10:05:00+00:00",
+          "date_min": "2026-09-07 03:50:00+00:00",
+          "duplicate_count": 0,
+          "invalid_ohlc_count": 0,
+          "missing_intervals": 16,
+          "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware",
+          "total_candles": 137,
+          "trading_dates": [
+            "2026-09-07",
+            "2026-09-08"
+          ]
+        },
+        "NSE-NIFTY-08Sep26-23250-CE.csv": {
+          "contract_count": 0,
+          "date_max": "2026-09-08 10:05:00+00:00",
+          "date_min": "2026-09-07 06:10:00+00:00",
+          "duplicate_count": 0,
+          "invalid_ohlc_count": 0,
+          "missing_intervals": 31,
+          "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware",
+          "total_candles": 94,
+          "trading_dates": [
+            "2026-09-07",
+            "2026-09-08"
+          ]
+        },
+        "NSE-NIFTY-08Sep26-23500-PE.csv": {
+          "contract_count": 0,
+          "date_max": "2026-09-08 10:05:00+00:00",
+          "date_min": "2026-09-07 03:45:00+00:00",
+          "duplicate_count": 0,
+          "invalid_ohlc_count": 0,
+          "missing_intervals": 0,
+          "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware",
+          "total_candles": 155,
+          "trading_dates": [
+            "2026-09-07",
+            "2026-09-08"
+          ]
+        },
+        "NSE-NIFTY-08Sep26-23600-PE.csv": {
+          "contract_count": 0,
+          "date_max": "2026-09-08 10:10:00+00:00",
+          "date_min": "2026-09-07 03:45:00+00:00",
+          "duplicate_count": 0,
+          "invalid_ohlc_count": 0,
+          "missing_intervals": 0,
+          "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware",
+          "total_candles": 156,
+          "trading_dates": [
+            "2026-09-07",
+            "2026-09-08"
+          ]
+        },
+        "NSE-NIFTY-15Sep26-22900-CE.csv": {
+          "contract_count": 0,
+          "date_max": "2026-09-11 10:05:00+00:00",
+          "date_min": "2026-09-07 04:30:00+00:00",
+          "duplicate_count": 0,
+          "invalid_ohlc_count": 0,
+          "missing_intervals": 97,
+          "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware",
+          "total_candles": 217,
+          "trading_dates": [
+            "2026-09-07",
+            "2026-09-08",
+            "2026-09-09",
+            "2026-09-10",
+            "2026-09-11"
+          ]
+        },
+        "NSE-NIFTY-15Sep26-23050-CE.csv": {
+          "contract_count": 0,
+          "date_max": "2026-09-11 10:05:00+00:00",
+          "date_min": "2026-09-09 03:50:00+00:00",
+          "duplicate_count": 0,
+          "invalid_ohlc_count": 0,
+          "missing_intervals": 7,
+          "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware",
+          "total_candles": 223,
+          "trading_dates": [
+            "2026-09-09",
+            "2026-09-10",
+            "2026-09-11"
+          ]
+        },
+        "NSE-NIFTY-15Sep26-23550-PE.csv": {
+          "contract_count": 0,
+          "date_max": "2026-09-11 10:10:00+00:00",
+          "date_min": "2026-09-07 03:45:00+00:00",
+          "duplicate_count": 0,
+          "invalid_ohlc_count": 0,
+          "missing_intervals": 0,
+          "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware",
+          "total_candles": 390,
+          "trading_dates": [
+            "2026-09-07",
+            "2026-09-08",
+            "2026-09-09",
+            "2026-09-10",
+            "2026-09-11"
+          ]
+        },
+        "NSE-NIFTY-15Sep26-23700-PE.csv": {
+          "contract_count": 0,
+          "date_max": "2026-09-11 10:05:00+00:00",
+          "date_min": "2026-09-07 03:45:00+00:00",
+          "duplicate_count": 0,
+          "invalid_ohlc_count": 0,
+          "missing_intervals": 0,
+          "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware",
+          "total_candles": 387,
+          "trading_dates": [
+            "2026-09-07",
+            "2026-09-08",
+            "2026-09-09",
+            "2026-09-10",
+            "2026-09-11"
+          ]
+        },
+        "NSE-NIFTY-22Sep26-23150-CE.csv": {
+          "contract_count": 0,
+          "date_max": "2026-09-11 10:05:00+00:00",
+          "date_min": "2026-09-09 03:45:00+00:00",
+          "duplicate_count": 0,
+          "invalid_ohlc_count": 0,
+          "missing_intervals": 89,
+          "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware",
+          "total_candles": 142,
+          "trading_dates": [
+            "2026-09-09",
+            "2026-09-10",
+            "2026-09-11"
+          ]
+        },
+        "NSE-NIFTY-22Sep26-23200-CE.csv": {
+          "contract_count": 0,
+          "date_max": "2026-09-11 10:10:00+00:00",
+          "date_min": "2026-09-07 06:40:00+00:00",
+          "duplicate_count": 0,
+          "invalid_ohlc_count": 0,
+          "missing_intervals": 93,
+          "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware",
+          "total_candles": 253,
+          "trading_dates": [
+            "2026-09-07",
+            "2026-09-08",
+            "2026-09-09",
+            "2026-09-10",
+            "2026-09-11"
+          ]
+        },
+        "NSE-NIFTY-22Sep26-23400-PE.csv": {
+          "contract_count": 0,
+          "date_max": "2026-09-11 10:10:00+00:00",
+          "date_min": "2026-09-07 03:45:00+00:00",
+          "duplicate_count": 0,
+          "invalid_ohlc_count": 0,
+          "missing_intervals": 0,
+          "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware",
+          "total_candles": 386,
+          "trading_dates": [
+            "2026-09-07",
+            "2026-09-08",
+            "2026-09-09",
+            "2026-09-10",
+            "2026-09-11"
+          ]
+        },
+        "NSE-NIFTY-22Sep26-23550-PE.csv": {
+          "contract_count": 0,
+          "date_max": "2026-09-11 10:10:00+00:00",
+          "date_min": "2026-09-07 03:45:00+00:00",
+          "duplicate_count": 0,
+          "invalid_ohlc_count": 0,
+          "missing_intervals": 5,
+          "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware",
+          "total_candles": 382,
+          "trading_dates": [
+            "2026-09-07",
+            "2026-09-08",
+            "2026-09-09",
+            "2026-09-10",
+            "2026-09-11"
+          ]
+        },
+        "NSE-NIFTY-29Sep26-22350-CE.csv": {
+          "contract_count": 0,
+          "date_max": "2026-09-11 08:50:00+00:00",
+          "date_min": "2026-09-07 09:15:00+00:00",
+          "duplicate_count": 0,
+          "invalid_ohlc_count": 0,
+          "missing_intervals": 0,
+          "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware",
+          "total_candles": 3,
+          "trading_dates": [
+            "2026-09-07",
+            "2026-09-11"
+          ]
+        },
+        "NSE-NIFTY-29Sep26-22400-CE.csv": {
+          "contract_count": 0,
+          "date_max": "2026-09-11 08:35:00+00:00",
+          "date_min": "2026-09-07 08:20:00+00:00",
+          "duplicate_count": 0,
+          "invalid_ohlc_count": 0,
+          "missing_intervals": 83,
+          "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware",
+          "total_candles": 8,
+          "trading_dates": [
+            "2026-09-07",
+            "2026-09-09",
+            "2026-09-10",
+            "2026-09-11"
+          ]
+        },
+        "NSE-NIFTY-29Sep26-23950-PE.csv": {
+          "contract_count": 0,
+          "date_max": "2026-09-11 10:05:00+00:00",
+          "date_min": "2026-09-07 03:45:00+00:00",
+          "duplicate_count": 0,
+          "invalid_ohlc_count": 0,
+          "missing_intervals": 59,
+          "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware",
+          "total_candles": 326,
+          "trading_dates": [
+            "2026-09-07",
+            "2026-09-08",
+            "2026-09-09",
+            "2026-09-10",
+            "2026-09-11"
+          ]
+        },
+        "NSE-NIFTY-29Sep26-24050-PE.csv": {
+          "contract_count": 0,
+          "date_max": "2026-09-11 10:05:00+00:00",
+          "date_min": "2026-09-07 03:45:00+00:00",
+          "duplicate_count": 0,
+          "invalid_ohlc_count": 0,
+          "missing_intervals": 81,
+          "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware",
+          "total_candles": 304,
+          "trading_dates": [
+            "2026-09-07",
+            "2026-09-08",
+            "2026-09-09",
+            "2026-09-10",
+            "2026-09-11"
+          ]
+        }
+      },
+      "underlying": {
+        "contract_count": 0,
+        "date_max": "2026-09-11 10:25:00+00:00",
+        "date_min": "2026-09-07 03:30:00+00:00",
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "missing_intervals": 0,
+        "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware",
+        "total_candles": 420,
+        "trading_dates": [
+          "2026-09-07",
+          "2026-09-08",
+          "2026-09-09",
+          "2026-09-10",
+          "2026-09-11"
+        ]
+      }
+    },
+    "dataset": "data/raw/nifty_5m.csv",
+    "development_validation": "INSUFFICIENT OUT-OF-SAMPLE DATA: one completed week is reserved for this bounded demo",
+    "lookahead_check": "PASS: deterministic engine uses completed candles and future candles only after entry",
+    "maximum_drawdown_points": 21.700000000000045,
+    "maximum_losing_streak": 2,
+    "maximum_winning_streak": 10,
+    "median_points": 6.649999999999999,
+    "outcomes": {
+      "OPEN": 8,
+      "SL": 12,
+      "TARGET": 44
+    },
+    "setup_count": 64,
+    "skipped_setups": 8,
+    "sl_hits": 12,
+    "strategy_version": "baseline-v1",
+    "target_hits": 44,
+    "valid_setups": 56,
+    "week": {
+      "end": "2026-09-11",
+      "start": "2026-09-07",
+      "trading_dates": [
+        "2026-09-07",
+        "2026-09-08",
+        "2026-09-09",
+        "2026-09-10",
+        "2026-09-11"
+      ]
+    }
+  },
+  "status": "NEED_MORE_DATA",
+  "updated_at": "2026-09-23T14:27:13.259873+00:00"
+}
