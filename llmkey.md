@@ -1,0 +1,3 @@
+export RESEARCH_LLM_PROVIDER=groq
+export RESEARCH_LLM_MODEL=openai/gpt-oss-20b
+export RESEARCH_LLM_API_KEY='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'
