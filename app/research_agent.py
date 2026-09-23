@@ -1,8 +1,12 @@
 import argparse
 import json
+import time
+from pathlib import Path
 
 from .config import CFG
+from .llm import LLMConfigurationError, build_llm_provider
 from .research_state import ResearchState
+from .weekly_experiment import run_baseline_week, select_latest_completed_week
 
 
 class ResearchAgent:
@@ -23,14 +27,110 @@ class ResearchAgent:
     def status(self):
         return self.state.load_checkpoint()
 
+    @staticmethod
+    def _json_reply(text):
+        value = text.strip()
+        if value.startswith("```"):
+            value = value.split("\n", 1)[1].rsplit("```", 1)[0].strip()
+        try:
+            result = json.loads(value)
+        except json.JSONDecodeError as error:
+            raise RuntimeError("LLM response was not valid JSON") from error
+        if not isinstance(result, dict):
+            raise RuntimeError("LLM response must be a JSON object")
+        return result
+
+    def run_autonomous(self, provider=None, max_experiments=1, max_failures=1,
+                       max_retries=0, max_runtime_seconds=900, dry_run=False):
+        if max_experiments != 1:
+            raise ValueError("The bounded demo supports exactly one experiment")
+        self.state.assert_safe(self.config)
+        started = time.monotonic()
+        provider = provider or build_llm_provider()
+        selection = select_latest_completed_week("data/raw/nifty_5m.csv", "data/raw/options")
+        context = {
+            "latest_completed_week": {"start": str(selection["start"]), "end": str(selection["end"]),
+                                      "trading_dates": [str(date) for date in selection["trading_dates"]]},
+            "option_file_count": len(selection["option_files"]),
+            "baseline": "baseline-v1 Level-to-Level and Ekalayava; no strategy changes",
+        }
+        plan = self._json_reply(provider.complete(
+            "You are a cautious quantitative research scientist. Return JSON only.",
+            "Generate one falsifiable hypothesis and select one bounded experiment from the available context. "
+            "Do not claim certainty. Required JSON keys: hypothesis, experiment, rationale, next_question. "
+            f"Context: {json.dumps(context, sort_keys=True)}"
+        ))
+        for key in ("hypothesis", "experiment", "rationale", "next_question"):
+            if not plan.get(key):
+                raise RuntimeError(f"LLM plan missing required key: {key}")
+        if dry_run:
+            return {"status": "DRY_RUN", "plan": plan, "context": context}
+        if time.monotonic() - started > max_runtime_seconds:
+            raise TimeoutError("Autonomous research runtime limit exceeded before experiment")
+        experiment_id = self.state.start_experiment(
+            plan["hypothesis"], "data/raw/nifty_5m.csv", strategy_version="baseline-v1",
+            ai_plan=plan, selected_week=context["latest_completed_week"], experiment=plan["experiment"]
+        )
+        failures = 0
+        while True:
+            try:
+                result = run_baseline_week("data/raw/nifty_5m.csv", "data/raw/options", selection)
+                break
+            except Exception as error:
+                failures += 1
+                self.state.record_error(experiment_id, error, context={"phase": "deterministic_run"})
+                if failures > max_failures or failures > max_retries:
+                    self.state.finish_experiment(experiment_id, "FAILED", error=str(error))
+                    raise
+        if time.monotonic() - started > max_runtime_seconds:
+            self.state.finish_experiment(experiment_id, "FAILED", error="runtime limit exceeded")
+            raise TimeoutError("Autonomous research runtime limit exceeded")
+        interpretation = self._json_reply(provider.complete(
+            "You are a cautious quantitative research scientist. Return JSON only.",
+            "Interpret this actual deterministic experiment result. Required JSON keys: decision, "
+            "supported_evidence, contradictory_evidence, data_limitations, strategy_change_proposed, "
+            "next_question. decision must be ACCEPT, REJECT, NEED_MORE_DATA, or INVESTIGATE. "
+            f"Hypothesis: {plan['hypothesis']}\nResult: {json.dumps(result, sort_keys=True, default=str)}"
+        ))
+        decision = interpretation.get("decision")
+        if decision not in {"ACCEPT", "REJECT", "NEED_MORE_DATA", "INVESTIGATE"}:
+            raise RuntimeError(f"LLM returned unsupported decision: {decision}")
+        report_path = Path("data/reports") / f"ai_experiment_{experiment_id}.json"
+        report_path.parent.mkdir(parents=True, exist_ok=True)
+        report = {"experiment_id": experiment_id, "plan": plan, "result": result,
+                  "interpretation": interpretation, "provider": provider.provider,
+                  "model": provider.model}
+        report_path.write_text(json.dumps(report, indent=2, sort_keys=True, default=str) + "\n")
+        self.state.finish_experiment(experiment_id, decision, result=result,
+                                     interpretation=interpretation, report=str(report_path))
+        return {"experiment_id": experiment_id, "plan": plan, "result": result,
+                "interpretation": interpretation, "report": str(report_path),
+                "steps": 7, "provider": provider.provider, "model": provider.model}
+
 
 def main():
     parser = argparse.ArgumentParser(description="Manage bounded paper-only research experiments.")
     parser.add_argument("--status", action="store_true")
+    parser.add_argument("--autonomous", action="store_true")
+    parser.add_argument("--max-experiments", type=int, default=1)
+    parser.add_argument("--max-failures", type=int, default=1)
+    parser.add_argument("--max-retries", type=int, default=0)
+    parser.add_argument("--max-runtime-seconds", type=int, default=900)
+    parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
     agent = ResearchAgent()
     if args.status:
         print(json.dumps(agent.status(), indent=2, sort_keys=True))
+    elif args.autonomous:
+        try:
+            output = agent.run_autonomous(
+                max_experiments=args.max_experiments, max_failures=args.max_failures,
+                max_retries=args.max_retries, max_runtime_seconds=args.max_runtime_seconds,
+                dry_run=args.dry_run)
+        except LLMConfigurationError as error:
+            parser.error(str(error))
+        else:
+            print(json.dumps(output, indent=2, sort_keys=True, default=str))
     else:
         parser.print_help()
 

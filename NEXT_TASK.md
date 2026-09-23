@@ -1,8 +1,10 @@
 # Next Task
 
-Run one bounded experiment on the latest completed historical week.
+Configure `RESEARCH_LLM_PROVIDER` and `RESEARCH_LLM_API_KEY` in the environment, then run one bounded experiment on the latest completed historical week.
 
 Hypothesis to test: CE and PE setup outcomes may differ by ITM rank and entry time, but the difference should be checked across a development period and an unseen validation period before proposing any strategy change.
+
+The repository selected 2026-09-07 through 2026-09-11 as the latest complete Monday-Friday week. The deterministic baseline path is ready; the AI demo cannot begin until a real provider is configured.
 
 Required steps:
 

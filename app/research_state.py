@@ -62,7 +62,8 @@ class ResearchState:
         return experiment_id
 
     def finish_experiment(self, experiment_id, status, **details):
-        if status not in {"COMPLETED", "FAILED", "REJECTED", "NEEDS_MORE_DATA"}:
+        if status not in {"COMPLETED", "FAILED", "REJECTED", "NEEDS_MORE_DATA", "NEED_MORE_DATA",
+                  "ACCEPT", "INVESTIGATE"}:
             raise ValueError(f"Unsupported experiment status: {status}")
         record = {"experiment_id": experiment_id, "status": status,
                   "finished_at": self._now(), **details}

@@ -32,6 +32,19 @@ python -m app.main --smoke
 python -m app.main --csv data/raw/sample.csv
 python -m app.main --history data/raw/nifty_5m.csv
 
+## Bounded AI research agent
+The autonomous loop uses a real, configurable LLM and never substitutes a
+hard-coded response. Configure `RESEARCH_LLM_PROVIDER` (`openai`,
+`openai-compatible`, or `anthropic`), `RESEARCH_LLM_API_KEY`, and optionally
+`RESEARCH_LLM_MODEL`, `RESEARCH_LLM_BASE_URL`, `RESEARCH_LLM_TEMPERATURE`, and
+`RESEARCH_LLM_MAX_TOKENS`. Keep these values in the environment; never commit
+them. Run one bounded experiment with:
+
+python -m app.research_agent --autonomous --max-experiments 1
+
+Without provider configuration the command stops before research and reports
+the missing variables. Use `--status` to inspect the latest checkpoint.
+
 ## Groww Cloud
 Upload the project or copy the relevant script into the Groww Strategy environment. Use only secure credential fields if Groww provides them. Do not hardcode secrets. Use paper/observation settings only.
 
