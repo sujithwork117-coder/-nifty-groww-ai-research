@@ -126,7 +126,11 @@ def run_baseline_week(underlying_path, option_dir, selection):
             missing_data.append({"date": str(trading_date), "dataset": "underlying", "reason": "no candles"})
             continue
         opening_price = float(day_underlying.sort_values("timestamp").iloc[0]["open"])
-        for path in selection.get("eligible_by_date", {}).get(trading_date, selection["option_files"]):
+        day_paths = selection.get("eligible_by_date", {}).get(trading_date, selection["option_files"])
+        if not day_paths:
+            missing_data.append({"date": str(trading_date), "dataset": "options",
+                                 "reason": "no eligible ITM-2/ITM-3 CE/PE contracts with candles"})
+        for path in day_paths:
             option = _load_week(path, [trading_date])
             coverage_key = f"{trading_date}:{path.name}"
             quality["options"][coverage_key] = quality_report(option)
