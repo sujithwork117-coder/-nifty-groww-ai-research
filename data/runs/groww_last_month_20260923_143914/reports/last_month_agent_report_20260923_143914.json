@@ -1,0 +1,173 @@
+{
+  "dataset": "data/runs/groww_last_month_20260923_143914/nifty_5m.csv",
+  "experiment_id": "EXP-20260923_143914",
+  "generated_at_utc": "2026-09-23T14:39:29.481705+00:00",
+  "interpretation": {
+    "contradictory_evidence": "Only two setups were generated for the entire week, providing an extremely small sample size. The result does not include any comparison to a buy\u2011and\u2011hold benchmark, so it is unclear whether the positive points translate into a net positive return relative to holding the underlying. Additionally, the options data contains missing intervals (up to 207 missing candles for some contracts), which could bias the SMA calculations and trade execution timing.",
+    "data_limitations": "- One completed week only (2026\u201109\u201107 to 2026\u201109\u201111).  - Only 2 valid setups, no losing trades.  - Missing intervals in options datasets (up to 207 missing candles).  - No explicit buy\u2011and\u2011hold return provided for the same period.  - Underlying data appears complete, but the limited number of trades reduces statistical confidence.",
+    "decision": "NEED_MORE_DATA",
+    "next_question": "Could you provide the buy\u2011and\u2011hold return for the week 2026\u201109\u201107 to 2026\u201109\u201111, or supply additional weeks of data so we can test the SMA crossover strategy on a larger sample?",
+    "strategy_change_proposed": "1. Expand the backtest to include multiple weeks (ideally 12+ weeks) to increase the number of setups and statistical power. 2. Incorporate a buy\u2011and\u2011hold baseline calculation for the same period to directly compare net returns. 3. Clean or interpolate missing option candles to ensure accurate SMA crossovers. 4. Record additional performance metrics (e.g., Sharpe ratio, win/loss ratio, average trade duration) to better assess risk\u2011adjusted performance.",
+    "supported_evidence": "Average points per trade are positive (0.0500), both of the two valid setups hit the target and there were no stop\u2011loss hits or losing streaks. The maximum drawdown is reported as 0.0 points and the maximum winning streak is 2, indicating that the strategy performed well on the limited sample."
+  },
+  "model": "openai/gpt-oss-20b",
+  "option_dir": "data/runs/groww_last_month_20260923_143914/options",
+  "plan": {
+    "experiment": "Backtest the 5\u2011day SMA crossover strategy on the specified trading dates using historical price data (open, high, low, close). Compute the net return of the strategy and compare it to the net return of a buy\u2011and\u2011hold position held over the same week. The experiment will be conducted in a paper\u2011trading environment only, with no real execution.",
+    "hypothesis": "A 5\u2011day simple moving average (SMA) crossover strategy applied to the selected week (2026\u201109\u201107 to 2026\u201109\u201111) will produce a net positive return compared to a buy\u2011and\u2011hold strategy on the same period.",
+    "next_question": "Which specific asset or index should the SMA crossover strategy be applied to for this backtest?",
+    "rationale": "The hypothesis is falsifiable by comparing the two returns; a negative or zero net return would refute it. The bounded experiment focuses on a single week, making the test concrete and reproducible."
+  },
+  "provider": "groq",
+  "result": {
+    "ambiguous_setups": 0,
+    "average_holding_time_minutes": 210.0,
+    "average_mae": -3.3000000000000007,
+    "average_mfe": 6.699999999999999,
+    "average_points": 0.05000000000000071,
+    "by_entry_hour": {
+      "9": 2
+    },
+    "by_itm_rank": {
+      "3": 2
+    },
+    "by_option_type": {
+      "PE": 2
+    },
+    "by_strategy": {
+      "EKALAYAVA": 1,
+      "LEVEL_TO_LEVEL": 1
+    },
+    "data_quality": {
+      "options": {
+        "NSE-NIFTY-29Dec26-16500-PE.csv": {
+          "contract_count": 0,
+          "date_max": "2026-09-11 09:10:00+00:00",
+          "date_min": "2026-09-07 04:10:00+00:00",
+          "duplicate_count": 0,
+          "invalid_ohlc_count": 0,
+          "missing_intervals": 207,
+          "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware",
+          "total_candles": 17,
+          "trading_dates": [
+            "2026-09-07",
+            "2026-09-08",
+            "2026-09-09",
+            "2026-09-11"
+          ]
+        },
+        "NSE-NIFTY-29Dec26-19500-PE.csv": {
+          "contract_count": 0,
+          "date_max": "2026-09-11 10:05:00+00:00",
+          "date_min": "2026-09-07 03:55:00+00:00",
+          "duplicate_count": 0,
+          "invalid_ohlc_count": 0,
+          "missing_intervals": 205,
+          "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware",
+          "total_candles": 175,
+          "trading_dates": [
+            "2026-09-07",
+            "2026-09-08",
+            "2026-09-09",
+            "2026-09-10",
+            "2026-09-11"
+          ]
+        },
+        "NSE-NIFTY-29Dec26-31500-CE.csv": {
+          "contract_count": 0,
+          "date_max": "2026-09-11 07:30:00+00:00",
+          "date_min": "2026-09-07 08:40:00+00:00",
+          "duplicate_count": 0,
+          "invalid_ohlc_count": 0,
+          "missing_intervals": 25,
+          "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware",
+          "total_candles": 10,
+          "trading_dates": [
+            "2026-09-07",
+            "2026-09-09",
+            "2026-09-11"
+          ]
+        },
+        "NSE-NIFTY-29Dec26-34500-CE.csv": {
+          "contract_count": 0,
+          "date_max": "2026-09-11 04:45:00+00:00",
+          "date_min": "2026-09-08 03:55:00+00:00",
+          "duplicate_count": 0,
+          "invalid_ohlc_count": 0,
+          "missing_intervals": 60,
+          "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware",
+          "total_candles": 5,
+          "trading_dates": [
+            "2026-09-08",
+            "2026-09-10",
+            "2026-09-11"
+          ]
+        }
+      },
+      "underlying": {
+        "contract_count": 0,
+        "date_max": "2026-09-11 10:25:00+00:00",
+        "date_min": "2026-09-07 03:30:00+00:00",
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "missing_intervals": 0,
+        "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware",
+        "total_candles": 420,
+        "trading_dates": [
+          "2026-09-07",
+          "2026-09-08",
+          "2026-09-09",
+          "2026-09-10",
+          "2026-09-11"
+        ]
+      }
+    },
+    "dataset": "data/runs/groww_last_month_20260923_143914/nifty_5m.csv",
+    "development_validation": "INSUFFICIENT OUT-OF-SAMPLE DATA: one completed week is reserved for this bounded demo",
+    "lookahead_check": "PASS: deterministic engine uses completed candles and future candles only after entry",
+    "maximum_drawdown_points": 0.0,
+    "maximum_losing_streak": 0,
+    "maximum_winning_streak": 2,
+    "median_points": 0.05000000000000071,
+    "outcomes": {
+      "TARGET": 2
+    },
+    "setup_count": 2,
+    "skipped_setups": 0,
+    "sl_hits": 0,
+    "strategy_version": "baseline-v1",
+    "target_hits": 2,
+    "valid_setups": 2,
+    "week": {
+      "end": "2026-09-11",
+      "start": "2026-09-07",
+      "trading_dates": [
+        "2026-09-07",
+        "2026-09-08",
+        "2026-09-09",
+        "2026-09-10",
+        "2026-09-11"
+      ]
+    }
+  },
+  "safety": {
+    "execution_allowed": false,
+    "groww_read_only": true,
+    "paper_only": true
+  },
+  "selected_period": {
+    "end": "2026-09-23T00:00:00+00:00",
+    "start": "2026-08-24T00:00:00+00:00"
+  },
+  "selected_week": {
+    "end": "2026-09-11",
+    "start": "2026-09-07",
+    "trading_dates": [
+      "2026-09-07",
+      "2026-09-08",
+      "2026-09-09",
+      "2026-09-10",
+      "2026-09-11"
+    ]
+  }
+}
