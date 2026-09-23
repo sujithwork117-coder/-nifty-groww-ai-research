@@ -1,551 +1,128 @@
-IMPORTANT: IMPROVE THE RESEARCH AGENT AFTER EXPERIMENT EXP-425143a757
-Hit the grow api and analyse last two months data
-We just completed experiment EXP-425143a757.
+FINAL TASK — DO NOT START ANY NEW FEATURES
 
-Read its report and use it as the starting point.
+We need to finish the current NIFTY Groww AI research project.
 
-The Groq connection is working.
-The agent is correctly grounded in:
-- NIFTY
-- LEVEL_TO_LEVEL
-- EKALAYAVA
-- ITM rank 2 and 3
-- CE/PE
-- 5-minute candles
-- completed-candle / causal processing
-- no interpolation or fabricated option prices
-- paper-only / read-only Groww
+The previous experiment was supposed to analyse the FULL TWO-MONTH PERIOD:
+2026-07-23 through 2026-09-23.
 
-However, the experiment exposed an important architectural problem:
+However, the generated report only actually analysed:
+2026-09-07 through 2026-09-11.
 
-The AI hypothesis/plan requested per-strategy average daily profit and potentially a statistical comparison, but the deterministic experiment output did not actually calculate per-strategy profit/points.
+This is an execution/data-selection failure. Do NOT treat the one-week result as the requested two-month result.
 
-Therefore the agent must now be upgraded so that:
+Your task now is ONLY to inspect and fix the existing implementation so that the next experiment can genuinely execute the requested two-month analysis.
 
-AI HYPOTHESIS
-    ↓
-STRUCTURED EXPERIMENT SPECIFICATION
-    ↓
-VALIDATE THAT THE SPECIFICATION IS EXECUTABLE
-    ↓
-DETERMINISTIC ENGINE COMPUTES EVERY REQUESTED METRIC
-    ↓
-VALIDATE RESULTS AGAINST THE SPECIFICATION
-    ↓
-SEND ACTUAL RESULTS TO GROQ
-    ↓
-AI INTERPRETATION
-    ↓
-DECISION
-    ↓
-NEXT RESEARCH QUESTION
-    ↓
-PERSIST REPORT
+Requirements:
 
-Do NOT run another experiment until this architecture is implemented.
+1. REMOVE/AVOID any hard-coded demo/validation restriction that limits the requested experiment to one week.
 
-==================================================
-1. CANONICAL STRATEGY GROUNDING
-==================================================
+2. The requested period must be:
+   2026-07-23 through 2026-09-23.
 
-The only strategies currently permitted are:
+3. The engine must attempt to retrieve/process the COMPLETE available period, covering every actual NIFTY trading day in that window.
 
-LEVEL_TO_LEVEL
+4. For every trading day:
+   - NIFTY 5-minute underlying data
+   - eligible NIFTY ITM 2 and ITM 3 CE
+   - eligible NIFTY ITM 2 and ITM 3 PE
+   - correct expiry/strike selection based on the underlying
+   - Asia/Kolkata timezone
+   - Level-to-Level
+   - Ekalayava
 
-- NIFTY only
-- 5-minute candles
-- Asia/Kolkata
-- Opening first 5-minute candle high/low
-- Premium must trade/break below opening low
-- Red candle breaks/trades below opening low
+5. DO NOT interpolate, fabricate, forward-fill, or invent missing option candles.
+
+6. If Groww does not provide some option data:
+   - record the missing dates/contracts/intervals explicitly
+   - do not silently replace the missing period with another period
+   - do not silently shrink the experiment to one week
+   - clearly report requested_period versus actual_data_period.
+
+7. Preserve the canonical strategy definitions already in the repository.
+DO NOT invent indicators, SMA, EMA, RSI, or additional entry conditions.
+
+LEVEL_TO_LEVEL:
+- Opening first 5-minute high/low
+- Premium below opening low
+- Red candle trades/breaks below opening low
 - FIRST subsequent green 5-minute candle is the entry
 - Entry at close of completed green candle
-- No extra confirmation
-- No indicators
-- No lookahead
-- SL = opening low - configurable points, default 4
+- SL = opening low - configurable SL, default 4 points
 - Target = opening high
-- Entry window currently 09:15-11:00
 
-EKALAYAVA
-
-- NIFTY only
-- 5-minute candles
-- Asia/Kolkata
+EKALAYAVA:
 - Opening high/low
 - Premium falls below opening low
 - Low/reversal develops
-- Recovery occurs
+- Recovery
 - Swing high forms during recovery
-- Premium breaks the swing high
-- Entry occurs on swing-high breakout BEFORE opening high
+- Entry when premium breaks the swing high
+- Entry must occur before opening high
 - Target = opening high
-- Causal swing detection only
-- No lookahead
-- No extra indicators
-- No invented confirmation rules
-- SL is NOT defined by the canonical source and MUST NOT be invented
-
-Contract selection:
-
-- NIFTY only
-- CE and PE
-- ITM rank 2 and 3 only
-- Contract eligibility must be derived from the actual underlying and applicable expiry/strike
-- Do NOT choose arbitrary far-away strikes
-- Do NOT invent contracts
-- Do NOT use unrelated instruments
-- Do NOT introduce SMA, RSI, MACD, VWAP or other indicators unless a future strategy version explicitly defines them.
-
-==================================================
-2. AI OUTPUT MUST BE STRUCTURED
-==================================================
-
-Do not allow Groq to return only free-form prose for an experiment plan.
-
-Create a structured ExperimentSpec containing at least:
-
-{
-  "hypothesis": "...",
-  "strategy_scope": ["LEVEL_TO_LEVEL", "EKALAYAVA"],
-  "dataset_period": "...",
-  "comparison_dimension": "...",
-  "required_metrics": [...],
-  "required_groupings": [...],
-  "statistical_test": "... or null",
-  "minimum_data_requirements": [...],
-  "reason": "..."
-}
-
-The AI must remain inside the canonical research space.
-
-If Groq proposes an indicator, unrelated strategy, fabricated data treatment, or non-canonical entry rule:
-
-REJECT THE SPECIFICATION.
-
-Do not execute it.
-
-Ask Groq to generate a corrected specification.
-
-==================================================
-3. EXPERIMENT SPECIFICATION VALIDATOR
-==================================================
-
-Before running Python/backtesting, validate:
-
-1. Every strategy is canonical.
-2. Every requested metric is supported by the deterministic engine.
-3. Every requested grouping can actually be calculated.
-4. The requested dataset exists.
-5. Required option contracts exist.
-6. Data quality is sufficient.
-7. No lookahead is introduced.
-8. No interpolation/fabrication is requested.
-9. No execution API is available.
-10. Baseline-v1 remains unchanged.
-
-If any required metric cannot be produced:
-
-DO NOT RUN THE EXPERIMENT.
-
-Return:
-
-EXPERIMENT_SPEC_INVALID
-
-with the exact missing capability.
-
-==================================================
-4. RESULT COMPLETENESS CHECK
-==================================================
-
-After deterministic execution, compare:
-
-ExperimentSpec.required_metrics
-
-against
-
-actual_result.metrics
-
-The experiment is valid only if every required metric was actually calculated.
-
-For example, if AI asks:
-
-"Compare average daily points for LEVEL_TO_LEVEL vs EKALAYAVA"
-
-then the deterministic result MUST contain something like:
-
-{
-  "by_strategy": {
-    "LEVEL_TO_LEVEL": {
-      "days": ...,
-      "setups": ...,
-      "valid_setups": ...,
-      "target_hits": ...,
-      "sl_hits": ...,
-      "points": ...,
-      "average_points_per_setup": ...,
-      "average_daily_points": ...
-    },
-    "EKALAYAVA": {
-      ...
-    }
-  }
-}
-
-Do NOT allow the experiment to be marked successful if these fields are absent.
-
-If a requested statistical test is specified, calculate the required input data first.
-
-If the required sample is too small:
-
-return:
-
-INSUFFICIENT_DATA_FOR_STATISTICAL_TEST
-
-instead of inventing a conclusion.
-
-==================================================
-5. NEVER INTERPOLATE OPTION DATA
-==================================================
-
-This is mandatory.
-
-Missing option candles must NEVER be interpolated, forward-filled, fabricated, synthesized, or reconstructed.
-
-If required option data is missing:
-
-- mark the contract/day as incomplete
-- skip the affected setup if appropriate
-- report exactly how much data is missing
-- determine whether the remaining data is sufficient
-- otherwise return INSUFFICIENT_DATA
-
-Do not turn missing market data into artificial prices.
-
-==================================================
-6. CONTRACT VALIDATION
-==================================================
-
-Before strategy execution, produce a contract eligibility table:
-
-date
-underlying price
-expiry
-option type
-strike
-ITM rank
-expected ITM relationship
-actual relationship
-data coverage
-missing intervals
-eligible yes/no
-
-Reject contracts that do not satisfy the canonical ITM 2/3 definition.
-
-This validation must prevent the previous problem where suspicious or inappropriate strikes could enter the experiment.
-
-==================================================
-7. DATA SUFFICIENCY
-==================================================
-
-The agent must inspect available historical data before selecting the experiment period.
-
-Do NOT blindly reuse:
-
-2026-09-07 to 2026-09-11
-
-unless it passes the data-quality requirements.
-
-Search the repository for completed historical periods.
-
-Select one suitable completed period for the bounded experiment.
-
-The selected period must have:
-
-- complete underlying 5-minute coverage
-- valid timestamps
-- no duplicate OHLC records
-- valid OHLC
-- sufficient eligible CE/PE ITM 2/3 option coverage
-- enough completed candles to evaluate setups
-
-If no suitable period exists:
-
-DO NOT fabricate or interpolate data.
-
-Return:
-
-NO_SUFFICIENT_DATASET_AVAILABLE
-
-and stop.
-
-==================================================
-8. ALLOWABLE AI HYPOTHESES
-==================================================
-
-For now, restrict Groq's hypothesis generation to questions such as:
-
-- LEVEL_TO_LEVEL vs EKALAYAVA
-- CE vs PE
-- ITM rank 2 vs ITM rank 3
-- entry before 10:00 vs later entry
-- entry hour
-- setup outcome distribution
-- target vs SL distribution
-- holding time
-- MFE/MAE
-- drawdown
-- winning/losing streaks
-
-The AI may combine these dimensions when supported.
-
-The AI may NOT invent a new strategy.
-
-The AI may NOT change baseline-v1.
-
-The AI may propose a strategy modification only after sufficient evidence and only as a separate experimental strategy version.
-
-==================================================
-9. ONE EXPERIMENT ONLY
-==================================================
-
-For the next demonstration:
-
-RUN EXACTLY ONE bounded experiment.
-
-Do not run multiple experiments.
-
-Do not perform a large historical sweep.
-
-Do not modify baseline-v1.
-
-The goal is to prove that the improved AI agent can correctly:
-
-1. inspect data
-2. generate a canonical hypothesis
-3. create a structured ExperimentSpec
-4. validate it
-5. run deterministic research
-6. verify result completeness
-7. send results to Groq
-8. receive interpretation
-9. decide:
-   - SUPPORTED
-   - NOT_SUPPORTED
-   - NEED_MORE_DATA
-   - INCONCLUSIVE
-10. generate next research question
-11. persist everything
-
-==================================================
-10. GROQ MUST ANALYSE ACTUAL RESULTS
-==================================================
-
-After deterministic execution, send Groq:
-
-- hypothesis
-- experiment specification
-- selected dataset
-- data-quality summary
-- contract-quality summary
-- actual setup count
-- valid/skipped/ambiguous
-- target hits
-- SL hits
-- open outcomes
-- points
-- average points
-- median points
-- MFE
-- MAE
-- holding time
-- drawdown
-- streaks
-- strategy breakdown
-- CE/PE breakdown
-- ITM rank breakdown
-- entry-hour breakdown
-
-Groq must not invent missing metrics.
-
-If a metric is absent, Groq must explicitly say:
-
-"METRIC NOT AVAILABLE"
-
-rather than estimating it.
-
-==================================================
-11. REPORTING
-==================================================
-
-Do NOT overwrite EXP-425143a757.
-
-Keep the existing report as historical evidence.
-
-Create a new unique report, for example:
-
-data/runs/<selected_period>/reports/
-    ai_agent_demo_report_v2.json
-    ai_agent_demo_report_v2.md
-
-Use the actual selected period.
-
-The report must contain:
-
-- experiment ID
-- timestamp
-- Groq provider
-- Groq model
-- hypothesis
-- structured ExperimentSpec
-- dataset
-- selected period
-- contract eligibility
-- data-quality validation
-- deterministic results
-- result completeness validation
-- Groq interpretation
-- decision
-- next research question
-- limitations
-- safety status
-
-Never write API keys or secrets into the report.
-
-==================================================
-12. PERSISTENT MEMORY
-==================================================
-
-Update:
-
-PROJECT_STATE.md
-EXPERIMENT_LOG.md
-ERROR_LOG.md
-NEXT_TASK.md
-
-Record:
-
-EXP-425143a757:
-- canonical grounding successful
-- previous SMA experiment discarded
-- experiment exposed missing result-metric enforcement
-- data completeness limitations
-
-Then record the new experiment separately.
-
-Do not erase historical research.
-
-==================================================
-13. SAFETY
-==================================================
-
-These must remain:
-
-EXECUTION_ALLOWED=false
-PAPER_ONLY=true
-GROWW_READ_ONLY=true
-
-Do not add:
-
-place_order
-modify_order
-cancel_order
-
-Do not add execution credentials.
-
-Groww is read-only.
-
-==================================================
-14. TESTS
-==================================================
-
-Add tests for:
-
-1. canonical strategy validation
-2. rejection of SMA/RSI/etc.
-3. rejection of non-canonical rules
-4. ExperimentSpec validation
-5. missing required metric detection
-6. result completeness validation
-7. missing option candle handling
-8. no interpolation
-9. contract ITM rank validation
-10. lookahead validation
-11. mocked Groq responses
-12. report persistence
-13. safety flags
-
-Tests must not call real Groq.
-
-==================================================
-15. AFTER IMPLEMENTATION
-==================================================
-
-First run:
-
-pytest
-
-Then run static/import checks.
-
-Then run:
-
-python -m app.research_agent --status
-
-Then show exactly what files were changed.
-
-DO NOT run the new historical experiment until the architecture and tests are complete.
-
-==================================================
-16. THEN RUN ONE FRESH DEMO
-==================================================
-
-After implementation and tests pass:
-
-run exactly ONE fresh bounded experiment.
-
-The agent must select a suitable completed historical period from available repository data.
-
-Do not assume the previous week is suitable.
-
-The complete chain must be visible in logs:
-
-AI hypothesis
-→ ExperimentSpec
-→ validation
-→ deterministic execution
-→ result completeness validation
-→ Groq interpretation
-→ decision
-→ next question
-→ persisted report
-
-At the end print:
-
-EXPERIMENT_ID
-SELECTED_PERIOD
-HYPOTHESIS
-DATASET
-SETUP_COUNT
-VALID_SETUPS
-TARGETS
-SL
-OPEN
-AVERAGE_POINTS
-MEDIAN_POINTS
-MFE
-MAE
-STRATEGY_BREAKDOWN
-CE_PE_BREAKDOWN
-ITM_BREAKDOWN
-ENTRY_TIME_BREAKDOWN
-DATA_QUALITY_STATUS
-LOOKAHEAD_STATUS
-RESULT_COMPLETENESS_STATUS
-AI_DECISION
-NEXT_RESEARCH_QUESTION
-REPORT_JSON_PATH
-REPORT_MD_PATH
-
-Do not claim success unless the entire chain actually executed.
-
-If any stage fails, clearly identify the failed stage and do not fabricate a successful result.
+- Causal swing detection only; no lookahead
+- Do not invent an SL rule because the canonical definition does not specify one.
+
+8. The experiment must produce at minimum:
+   - total setups
+   - valid/skipped/open
+   - targets
+   - SL
+   - average points
+   - average daily points
+   - average points per setup
+   - max drawdown
+   - winning/losing streak
+   - average holding time
+   - Level-to-Level breakdown
+   - Ekalayava breakdown
+   - CE/PE breakdown
+   - ITM2/ITM3 breakdown
+   - trading-day coverage
+   - option-data coverage
+   - missing-data report
+
+9. Fix the suspicious contract_count=0 reporting issue seen in the previous report if it is a reporting/aggregation bug. Do not fabricate a value; derive it from actual loaded/validated contracts.
+
+10. Keep:
+   EXECUTION_ALLOWED=false
+   PAPER_ONLY=true
+   GROWW_READ_ONLY=true
+   No order placement/modification/cancellation.
+
+11. Do NOT call an LLM to make individual candle-level trading decisions. The canonical strategy logic must remain deterministic.
+
+12. Do not create a new unrelated architecture. Reuse the existing project structure.
+
+13. Run the existing tests after making changes.
+
+14. Add/update tests specifically covering:
+   - requested two-month period is not silently reduced to one week
+   - missing option candles are not fabricated
+   - correct ITM2/ITM3 contract selection
+   - no lookahead
+   - both strategies remain canonical
+   - result period/coverage is reported accurately.
+
+15. IMPORTANT:
+Do NOT spend time doing another AI research interpretation.
+Do NOT generate another one-week experiment.
+Do NOT invent a baseline.
+Do NOT modify the strategy rules.
+
+The goal is simply:
+
+REQUESTED:
+2026-07-23 → 2026-09-23
+
+ACTUAL EXECUTION:
+must attempt the full requested period and transparently report whatever data was actually available.
+
+Before finishing:
+- inspect the existing code carefully
+- make only the changes necessary for this requirement
+- run tests
+- show me exactly which files were changed
+- show the final test result
+- explain any remaining blocker preventing the full two-month run
+
+Do not claim the two-month analysis is complete unless the underlying data actually covers the requested period.
