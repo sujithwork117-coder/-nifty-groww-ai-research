@@ -1,128 +1,40 @@
-FINAL TASK — DO NOT START ANY NEW FEATURES
+Do NOT modify any files and do NOT run a new AI research experiment.
 
-We need to finish the current NIFTY Groww AI research project.
+I cannot use the terminal manually. Please inspect the existing repository yourself and diagnose the historical-data situation.
 
-The previous experiment was supposed to analyse the FULL TWO-MONTH PERIOD:
+I need the requested analysis period:
 2026-07-23 through 2026-09-23.
 
-However, the generated report only actually analysed:
-2026-09-07 through 2026-09-11.
+The previous task reported:
+Actual local data: 2026-08-24 through 2026-09-22
+Missing option contracts/days: 2026-08-26 and 2026-09-02.
 
-This is an execution/data-selection failure. Do NOT treat the one-week result as the requested two-month result.
+Please inspect the existing historical-data loader/downloader and answer ONLY these questions:
 
-Your task now is ONLY to inspect and fix the existing implementation so that the next experiment can genuinely execute the requested two-month analysis.
+1. Where does the project currently obtain historical NIFTY and option 5-minute data?
+2. What exact function/API is used to retrieve it?
+3. Does the existing code have the ability to retrieve 2026-07-23 through 2026-09-23?
+4. Is the July data missing because:
+   a) it was never downloaded,
+   b) it was filtered out by the code,
+   c) Groww/API did not return it,
+   d) the local dataset is incomplete,
+   or something else?
+5. Can the existing downloader retrieve the missing period without changing the strategy logic?
+6. If yes, identify the exact existing command/function/script that should be used to download it.
+7. If no, explain the exact technical blocker.
 
-Requirements:
+Do NOT invent data.
+Do NOT interpolate missing candles.
+Do NOT change strategy rules.
+Do NOT change files.
+Do NOT run the two-month research experiment yet.
 
-1. REMOVE/AVOID any hard-coded demo/validation restriction that limits the requested experiment to one week.
+If you need to execute read-only inspection commands in the Codespace to determine the answer, you may do so.
 
-2. The requested period must be:
-   2026-07-23 through 2026-09-23.
-
-3. The engine must attempt to retrieve/process the COMPLETE available period, covering every actual NIFTY trading day in that window.
-
-4. For every trading day:
-   - NIFTY 5-minute underlying data
-   - eligible NIFTY ITM 2 and ITM 3 CE
-   - eligible NIFTY ITM 2 and ITM 3 PE
-   - correct expiry/strike selection based on the underlying
-   - Asia/Kolkata timezone
-   - Level-to-Level
-   - Ekalayava
-
-5. DO NOT interpolate, fabricate, forward-fill, or invent missing option candles.
-
-6. If Groww does not provide some option data:
-   - record the missing dates/contracts/intervals explicitly
-   - do not silently replace the missing period with another period
-   - do not silently shrink the experiment to one week
-   - clearly report requested_period versus actual_data_period.
-
-7. Preserve the canonical strategy definitions already in the repository.
-DO NOT invent indicators, SMA, EMA, RSI, or additional entry conditions.
-
-LEVEL_TO_LEVEL:
-- Opening first 5-minute high/low
-- Premium below opening low
-- Red candle trades/breaks below opening low
-- FIRST subsequent green 5-minute candle is the entry
-- Entry at close of completed green candle
-- SL = opening low - configurable SL, default 4 points
-- Target = opening high
-
-EKALAYAVA:
-- Opening high/low
-- Premium falls below opening low
-- Low/reversal develops
-- Recovery
-- Swing high forms during recovery
-- Entry when premium breaks the swing high
-- Entry must occur before opening high
-- Target = opening high
-- Causal swing detection only; no lookahead
-- Do not invent an SL rule because the canonical definition does not specify one.
-
-8. The experiment must produce at minimum:
-   - total setups
-   - valid/skipped/open
-   - targets
-   - SL
-   - average points
-   - average daily points
-   - average points per setup
-   - max drawdown
-   - winning/losing streak
-   - average holding time
-   - Level-to-Level breakdown
-   - Ekalayava breakdown
-   - CE/PE breakdown
-   - ITM2/ITM3 breakdown
-   - trading-day coverage
-   - option-data coverage
-   - missing-data report
-
-9. Fix the suspicious contract_count=0 reporting issue seen in the previous report if it is a reporting/aggregation bug. Do not fabricate a value; derive it from actual loaded/validated contracts.
-
-10. Keep:
-   EXECUTION_ALLOWED=false
-   PAPER_ONLY=true
-   GROWW_READ_ONLY=true
-   No order placement/modification/cancellation.
-
-11. Do NOT call an LLM to make individual candle-level trading decisions. The canonical strategy logic must remain deterministic.
-
-12. Do not create a new unrelated architecture. Reuse the existing project structure.
-
-13. Run the existing tests after making changes.
-
-14. Add/update tests specifically covering:
-   - requested two-month period is not silently reduced to one week
-   - missing option candles are not fabricated
-   - correct ITM2/ITM3 contract selection
-   - no lookahead
-   - both strategies remain canonical
-   - result period/coverage is reported accurately.
-
-15. IMPORTANT:
-Do NOT spend time doing another AI research interpretation.
-Do NOT generate another one-week experiment.
-Do NOT invent a baseline.
-Do NOT modify the strategy rules.
-
-The goal is simply:
-
-REQUESTED:
-2026-07-23 → 2026-09-23
-
-ACTUAL EXECUTION:
-must attempt the full requested period and transparently report whatever data was actually available.
-
-Before finishing:
-- inspect the existing code carefully
-- make only the changes necessary for this requirement
-- run tests
-- show me exactly which files were changed
-- show the final test result
-- explain any remaining blocker preventing the full two-month run
-
-Do not claim the two-month analysis is complete unless the underlying data actually covers the requested period.
+At the end give me a short diagnosis with:
+- DATA SOURCE
+- CURRENT COVERAGE
+- WHY JULY IS MISSING
+- WHETHER GROWw CAN RETRIEVE IT
+- EXACT NEXT STEP
