@@ -1,40 +1,37 @@
-Do NOT modify any files and do NOT run a new AI research experiment.
+Now execute the historical data download only.
 
-I cannot use the terminal manually. Please inspect the existing repository yourself and diagnose the historical-data situation.
+Do NOT modify any files.
+Do NOT run the AI research experiment.
+Do NOT change strategy logic.
 
-I need the requested analysis period:
+Use the existing downloader/functions you just identified.
+
+Retrieve the requested historical period:
 2026-07-23 through 2026-09-23.
 
-The previous task reported:
-Actual local data: 2026-08-24 through 2026-09-22
-Missing option contracts/days: 2026-08-26 and 2026-09-02.
+For NIFTY underlying:
+- use the existing historical downloader
+- retrieve the complete requested period
+- use 5-minute candles
 
-Please inspect the existing historical-data loader/downloader and answer ONLY these questions:
+For options:
+- use the existing discover_itm_contracts() and save_option_historical()
+- retrieve the actual eligible NIFTY ITM2/ITM3 CE/PE contracts for each applicable expiry/day
+- use the actual Groww contracts
+- do not fabricate or interpolate missing candles
 
-1. Where does the project currently obtain historical NIFTY and option 5-minute data?
-2. What exact function/API is used to retrieve it?
-3. Does the existing code have the ability to retrieve 2026-07-23 through 2026-09-23?
-4. Is the July data missing because:
-   a) it was never downloaded,
-   b) it was filtered out by the code,
-   c) Groww/API did not return it,
-   d) the local dataset is incomplete,
-   or something else?
-5. Can the existing downloader retrieve the missing period without changing the strategy logic?
-6. If yes, identify the exact existing command/function/script that should be used to download it.
-7. If no, explain the exact technical blocker.
+The goal is ONLY to populate the historical dataset for:
+2026-07-23 → 2026-09-23.
 
-Do NOT invent data.
-Do NOT interpolate missing candles.
-Do NOT change strategy rules.
-Do NOT change files.
-Do NOT run the two-month research experiment yet.
+After downloading, validate and report:
+1. actual underlying coverage
+2. actual option coverage
+3. missing trading days
+4. empty option files
+5. failed API requests, if any
+6. number of contracts downloaded
+7. whether 2026-07-23 through 2026-09-23 is now genuinely available.
 
-If you need to execute read-only inspection commands in the Codespace to determine the answer, you may do so.
+If any Groww request fails, show the actual failure rather than hiding it.
 
-At the end give me a short diagnosis with:
-- DATA SOURCE
-- CURRENT COVERAGE
-- WHY JULY IS MISSING
-- WHETHER GROWw CAN RETRIEVE IT
-- EXACT NEXT STEP
+Do NOT run the research experiment yet.
