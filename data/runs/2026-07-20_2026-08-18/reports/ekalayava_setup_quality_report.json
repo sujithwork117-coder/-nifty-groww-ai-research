@@ -1,0 +1,2690 @@
+{
+  "events": 159,
+  "groups": {
+    "entry_before_10": [
+      {
+        "value": "False",
+        "n": 91,
+        "avg_mfe": 30.51648351648351,
+        "avg_mae": -23.426923076923075,
+        "target_rate": 0.4835164835164835,
+        "avg_time_to_target_minutes": 57.61363636363637
+      },
+      {
+        "value": "True",
+        "n": 68,
+        "avg_mfe": 33.711764705882345,
+        "avg_mae": -38.38382352941176,
+        "target_rate": 0.7941176470588235,
+        "avg_time_to_target_minutes": 48.888888888888886
+      }
+    ],
+    "option_type": [
+      {
+        "value": "CE",
+        "n": 89,
+        "avg_mfe": 28.405617977528095,
+        "avg_mae": -28.14662921348314,
+        "target_rate": 0.5617977528089888,
+        "avg_time_to_target_minutes": 81.9
+      },
+      {
+        "value": "PE",
+        "n": 70,
+        "avg_mfe": 36.304285714285705,
+        "avg_mae": -31.955714285714286,
+        "target_rate": 0.6857142857142857,
+        "avg_time_to_target_minutes": 22.5
+      }
+    ],
+    "itm_rank": [
+      {
+        "value": "2",
+        "n": 80,
+        "avg_mfe": 29.080624999999998,
+        "avg_mae": -31.191875,
+        "target_rate": 0.6375,
+        "avg_time_to_target_minutes": 55.294117647058826
+      },
+      {
+        "value": "3",
+        "n": 79,
+        "avg_mfe": 34.72088607594936,
+        "avg_mae": -28.437974683544304,
+        "target_rate": 0.5949367088607594,
+        "avg_time_to_target_minutes": 50.1063829787234
+      }
+    ],
+    "entry_hour": [
+      {
+        "value": "9",
+        "n": 68,
+        "avg_mfe": 33.711764705882345,
+        "avg_mae": -38.38382352941176,
+        "target_rate": 0.7941176470588235,
+        "avg_time_to_target_minutes": 48.888888888888886
+      },
+      {
+        "value": "10",
+        "n": 56,
+        "avg_mfe": 32.11339285714286,
+        "avg_mae": -26.391071428571426,
+        "target_rate": 0.5357142857142857,
+        "avg_time_to_target_minutes": 69.5
+      },
+      {
+        "value": "11",
+        "n": 20,
+        "avg_mfe": 37.695,
+        "avg_mae": -27.7375,
+        "target_rate": 0.5,
+        "avg_time_to_target_minutes": 39.0
+      },
+      {
+        "value": "12",
+        "n": 5,
+        "avg_mfe": 18.629999999999992,
+        "avg_mae": -8.74999999999999,
+        "target_rate": 0.6,
+        "avg_time_to_target_minutes": 18.333333333333332
+      },
+      {
+        "value": "13",
+        "n": 6,
+        "avg_mfe": 17.558333333333334,
+        "avg_mae": -7.774999999999999,
+        "target_rate": 0.16666666666666666,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "14",
+        "n": 2,
+        "avg_mfe": 2.3249999999999957,
+        "avg_mae": -9.049999999999994,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "15",
+        "n": 2,
+        "avg_mfe": 10.800000000000011,
+        "avg_mae": 4.650000000000006,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      }
+    ],
+    "weekday": [
+      {
+        "value": "0",
+        "n": 41,
+        "avg_mfe": 35.79024390243902,
+        "avg_mae": -24.820731707317073,
+        "target_rate": 0.6097560975609756,
+        "avg_time_to_target_minutes": 78.6
+      },
+      {
+        "value": "1",
+        "n": 36,
+        "avg_mfe": 33.73194444444445,
+        "avg_mae": -38.65277777777777,
+        "target_rate": 0.5,
+        "avg_time_to_target_minutes": 23.88888888888889
+      },
+      {
+        "value": "2",
+        "n": 27,
+        "avg_mfe": 29.937037037037037,
+        "avg_mae": -26.551851851851847,
+        "target_rate": 0.5555555555555556,
+        "avg_time_to_target_minutes": 10.0
+      },
+      {
+        "value": "3",
+        "n": 28,
+        "avg_mfe": 27.592857142857138,
+        "avg_mae": -29.546428571428574,
+        "target_rate": 0.6428571428571429,
+        "avg_time_to_target_minutes": 45.0
+      },
+      {
+        "value": "4",
+        "n": 27,
+        "avg_mfe": 29.879629629629623,
+        "avg_mae": -29.20740740740741,
+        "target_rate": 0.8148148148148148,
+        "avg_time_to_target_minutes": 82.72727272727273
+      }
+    ],
+    "volatility_10": [
+      {
+        "value": "0.0062836685989134",
+        "n": 1,
+        "avg_mfe": 33.85000000000002,
+        "avg_mae": 1.5500000000000682,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0079114680955948",
+        "n": 1,
+        "avg_mfe": 27.94999999999999,
+        "avg_mae": -13.449999999999989,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0088913414030293",
+        "n": 1,
+        "avg_mfe": 10.900000000000093,
+        "avg_mae": -101.19999999999992,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0090566043437367",
+        "n": 1,
+        "avg_mfe": 129.69999999999993,
+        "avg_mae": 0.0,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 65.0
+      },
+      {
+        "value": "0.0122877375865328",
+        "n": 1,
+        "avg_mfe": 76.5,
+        "avg_mae": -6.0499999999999545,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 15.0
+      },
+      {
+        "value": "0.0124246424103213",
+        "n": 1,
+        "avg_mfe": 90.79999999999995,
+        "avg_mae": -6.0,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 25.0
+      },
+      {
+        "value": "0.0132886332958743",
+        "n": 1,
+        "avg_mfe": 14.049999999999956,
+        "avg_mae": -28.55000000000001,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0134036135612864",
+        "n": 1,
+        "avg_mfe": 45.25,
+        "avg_mae": -83.29999999999995,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0139607938902688",
+        "n": 1,
+        "avg_mfe": 15.449999999999989,
+        "avg_mae": -17.25,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0148508704240111",
+        "n": 1,
+        "avg_mfe": 1.1999999999999886,
+        "avg_mae": -22.05000000000001,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0165674955591735",
+        "n": 1,
+        "avg_mfe": 26.149999999999977,
+        "avg_mae": -4.5,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0167065885269539",
+        "n": 1,
+        "avg_mfe": 126.14999999999998,
+        "avg_mae": -5.850000000000023,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 80.0
+      },
+      {
+        "value": "0.0167940162925348",
+        "n": 1,
+        "avg_mfe": 10.0,
+        "avg_mae": 10.0,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0169839917290632",
+        "n": 1,
+        "avg_mfe": 4.400000000000006,
+        "avg_mae": -7.950000000000003,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0173628574145297",
+        "n": 1,
+        "avg_mfe": 76.54999999999995,
+        "avg_mae": -70.65000000000009,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.0177163356956149",
+        "n": 1,
+        "avg_mfe": 7.399999999999991,
+        "avg_mae": -7.600000000000008,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0179634849530868",
+        "n": 1,
+        "avg_mfe": 33.75,
+        "avg_mae": -96.0,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0184276479276084",
+        "n": 1,
+        "avg_mfe": 76.5,
+        "avg_mae": -78.5,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.0184522641034986",
+        "n": 1,
+        "avg_mfe": 50.0,
+        "avg_mae": -14.0,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 10.0
+      },
+      {
+        "value": "0.0185319493288913",
+        "n": 1,
+        "avg_mfe": 9.799999999999985,
+        "avg_mae": -14.900000000000006,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0186993962577342",
+        "n": 1,
+        "avg_mfe": 15.699999999999989,
+        "avg_mae": -37.5,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0190100689324289",
+        "n": 1,
+        "avg_mfe": 16.100000000000023,
+        "avg_mae": -60.04999999999996,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.0193441801827239",
+        "n": 1,
+        "avg_mfe": 36.10000000000002,
+        "avg_mae": -17.049999999999955,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 170.0
+      },
+      {
+        "value": "0.0194501420138119",
+        "n": 1,
+        "avg_mfe": 19.80000000000001,
+        "avg_mae": -19.15000000000001,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0194737876042246",
+        "n": 1,
+        "avg_mfe": 11.550000000000011,
+        "avg_mae": -105.45,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0197979464764073",
+        "n": 1,
+        "avg_mfe": 13.300000000000011,
+        "avg_mae": -114.39999999999998,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 25.0
+      },
+      {
+        "value": "0.0199240947979272",
+        "n": 1,
+        "avg_mfe": 11.599999999999994,
+        "avg_mae": -43.0,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0200967626903512",
+        "n": 1,
+        "avg_mfe": 1.25,
+        "avg_mae": -34.5,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0207395577235727",
+        "n": 1,
+        "avg_mfe": 36.400000000000006,
+        "avg_mae": -21.8,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.0214099158216625",
+        "n": 1,
+        "avg_mfe": 6.3500000000000085,
+        "avg_mae": -12.799999999999995,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.0215338453156625",
+        "n": 1,
+        "avg_mfe": 32.60000000000002,
+        "avg_mae": -40.49999999999999,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 20.0
+      },
+      {
+        "value": "0.0215388071731657",
+        "n": 1,
+        "avg_mfe": 2.1999999999999886,
+        "avg_mae": -51.75,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0218310470551046",
+        "n": 1,
+        "avg_mfe": 95.25,
+        "avg_mae": -16.75,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 130.0
+      },
+      {
+        "value": "0.0221559180473405",
+        "n": 1,
+        "avg_mfe": 2.999999999999972,
+        "avg_mae": -48.20000000000002,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0224593852900125",
+        "n": 1,
+        "avg_mfe": 75.79999999999995,
+        "avg_mae": -40.75,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 125.0
+      },
+      {
+        "value": "0.0225429359678648",
+        "n": 1,
+        "avg_mfe": 21.19999999999999,
+        "avg_mae": -8.599999999999994,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.0229717156899345",
+        "n": 1,
+        "avg_mfe": 2.050000000000012,
+        "avg_mae": -44.19999999999999,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0232505734566087",
+        "n": 1,
+        "avg_mfe": 44.80000000000001,
+        "avg_mae": -71.14999999999998,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0240072016345296",
+        "n": 1,
+        "avg_mfe": -0.5500000000000114,
+        "avg_mae": -18.65000000000001,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.024409693704784",
+        "n": 1,
+        "avg_mfe": 25.200000000000003,
+        "avg_mae": -13.55,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.0244723319470151",
+        "n": 1,
+        "avg_mfe": 11.399999999999975,
+        "avg_mae": -103.05,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 25.0
+      },
+      {
+        "value": "0.0251998934952548",
+        "n": 1,
+        "avg_mfe": -0.1999999999999886,
+        "avg_mae": -45.25,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0253725292062499",
+        "n": 1,
+        "avg_mfe": -1.0999999999999943,
+        "avg_mae": -31.099999999999994,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0255348856213977",
+        "n": 1,
+        "avg_mfe": 24.39999999999999,
+        "avg_mae": -3.700000000000003,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 110.0
+      },
+      {
+        "value": "0.025985333141937",
+        "n": 1,
+        "avg_mfe": 17.099999999999994,
+        "avg_mae": -7.450000000000003,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 305.0
+      },
+      {
+        "value": "0.0262068777731731",
+        "n": 1,
+        "avg_mfe": 11.600000000000025,
+        "avg_mae": -0.6999999999999886,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0268489856341824",
+        "n": 1,
+        "avg_mfe": -1.4499999999999886,
+        "avg_mae": -27.049999999999983,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0270555688715893",
+        "n": 1,
+        "avg_mfe": 9.049999999999995,
+        "avg_mae": -4.349999999999994,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0277515120643572",
+        "n": 1,
+        "avg_mfe": 0.0,
+        "avg_mae": -16.25,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0277691908084609",
+        "n": 1,
+        "avg_mfe": 68.04999999999995,
+        "avg_mae": -37.55000000000001,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 210.0
+      },
+      {
+        "value": "0.0283551246312511",
+        "n": 1,
+        "avg_mfe": 20.0,
+        "avg_mae": -34.150000000000006,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0284134056219593",
+        "n": 1,
+        "avg_mfe": 161.14999999999998,
+        "avg_mae": -6.850000000000023,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 20.0
+      },
+      {
+        "value": "0.0288421141303683",
+        "n": 1,
+        "avg_mfe": 19.9,
+        "avg_mae": -9.85,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.0299901777837896",
+        "n": 1,
+        "avg_mfe": 9.400000000000034,
+        "avg_mae": -26.0,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 25.0
+      },
+      {
+        "value": "0.0300315655531084",
+        "n": 1,
+        "avg_mfe": 21.200000000000003,
+        "avg_mae": -3.3500000000000014,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 130.0
+      },
+      {
+        "value": "0.0300920309164909",
+        "n": 1,
+        "avg_mfe": 17.5,
+        "avg_mae": -31.5,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0301084554367753",
+        "n": 1,
+        "avg_mfe": 79.80000000000001,
+        "avg_mae": -2.050000000000012,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.030691609904268",
+        "n": 1,
+        "avg_mfe": 0.7000000000000028,
+        "avg_mae": -5.649999999999999,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0316455892173057",
+        "n": 1,
+        "avg_mfe": 4.300000000000001,
+        "avg_mae": -3.8000000000000007,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0318470643532013",
+        "n": 1,
+        "avg_mfe": 68.05000000000001,
+        "avg_mae": -8.050000000000011,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 40.0
+      },
+      {
+        "value": "0.0318660749929549",
+        "n": 1,
+        "avg_mfe": 64.0,
+        "avg_mae": -6.75,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 120.0
+      },
+      {
+        "value": "0.0318872382780247",
+        "n": 1,
+        "avg_mfe": 5.650000000000006,
+        "avg_mae": -10.5,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.033368027818861",
+        "n": 1,
+        "avg_mfe": 50.5,
+        "avg_mae": -6.849999999999994,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 105.0
+      },
+      {
+        "value": "0.033393132042705",
+        "n": 1,
+        "avg_mfe": 32.14999999999999,
+        "avg_mae": -0.8500000000000085,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 10.0
+      },
+      {
+        "value": "0.034132111097293",
+        "n": 1,
+        "avg_mfe": 21.64999999999999,
+        "avg_mae": -11.600000000000009,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0341660551278781",
+        "n": 1,
+        "avg_mfe": 4.200000000000003,
+        "avg_mae": -27.3,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.0347595406140773",
+        "n": 1,
+        "avg_mfe": 35.94999999999999,
+        "avg_mae": -80.15000000000003,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 10.0
+      },
+      {
+        "value": "0.0348972122502197",
+        "n": 1,
+        "avg_mfe": 34.75,
+        "avg_mae": -76.0,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 10.0
+      },
+      {
+        "value": "0.0349377118188943",
+        "n": 1,
+        "avg_mfe": 28.69999999999999,
+        "avg_mae": -1.25,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.0355454527734089",
+        "n": 1,
+        "avg_mfe": 63.0,
+        "avg_mae": -6.899999999999977,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 40.0
+      },
+      {
+        "value": "0.0357619191546986",
+        "n": 1,
+        "avg_mfe": 7.650000000000002,
+        "avg_mae": -1.8999999999999984,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 135.0
+      },
+      {
+        "value": "0.035800956692415",
+        "n": 1,
+        "avg_mfe": 144.6,
+        "avg_mae": -1.0999999999999943,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 25.0
+      },
+      {
+        "value": "0.0365961922199232",
+        "n": 1,
+        "avg_mfe": -0.2000000000000028,
+        "avg_mae": -18.05000000000001,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0371767695484152",
+        "n": 1,
+        "avg_mfe": 52.55,
+        "avg_mae": -5.75,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 125.0
+      },
+      {
+        "value": "0.0382608200584035",
+        "n": 1,
+        "avg_mfe": 0.3999999999999915,
+        "avg_mae": -16.050000000000004,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0382670108483545",
+        "n": 1,
+        "avg_mfe": 4.3500000000000085,
+        "avg_mae": -10.25,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0383180096193384",
+        "n": 1,
+        "avg_mfe": 74.10000000000002,
+        "avg_mae": -37.94999999999999,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 130.0
+      },
+      {
+        "value": "0.0384038773748499",
+        "n": 1,
+        "avg_mfe": 14.200000000000005,
+        "avg_mae": -7.549999999999997,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 265.0
+      },
+      {
+        "value": "0.0384180439009369",
+        "n": 1,
+        "avg_mfe": 9.400000000000002,
+        "avg_mae": -2.349999999999998,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 130.0
+      },
+      {
+        "value": "0.0387638816200557",
+        "n": 1,
+        "avg_mfe": 10.049999999999995,
+        "avg_mae": -6.599999999999994,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0388104919130212",
+        "n": 1,
+        "avg_mfe": 8.499999999999996,
+        "avg_mae": -2.6000000000000014,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0392212664903187",
+        "n": 1,
+        "avg_mfe": 65.15,
+        "avg_mae": -0.8499999999999943,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 45.0
+      },
+      {
+        "value": "0.0393834613271462",
+        "n": 1,
+        "avg_mfe": 52.7,
+        "avg_mae": -7.25,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 80.0
+      },
+      {
+        "value": "0.0397013437587253",
+        "n": 1,
+        "avg_mfe": 13.299999999999995,
+        "avg_mae": -4.700000000000003,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 25.0
+      },
+      {
+        "value": "0.0408843765926702",
+        "n": 1,
+        "avg_mfe": 2.5,
+        "avg_mae": -27.80000000000001,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 20.0
+      },
+      {
+        "value": "0.0411241021285274",
+        "n": 1,
+        "avg_mfe": -11.0,
+        "avg_mae": -79.0,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0412817483659061",
+        "n": 1,
+        "avg_mfe": 11.849999999999994,
+        "avg_mae": -24.599999999999994,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0414304373477718",
+        "n": 1,
+        "avg_mfe": 2.6000000000000014,
+        "avg_mae": -1.3999999999999986,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0416336440289846",
+        "n": 1,
+        "avg_mfe": 3.5999999999999943,
+        "avg_mae": -24.15,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.0420766737997236",
+        "n": 1,
+        "avg_mfe": 42.900000000000034,
+        "avg_mae": -4.699999999999989,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0422939769473944",
+        "n": 1,
+        "avg_mfe": 10.75,
+        "avg_mae": -3.4499999999999997,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 25.0
+      },
+      {
+        "value": "0.0434453074847202",
+        "n": 1,
+        "avg_mfe": 1.5,
+        "avg_mae": -63.2,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0450157337549575",
+        "n": 1,
+        "avg_mfe": -0.0500000000000113,
+        "avg_mae": -11.0,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0476344984338008",
+        "n": 1,
+        "avg_mfe": 3.9499999999999886,
+        "avg_mae": -12.449999999999989,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0486118453968102",
+        "n": 1,
+        "avg_mfe": 3.6999999999999993,
+        "avg_mae": -1.8999999999999984,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0509073694515359",
+        "n": 1,
+        "avg_mfe": 99.15,
+        "avg_mae": -15.0,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 80.0
+      },
+      {
+        "value": "0.0516143140277908",
+        "n": 1,
+        "avg_mfe": 46.400000000000006,
+        "avg_mae": -1.1499999999999986,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.0525368593402292",
+        "n": 1,
+        "avg_mfe": 1.3500000000000083,
+        "avg_mae": -71.44999999999999,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0531054046164412",
+        "n": 1,
+        "avg_mfe": 91.74999999999996,
+        "avg_mae": -55.6,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 185.0
+      },
+      {
+        "value": "0.0551382963626227",
+        "n": 1,
+        "avg_mfe": 34.150000000000006,
+        "avg_mae": -10.150000000000006,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 160.0
+      },
+      {
+        "value": "0.0558313895960436",
+        "n": 1,
+        "avg_mfe": 85.34999999999997,
+        "avg_mae": -51.0,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 185.0
+      },
+      {
+        "value": "0.0565293009160025",
+        "n": 1,
+        "avg_mfe": 38.25,
+        "avg_mae": -10.449999999999989,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 160.0
+      },
+      {
+        "value": "0.0584800976575181",
+        "n": 1,
+        "avg_mfe": 37.0,
+        "avg_mae": -19.19999999999999,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.0610690008371709",
+        "n": 1,
+        "avg_mfe": 1.049999999999983,
+        "avg_mae": -43.900000000000006,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.061700842623377",
+        "n": 1,
+        "avg_mfe": 9.950000000000005,
+        "avg_mae": -25.700000000000003,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 10.0
+      },
+      {
+        "value": "0.0624260518871506",
+        "n": 1,
+        "avg_mfe": 84.0,
+        "avg_mae": -3.3499999999999943,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 10.0
+      },
+      {
+        "value": "0.0654908856835755",
+        "n": 1,
+        "avg_mfe": 38.150000000000034,
+        "avg_mae": -16.349999999999966,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.0664887579885975",
+        "n": 1,
+        "avg_mfe": 19.0,
+        "avg_mae": -76.30000000000001,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0673521549462509",
+        "n": 1,
+        "avg_mfe": 8.349999999999994,
+        "avg_mae": -46.25,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.0717747103566922",
+        "n": 1,
+        "avg_mfe": 9.850000000000009,
+        "avg_mae": -37.75,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.0719582737309315",
+        "n": 1,
+        "avg_mfe": 10.349999999999994,
+        "avg_mae": -144.15,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0729369500859134",
+        "n": 1,
+        "avg_mfe": -7.700000000000045,
+        "avg_mae": -72.94999999999999,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0732468389921166",
+        "n": 1,
+        "avg_mfe": 171.60000000000002,
+        "avg_mae": -10.549999999999985,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 20.0
+      },
+      {
+        "value": "0.0777537201850628",
+        "n": 1,
+        "avg_mfe": 8.199999999999996,
+        "avg_mae": -31.5,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.0793300392645075",
+        "n": 1,
+        "avg_mfe": 52.35000000000002,
+        "avg_mae": 0.9500000000000456,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 10.0
+      },
+      {
+        "value": "0.0807894214995865",
+        "n": 1,
+        "avg_mfe": 43.400000000000006,
+        "avg_mae": -8.0,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.0808052748529021",
+        "n": 1,
+        "avg_mfe": 50.94999999999999,
+        "avg_mae": -7.950000000000003,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.0820249733073915",
+        "n": 1,
+        "avg_mfe": 19.25,
+        "avg_mae": -6.850000000000001,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 160.0
+      },
+      {
+        "value": "0.0836249790734069",
+        "n": 1,
+        "avg_mfe": 16.30000000000001,
+        "avg_mae": -79.0,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0849264574032808",
+        "n": 1,
+        "avg_mfe": 0.0,
+        "avg_mae": -33.349999999999994,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0854270633648697",
+        "n": 1,
+        "avg_mfe": 10.049999999999985,
+        "avg_mae": -115.85,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.0866547500678201",
+        "n": 1,
+        "avg_mfe": 38.25,
+        "avg_mae": -68.1,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.0896324682657118",
+        "n": 1,
+        "avg_mfe": 7.100000000000001,
+        "avg_mae": -11.799999999999995,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 10.0
+      },
+      {
+        "value": "0.0910507407574959",
+        "n": 1,
+        "avg_mfe": 24.599999999999994,
+        "avg_mae": -7.700000000000003,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 160.0
+      },
+      {
+        "value": "0.091203614265503",
+        "n": 1,
+        "avg_mfe": 9.0,
+        "avg_mae": -13.25,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 10.0
+      },
+      {
+        "value": "0.0919096270266303",
+        "n": 1,
+        "avg_mfe": 7.699999999999989,
+        "avg_mae": -41.35000000000002,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.0951463246415148",
+        "n": 1,
+        "avg_mfe": 3.3499999999999943,
+        "avg_mae": -30.0,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.0980261175985062",
+        "n": 1,
+        "avg_mfe": 14.450000000000005,
+        "avg_mae": -11.5,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.1081123282797151",
+        "n": 1,
+        "avg_mfe": 40.6,
+        "avg_mae": -37.95,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 255.0
+      },
+      {
+        "value": "0.1112284201363206",
+        "n": 1,
+        "avg_mfe": 6.099999999999994,
+        "avg_mae": -29.65,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.1132089837113185",
+        "n": 1,
+        "avg_mfe": 24.450000000000003,
+        "avg_mae": -25.2,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 45.0
+      },
+      {
+        "value": "0.1153870572005987",
+        "n": 1,
+        "avg_mfe": 49.0,
+        "avg_mae": -44.75,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 255.0
+      },
+      {
+        "value": "0.1223884293944705",
+        "n": 1,
+        "avg_mfe": 48.94999999999999,
+        "avg_mae": -147.5,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.1255904374861449",
+        "n": 1,
+        "avg_mfe": 36.20000000000002,
+        "avg_mae": -83.24999999999999,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 40.0
+      },
+      {
+        "value": "0.1280600192799904",
+        "n": 1,
+        "avg_mfe": 24.849999999999994,
+        "avg_mae": -58.150000000000006,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.1297092403125197",
+        "n": 1,
+        "avg_mfe": 62.44999999999999,
+        "avg_mae": -7.100000000000023,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.1307520112981929",
+        "n": 1,
+        "avg_mfe": 49.85000000000002,
+        "avg_mae": -140.25,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.1338412106324109",
+        "n": 1,
+        "avg_mfe": 8.399999999999999,
+        "avg_mae": -27.15,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.1358283170814496",
+        "n": 1,
+        "avg_mfe": 10.75,
+        "avg_mae": -34.05,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.1394702010580157",
+        "n": 1,
+        "avg_mfe": 57.55000000000001,
+        "avg_mae": -6.299999999999983,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.141804580335323",
+        "n": 1,
+        "avg_mfe": 32.150000000000006,
+        "avg_mae": -75.2,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 40.0
+      },
+      {
+        "value": "0.1431284459522424",
+        "n": 1,
+        "avg_mfe": 22.55,
+        "avg_mae": -24.200000000000003,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.1503662503227635",
+        "n": 1,
+        "avg_mfe": 31.75,
+        "avg_mae": -36.4,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 40.0
+      },
+      {
+        "value": "0.1556393689242498",
+        "n": 1,
+        "avg_mfe": 97.20000000000002,
+        "avg_mae": -37.69999999999999,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.1586795185916132",
+        "n": 1,
+        "avg_mfe": 53.150000000000006,
+        "avg_mae": -6.199999999999996,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 20.0
+      },
+      {
+        "value": "0.1701033901018544",
+        "n": 1,
+        "avg_mfe": 35.55000000000001,
+        "avg_mae": -5.149999999999977,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 10.0
+      },
+      {
+        "value": "0.1820982648943741",
+        "n": 1,
+        "avg_mfe": 34.64999999999998,
+        "avg_mae": -5.050000000000011,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 15.0
+      },
+      {
+        "value": "0.1821113965443261",
+        "n": 1,
+        "avg_mfe": 17.549999999999997,
+        "avg_mae": -50.45,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.3234464028615916",
+        "n": 1,
+        "avg_mfe": 72.25,
+        "avg_mae": -24.95,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 30.0
+      },
+      {
+        "value": "0.3489943926061679",
+        "n": 1,
+        "avg_mfe": 86.94999999999999,
+        "avg_mae": -25.65,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 15.0
+      },
+      {
+        "value": "0.5758004028864072",
+        "n": 1,
+        "avg_mfe": 34.900000000000006,
+        "avg_mae": -6.449999999999989,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 20.0
+      },
+      {
+        "value": "0.6625428249568568",
+        "n": 1,
+        "avg_mfe": 29.0,
+        "avg_mae": -9.599999999999994,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 15.0
+      },
+      {
+        "value": null,
+        "n": 7,
+        "avg_mfe": 39.021428571428565,
+        "avg_mae": -31.23571428571429,
+        "target_rate": 0.14285714285714285,
+        "avg_time_to_target_minutes": 205.0
+      }
+    ],
+    "premium_change": [
+      {
+        "value": "-13.700000000000044",
+        "n": 1,
+        "avg_mfe": 16.100000000000023,
+        "avg_mae": -60.04999999999996,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "-8.25",
+        "n": 1,
+        "avg_mfe": 99.15,
+        "avg_mae": -15.0,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 80.0
+      },
+      {
+        "value": "-8.0",
+        "n": 1,
+        "avg_mfe": 52.35000000000002,
+        "avg_mae": 0.9500000000000456,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 10.0
+      },
+      {
+        "value": "-7.199999999999989",
+        "n": 1,
+        "avg_mfe": 68.04999999999995,
+        "avg_mae": -37.55000000000001,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 210.0
+      },
+      {
+        "value": "-4.449999999999989",
+        "n": 1,
+        "avg_mfe": 15.449999999999989,
+        "avg_mae": -17.25,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "-4.0",
+        "n": 2,
+        "avg_mfe": 82.2,
+        "avg_mae": -10.125000000000002,
+        "target_rate": 0.5,
+        "avg_time_to_target_minutes": 25.0
+      },
+      {
+        "value": "-3.8000000000000114",
+        "n": 1,
+        "avg_mfe": 21.19999999999999,
+        "avg_mae": -8.599999999999994,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "-3.049999999999997",
+        "n": 1,
+        "avg_mfe": 53.150000000000006,
+        "avg_mae": -6.199999999999996,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 20.0
+      },
+      {
+        "value": "-2.8500000000000085",
+        "n": 1,
+        "avg_mfe": 52.7,
+        "avg_mae": -7.25,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 80.0
+      },
+      {
+        "value": "-2.799999999999997",
+        "n": 1,
+        "avg_mfe": 9.799999999999985,
+        "avg_mae": -14.900000000000006,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "-2.75",
+        "n": 1,
+        "avg_mfe": 19.0,
+        "avg_mae": -76.30000000000001,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "-2.700000000000003",
+        "n": 1,
+        "avg_mfe": 9.049999999999995,
+        "avg_mae": -4.349999999999994,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "-2.3999999999999773",
+        "n": 1,
+        "avg_mfe": 68.05000000000001,
+        "avg_mae": -8.050000000000011,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 40.0
+      },
+      {
+        "value": "-2.300000000000068",
+        "n": 1,
+        "avg_mfe": 45.25,
+        "avg_mae": -83.29999999999995,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "-2.300000000000012",
+        "n": 1,
+        "avg_mfe": 63.0,
+        "avg_mae": -6.899999999999977,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 40.0
+      },
+      {
+        "value": "-2.299999999999997",
+        "n": 1,
+        "avg_mfe": 86.94999999999999,
+        "avg_mae": -25.65,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 15.0
+      },
+      {
+        "value": "-2.25",
+        "n": 1,
+        "avg_mfe": 16.30000000000001,
+        "avg_mae": -79.0,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "-2.200000000000003",
+        "n": 1,
+        "avg_mfe": 72.25,
+        "avg_mae": -24.95,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 30.0
+      },
+      {
+        "value": "-2.1999999999999886",
+        "n": 1,
+        "avg_mfe": 44.80000000000001,
+        "avg_mae": -71.14999999999998,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "-2.0999999999999943",
+        "n": 1,
+        "avg_mfe": 1.1999999999999886,
+        "avg_mae": -22.05000000000001,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "-2.0",
+        "n": 1,
+        "avg_mfe": 36.400000000000006,
+        "avg_mae": -21.8,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "-1.9499999999999889",
+        "n": 1,
+        "avg_mfe": 85.34999999999997,
+        "avg_mae": -51.0,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 185.0
+      },
+      {
+        "value": "-1.8500000000000227",
+        "n": 1,
+        "avg_mfe": 32.60000000000002,
+        "avg_mae": -40.49999999999999,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 20.0
+      },
+      {
+        "value": "-1.8499999999999943",
+        "n": 1,
+        "avg_mfe": 15.699999999999989,
+        "avg_mae": -37.5,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "-1.7999999999999972",
+        "n": 1,
+        "avg_mfe": 50.94999999999999,
+        "avg_mae": -7.950000000000003,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "-1.6499999999999986",
+        "n": 1,
+        "avg_mfe": 13.299999999999995,
+        "avg_mae": -4.700000000000003,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 25.0
+      },
+      {
+        "value": "-1.5999999999999943",
+        "n": 1,
+        "avg_mfe": -0.0500000000000113,
+        "avg_mae": -11.0,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "-1.5499999999999972",
+        "n": 1,
+        "avg_mfe": 17.099999999999994,
+        "avg_mae": -7.450000000000003,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 305.0
+      },
+      {
+        "value": "-1.5",
+        "n": 2,
+        "avg_mfe": 43.625,
+        "avg_mae": -56.275,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "-1.4500000000000028",
+        "n": 1,
+        "avg_mfe": 10.75,
+        "avg_mae": -3.4499999999999997,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 25.0
+      },
+      {
+        "value": "-1.4499999999999886",
+        "n": 1,
+        "avg_mfe": 34.900000000000006,
+        "avg_mae": -6.449999999999989,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 20.0
+      },
+      {
+        "value": "-1.2999999999999972",
+        "n": 1,
+        "avg_mfe": 7.399999999999991,
+        "avg_mae": -7.600000000000008,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "-1.1499999999999986",
+        "n": 1,
+        "avg_mfe": 43.400000000000006,
+        "avg_mae": -8.0,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "-1.0999999999999943",
+        "n": 1,
+        "avg_mfe": 91.74999999999996,
+        "avg_mae": -55.6,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 185.0
+      },
+      {
+        "value": "-1.0",
+        "n": 1,
+        "avg_mfe": 90.79999999999995,
+        "avg_mae": -6.0,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 25.0
+      },
+      {
+        "value": "-0.8999999999999986",
+        "n": 1,
+        "avg_mfe": 19.9,
+        "avg_mae": -9.85,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "-0.8500000000000227",
+        "n": 1,
+        "avg_mfe": 33.85000000000002,
+        "avg_mae": 1.5500000000000682,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "-0.8500000000000014",
+        "n": 1,
+        "avg_mfe": 25.200000000000003,
+        "avg_mae": -13.55,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "-0.8000000000000114",
+        "n": 1,
+        "avg_mfe": 27.94999999999999,
+        "avg_mae": -13.449999999999989,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "-0.5",
+        "n": 2,
+        "avg_mfe": 12.974999999999996,
+        "avg_mae": -7.700000000000005,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "-0.4000000000000057",
+        "n": 2,
+        "avg_mfe": 35.400000000000006,
+        "avg_mae": -5.674999999999997,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 25.0
+      },
+      {
+        "value": "-0.25",
+        "n": 1,
+        "avg_mfe": 4.400000000000006,
+        "avg_mae": -7.950000000000003,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "-0.1500000000000341",
+        "n": 1,
+        "avg_mfe": 11.600000000000025,
+        "avg_mae": -0.6999999999999886,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "-0.1000000000000014",
+        "n": 2,
+        "avg_mfe": 7.75,
+        "avg_mae": -19.474999999999998,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 7.5
+      },
+      {
+        "value": "-0.0999999999999943",
+        "n": 1,
+        "avg_mfe": 40.6,
+        "avg_mae": -37.95,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 255.0
+      },
+      {
+        "value": "0.0",
+        "n": 1,
+        "avg_mfe": 9.0,
+        "avg_mae": -13.25,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 10.0
+      },
+      {
+        "value": "0.0999999999999978",
+        "n": 1,
+        "avg_mfe": 7.650000000000002,
+        "avg_mae": -1.8999999999999984,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 135.0
+      },
+      {
+        "value": "0.1500000000000056",
+        "n": 1,
+        "avg_mfe": 3.5999999999999943,
+        "avg_mae": -24.15,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.25",
+        "n": 1,
+        "avg_mfe": 49.0,
+        "avg_mae": -44.75,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 255.0
+      },
+      {
+        "value": "0.3000000000000007",
+        "n": 1,
+        "avg_mfe": 9.400000000000002,
+        "avg_mae": -2.349999999999998,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 130.0
+      },
+      {
+        "value": "0.3500000000000085",
+        "n": 1,
+        "avg_mfe": 14.450000000000005,
+        "avg_mae": -11.5,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.3999999999999772",
+        "n": 1,
+        "avg_mfe": 171.60000000000002,
+        "avg_mae": -10.549999999999985,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 20.0
+      },
+      {
+        "value": "0.3999999999999986",
+        "n": 1,
+        "avg_mfe": 64.0,
+        "avg_mae": -6.75,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 120.0
+      },
+      {
+        "value": "0.4000000000000057",
+        "n": 1,
+        "avg_mfe": 4.200000000000003,
+        "avg_mae": -27.3,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.4499999999999993",
+        "n": 1,
+        "avg_mfe": 8.499999999999996,
+        "avg_mae": -2.6000000000000014,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.4500000000000028",
+        "n": 1,
+        "avg_mfe": 19.25,
+        "avg_mae": -6.850000000000001,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 160.0
+      },
+      {
+        "value": "0.6000000000000085",
+        "n": 1,
+        "avg_mfe": 21.200000000000003,
+        "avg_mae": -3.3500000000000014,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 130.0
+      },
+      {
+        "value": "0.6500000000000057",
+        "n": 1,
+        "avg_mfe": 9.950000000000005,
+        "avg_mae": -25.700000000000003,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 10.0
+      },
+      {
+        "value": "0.75",
+        "n": 1,
+        "avg_mfe": 24.599999999999994,
+        "avg_mae": -7.700000000000003,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 160.0
+      },
+      {
+        "value": "0.7999999999999972",
+        "n": 1,
+        "avg_mfe": 6.3500000000000085,
+        "avg_mae": -12.799999999999995,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "0.8499999999999659",
+        "n": 1,
+        "avg_mfe": 0.0,
+        "avg_mae": -33.349999999999994,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.8499999999999943",
+        "n": 1,
+        "avg_mfe": 0.7000000000000028,
+        "avg_mae": -5.649999999999999,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "0.8500000000000085",
+        "n": 1,
+        "avg_mfe": 14.200000000000005,
+        "avg_mae": -7.549999999999997,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 265.0
+      },
+      {
+        "value": "1.0499999999999972",
+        "n": 1,
+        "avg_mfe": 2.6000000000000014,
+        "avg_mae": -1.3999999999999986,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "1.0500000000000114",
+        "n": 3,
+        "avg_mfe": 71.49999999999999,
+        "avg_mae": -16.950000000000006,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 11.666666666666666
+      },
+      {
+        "value": "1.0999999999999943",
+        "n": 1,
+        "avg_mfe": 25.450000000000017,
+        "avg_mae": -16.549999999999997,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "1.25",
+        "n": 2,
+        "avg_mfe": 36.44999999999999,
+        "avg_mae": -7.75,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 87.5
+      },
+      {
+        "value": "1.3000000000000114",
+        "n": 1,
+        "avg_mfe": 1.25,
+        "avg_mae": -34.5,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "1.3499999999999943",
+        "n": 1,
+        "avg_mfe": 1.3500000000000083,
+        "avg_mae": -71.44999999999999,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "1.3500000000000014",
+        "n": 1,
+        "avg_mfe": 52.55,
+        "avg_mae": -5.75,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 125.0
+      },
+      {
+        "value": "1.3999999999999986",
+        "n": 1,
+        "avg_mfe": 46.400000000000006,
+        "avg_mae": -1.1499999999999986,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "1.4500000000000028",
+        "n": 1,
+        "avg_mfe": 22.55,
+        "avg_mae": -24.200000000000003,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "1.5",
+        "n": 1,
+        "avg_mfe": 3.6999999999999993,
+        "avg_mae": -1.8999999999999984,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "1.5499999999999972",
+        "n": 2,
+        "avg_mfe": 26.699999999999996,
+        "avg_mae": -6.649999999999999,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 62.5
+      },
+      {
+        "value": "1.5999999999999943",
+        "n": 1,
+        "avg_mfe": 36.20000000000002,
+        "avg_mae": -83.24999999999999,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 40.0
+      },
+      {
+        "value": "1.6500000000000057",
+        "n": 1,
+        "avg_mfe": -0.5500000000000114,
+        "avg_mae": -18.65000000000001,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "1.6999999999999886",
+        "n": 1,
+        "avg_mfe": 50.5,
+        "avg_mae": -6.849999999999994,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 105.0
+      },
+      {
+        "value": "1.7999999999999972",
+        "n": 1,
+        "avg_mfe": 28.69999999999999,
+        "avg_mae": -1.25,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "1.8999999999999917",
+        "n": 1,
+        "avg_mfe": 0.0,
+        "avg_mae": -16.25,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "1.9000000000000057",
+        "n": 1,
+        "avg_mfe": 32.150000000000006,
+        "avg_mae": -75.2,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 40.0
+      },
+      {
+        "value": "2.0",
+        "n": 1,
+        "avg_mfe": 33.75,
+        "avg_mae": -96.0,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "2.049999999999997",
+        "n": 1,
+        "avg_mfe": 32.14999999999999,
+        "avg_mae": -0.8500000000000085,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 10.0
+      },
+      {
+        "value": "2.1000000000000227",
+        "n": 1,
+        "avg_mfe": 14.049999999999956,
+        "avg_mae": -28.55000000000001,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "2.1500000000000057",
+        "n": 2,
+        "avg_mfe": 17.599999999999994,
+        "avg_mae": -27.025000000000006,
+        "target_rate": 0.5,
+        "avg_time_to_target_minutes": 160.0
+      },
+      {
+        "value": "2.200000000000003",
+        "n": 1,
+        "avg_mfe": 8.199999999999996,
+        "avg_mae": -31.5,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "2.3999999999999773",
+        "n": 1,
+        "avg_mfe": 11.550000000000011,
+        "avg_mae": -105.45,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "2.4499999999999886",
+        "n": 1,
+        "avg_mfe": 1.5,
+        "avg_mae": -63.2,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "2.5",
+        "n": 1,
+        "avg_mfe": 76.54999999999995,
+        "avg_mae": -70.65000000000009,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "2.75",
+        "n": 1,
+        "avg_mfe": -0.2000000000000028,
+        "avg_mae": -18.05000000000001,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "2.799999999999997",
+        "n": 1,
+        "avg_mfe": 9.850000000000009,
+        "avg_mae": -37.75,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "2.8500000000000085",
+        "n": 1,
+        "avg_mfe": 0.3999999999999915,
+        "avg_mae": -16.050000000000004,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "2.9000000000000057",
+        "n": 1,
+        "avg_mfe": 8.349999999999994,
+        "avg_mae": -46.25,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "2.9499999999999886",
+        "n": 1,
+        "avg_mfe": 84.0,
+        "avg_mae": -3.3499999999999943,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 10.0
+      },
+      {
+        "value": "3.0",
+        "n": 1,
+        "avg_mfe": 11.599999999999994,
+        "avg_mae": -43.0,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "3.049999999999983",
+        "n": 1,
+        "avg_mfe": 38.25,
+        "avg_mae": -68.1,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "3.25",
+        "n": 1,
+        "avg_mfe": 10.049999999999995,
+        "avg_mae": -6.599999999999994,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "3.5499999999999545",
+        "n": 1,
+        "avg_mfe": 10.0,
+        "avg_mae": 10.0,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "3.550000000000012",
+        "n": 1,
+        "avg_mfe": 3.9499999999999886,
+        "avg_mae": -12.449999999999989,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "3.5999999999999943",
+        "n": 1,
+        "avg_mfe": 29.849999999999994,
+        "avg_mae": -16.150000000000006,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "3.650000000000034",
+        "n": 1,
+        "avg_mfe": 2.050000000000012,
+        "avg_mae": -44.19999999999999,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "3.75",
+        "n": 1,
+        "avg_mfe": 27.44999999999999,
+        "avg_mae": -31.05000000000001,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "3.8000000000000114",
+        "n": 1,
+        "avg_mfe": 2.5,
+        "avg_mae": -27.80000000000001,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 20.0
+      },
+      {
+        "value": "3.850000000000023",
+        "n": 1,
+        "avg_mfe": 17.5,
+        "avg_mae": -31.5,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "3.899999999999977",
+        "n": 1,
+        "avg_mfe": -0.1999999999999886,
+        "avg_mae": -45.25,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "3.9499999999999886",
+        "n": 1,
+        "avg_mfe": 4.3500000000000085,
+        "avg_mae": -10.25,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "3.9500000000000455",
+        "n": 1,
+        "avg_mfe": 75.79999999999995,
+        "avg_mae": -40.75,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 125.0
+      },
+      {
+        "value": "4.0",
+        "n": 1,
+        "avg_mfe": 20.0,
+        "avg_mae": -34.150000000000006,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "4.199999999999989",
+        "n": 1,
+        "avg_mfe": 36.39999999999998,
+        "avg_mae": -22.0,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 205.0
+      },
+      {
+        "value": "4.700000000000003",
+        "n": 1,
+        "avg_mfe": 24.450000000000003,
+        "avg_mae": -25.2,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 45.0
+      },
+      {
+        "value": "5.199999999999989",
+        "n": 1,
+        "avg_mfe": 35.55000000000001,
+        "avg_mae": -5.149999999999977,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 10.0
+      },
+      {
+        "value": "5.400000000000006",
+        "n": 1,
+        "avg_mfe": 2.999999999999972,
+        "avg_mae": -48.20000000000002,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "5.899999999999977",
+        "n": 1,
+        "avg_mfe": 26.149999999999977,
+        "avg_mae": -4.5,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "5.949999999999989",
+        "n": 1,
+        "avg_mfe": 6.349999999999994,
+        "avg_mae": -59.19999999999999,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "6.0",
+        "n": 1,
+        "avg_mfe": 31.75,
+        "avg_mae": -36.4,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 40.0
+      },
+      {
+        "value": "6.299999999999983",
+        "n": 1,
+        "avg_mfe": -1.4499999999999886,
+        "avg_mae": -27.049999999999983,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "6.350000000000023",
+        "n": 1,
+        "avg_mfe": 95.25,
+        "avg_mae": -16.75,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 130.0
+      },
+      {
+        "value": "6.449999999999989",
+        "n": 1,
+        "avg_mfe": 36.10000000000002,
+        "avg_mae": -17.049999999999955,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 170.0
+      },
+      {
+        "value": "6.5",
+        "n": 1,
+        "avg_mfe": 76.5,
+        "avg_mae": -6.0499999999999545,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 15.0
+      },
+      {
+        "value": "6.75",
+        "n": 1,
+        "avg_mfe": 2.1999999999999886,
+        "avg_mae": -51.75,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "6.800000000000011",
+        "n": 1,
+        "avg_mfe": 42.900000000000034,
+        "avg_mae": -4.699999999999989,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "6.899999999999977",
+        "n": 1,
+        "avg_mfe": -1.0999999999999943,
+        "avg_mae": -31.099999999999994,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "8.349999999999994",
+        "n": 1,
+        "avg_mfe": 6.099999999999994,
+        "avg_mae": -29.65,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "8.649999999999977",
+        "n": 1,
+        "avg_mfe": 38.150000000000034,
+        "avg_mae": -16.349999999999966,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "9.100000000000025",
+        "n": 1,
+        "avg_mfe": 37.0,
+        "avg_mae": -19.19999999999999,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "9.300000000000011",
+        "n": 1,
+        "avg_mfe": 72.75,
+        "avg_mae": -35.900000000000034,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "9.599999999999994",
+        "n": 1,
+        "avg_mfe": 11.849999999999994,
+        "avg_mae": -24.599999999999994,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "9.650000000000006",
+        "n": 1,
+        "avg_mfe": 10.049999999999985,
+        "avg_mae": -115.85,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "10.0",
+        "n": 1,
+        "avg_mfe": 11.399999999999975,
+        "avg_mae": -103.05,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 25.0
+      },
+      {
+        "value": "10.050000000000011",
+        "n": 1,
+        "avg_mfe": 74.89999999999998,
+        "avg_mae": -37.80000000000001,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "10.199999999999989",
+        "n": 1,
+        "avg_mfe": 9.400000000000034,
+        "avg_mae": -26.0,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 25.0
+      },
+      {
+        "value": "10.25",
+        "n": 2,
+        "avg_mfe": 70.30000000000001,
+        "avg_mae": -50.59999999999996,
+        "target_rate": 0.5,
+        "avg_time_to_target_minutes": 65.0
+      },
+      {
+        "value": "10.449999999999989",
+        "n": 2,
+        "avg_mfe": 42.30000000000001,
+        "avg_mae": -108.125,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 7.5
+      },
+      {
+        "value": "10.5",
+        "n": 1,
+        "avg_mfe": 126.14999999999998,
+        "avg_mae": -5.850000000000023,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 80.0
+      },
+      {
+        "value": "10.550000000000011",
+        "n": 1,
+        "avg_mfe": 13.300000000000011,
+        "avg_mae": -114.39999999999998,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 25.0
+      },
+      {
+        "value": "10.650000000000006",
+        "n": 1,
+        "avg_mfe": 10.349999999999994,
+        "avg_mae": -144.15,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "11.0",
+        "n": 1,
+        "avg_mfe": 35.94999999999999,
+        "avg_mae": -80.15000000000003,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 10.0
+      },
+      {
+        "value": "11.350000000000025",
+        "n": 1,
+        "avg_mfe": 74.10000000000002,
+        "avg_mae": -37.94999999999999,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 130.0
+      },
+      {
+        "value": "12.5",
+        "n": 1,
+        "avg_mfe": 7.699999999999989,
+        "avg_mae": -41.35000000000002,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "15.050000000000011",
+        "n": 1,
+        "avg_mfe": 48.94999999999999,
+        "avg_mae": -147.5,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "17.899999999999977",
+        "n": 1,
+        "avg_mfe": 57.55000000000001,
+        "avg_mae": -6.299999999999983,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "18.350000000000023",
+        "n": 1,
+        "avg_mfe": 79.80000000000001,
+        "avg_mae": -2.050000000000012,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "19.5",
+        "n": 1,
+        "avg_mfe": -7.700000000000045,
+        "avg_mae": -72.94999999999999,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "19.950000000000017",
+        "n": 1,
+        "avg_mfe": 62.44999999999999,
+        "avg_mae": -7.100000000000023,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "21.100000000000023",
+        "n": 1,
+        "avg_mfe": -11.0,
+        "avg_mae": -79.0,
+        "target_rate": 0.0,
+        "avg_time_to_target_minutes": NaN
+      },
+      {
+        "value": "23.5",
+        "n": 1,
+        "avg_mfe": 97.20000000000002,
+        "avg_mae": -37.69999999999999,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "26.6",
+        "n": 1,
+        "avg_mfe": 17.549999999999997,
+        "avg_mae": -50.45,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      },
+      {
+        "value": "30.90000000000001",
+        "n": 1,
+        "avg_mfe": 24.849999999999994,
+        "avg_mae": -58.150000000000006,
+        "target_rate": 1.0,
+        "avg_time_to_target_minutes": 5.0
+      }
+    ],
+    "candle_type": [
+      {
+        "value": "indecision",
+        "n": 7,
+        "avg_mfe": 35.114285714285714,
+        "avg_mae": -17.02857142857143,
+        "target_rate": 0.7142857142857143,
+        "avg_time_to_target_minutes": 9.0
+      },
+      {
+        "value": "lower_rejection",
+        "n": 17,
+        "avg_mfe": 35.70882352941177,
+        "avg_mae": -29.23235294117647,
+        "target_rate": 0.8823529411764706,
+        "avg_time_to_target_minutes": 104.33333333333333
+      },
+      {
+        "value": "normal",
+        "n": 45,
+        "avg_mfe": 25.29,
+        "avg_mae": -36.81444444444444,
+        "target_rate": 0.5555555555555556,
+        "avg_time_to_target_minutes": 32.0
+      },
+      {
+        "value": "strong_green",
+        "n": 33,
+        "avg_mfe": 31.603030303030298,
+        "avg_mae": -28.403030303030302,
+        "target_rate": 0.5151515151515151,
+        "avg_time_to_target_minutes": 40.294117647058826
+      },
+      {
+        "value": "strong_red",
+        "n": 14,
+        "avg_mfe": 43.57142857142857,
+        "avg_mae": -19.19999999999999,
+        "target_rate": 0.5714285714285714,
+        "avg_time_to_target_minutes": 71.875
+      },
+      {
+        "value": "unknown",
+        "n": 8,
+        "avg_mfe": 16.606250000000003,
+        "avg_mae": -23.599999999999994,
+        "target_rate": 0.25,
+        "avg_time_to_target_minutes": 97.5
+      },
+      {
+        "value": "upper_rejection",
+        "n": 35,
+        "avg_mfe": 36.935714285714276,
+        "avg_mae": -30.692857142857143,
+        "target_rate": 0.7428571428571429,
+        "avg_time_to_target_minutes": 50.38461538461539
+      }
+    ],
+    "rejection_characteristic": [
+      {
+        "value": "indecision",
+        "n": 7,
+        "avg_mfe": 35.114285714285714,
+        "avg_mae": -17.02857142857143,
+        "target_rate": 0.7142857142857143,
+        "avg_time_to_target_minutes": 9.0
+      },
+      {
+        "value": "lower_rejection",
+        "n": 17,
+        "avg_mfe": 35.70882352941177,
+        "avg_mae": -29.23235294117647,
+        "target_rate": 0.8823529411764706,
+        "avg_time_to_target_minutes": 104.33333333333333
+      },
+      {
+        "value": "normal",
+        "n": 45,
+        "avg_mfe": 25.29,
+        "avg_mae": -36.81444444444444,
+        "target_rate": 0.5555555555555556,
+        "avg_time_to_target_minutes": 32.0
+      },
+      {
+        "value": "strong_green",
+        "n": 33,
+        "avg_mfe": 31.603030303030298,
+        "avg_mae": -28.403030303030302,
+        "target_rate": 0.5151515151515151,
+        "avg_time_to_target_minutes": 40.294117647058826
+      },
+      {
+        "value": "strong_red",
+        "n": 14,
+        "avg_mfe": 43.57142857142857,
+        "avg_mae": -19.19999999999999,
+        "target_rate": 0.5714285714285714,
+        "avg_time_to_target_minutes": 71.875
+      },
+      {
+        "value": "unknown",
+        "n": 8,
+        "avg_mfe": 16.606250000000003,
+        "avg_mae": -23.599999999999994,
+        "target_rate": 0.25,
+        "avg_time_to_target_minutes": 97.5
+      },
+      {
+        "value": "upper_rejection",
+        "n": 35,
+        "avg_mfe": 36.935714285714276,
+        "avg_mae": -30.692857142857143,
+        "target_rate": 0.7428571428571429,
+        "avg_time_to_target_minutes": 50.38461538461539
+      }
+    ],
+    "false_breakout": [
+      {
+        "value": "False",
+        "n": 159,
+        "avg_mfe": 31.88301886792452,
+        "avg_mae": -29.823584905660372,
+        "target_rate": 0.6163522012578616,
+        "avg_time_to_target_minutes": 52.80612244897959
+      }
+    ]
+  },
+  "note": "Factual historical distributions; no composite setup score or profitability claim."
+}

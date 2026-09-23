@@ -19,7 +19,7 @@ def save_setup_chart(candles,event,path,title=None):
     for field,label,color in (("timestamp","entry","tab:green"),("breakout_timestamp","breakout","tab:purple"),
                               ("exit_time","exit","tab:red")):
         value=event_values.get(field)
-        if value is not None:
+        if value is not None and not pd.isna(value):
             value=pd.to_datetime(value,utc=True)
             axis.axvline(value,label=label,color=color,linestyle=":",linewidth=1)
     axis.set_title(title or str(event_values.get("strategy","setup")))

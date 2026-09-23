@@ -1,0 +1,36 @@
+{
+  "events": 103,
+  "date_min": "2026-07-20",
+  "date_max": "2026-08-18",
+  "train": {
+    "n": 72,
+    "target_rate": 0.19444444444444445,
+    "sl_rate": 0.7361111111111112,
+    "avg_mfe": 31.46805555555555,
+    "avg_mae": -29.66388888888889
+  },
+  "validation": {
+    "n": 31,
+    "target_rate": 0.22580645161290322,
+    "sl_rate": 0.7741935483870968,
+    "avg_mfe": 43.08225806451612,
+    "avg_mae": -40.46129032258064
+  },
+  "classifier": {
+    "enabled": true,
+    "features": [
+      "entry_hour",
+      "entry_minute",
+      "entry_before_10",
+      "entry_after_10",
+      "weekday",
+      "volatility_10",
+      "premium_change",
+      "lower_wick",
+      "upper_wick",
+      "range"
+    ],
+    "validation_accuracy": 0.5161290322580645
+  },
+  "anti_overfit": "Chronological validation; validation data is not used for fitting."
+}

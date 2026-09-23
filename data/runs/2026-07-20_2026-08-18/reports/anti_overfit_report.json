@@ -1,0 +1,29 @@
+{
+  "model_version": "v001",
+  "sample_size": 262,
+  "training_statistics": {
+    "n": 183
+  },
+  "validation_statistics": {
+    "n": 79
+  },
+  "feature_set": [
+    "entry_hour",
+    "entry_minute",
+    "entry_before_10",
+    "entry_after_10",
+    "weekday",
+    "volatility_10",
+    "premium_change",
+    "lower_wick",
+    "upper_wick",
+    "range"
+  ],
+  "date_range": {
+    "min": "2026-07-20 04:05:00+00:00",
+    "max": "2026-08-18 05:00:00+00:00"
+  },
+  "insufficient_samples": false,
+  "chronological_split": true,
+  "future_features_excluded": true
+}
