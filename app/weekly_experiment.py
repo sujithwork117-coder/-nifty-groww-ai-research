@@ -29,6 +29,13 @@ def select_latest_completed_week(underlying_path, option_dir):
     if not candidates:
         raise RuntimeError("INSUFFICIENT DATA: no completed Monday-Friday trading week")
     monday, friday, dates = max(candidates)
+    underlying = pd.read_csv(underlying_path)
+    underlying["timestamp"] = pd.to_datetime(underlying["timestamp"], utc=True)
+    local = underlying["timestamp"].dt.tz_convert("Asia/Kolkata")
+    opening = underlying[local.dt.date == dates[0]].sort_values("timestamp")
+    if opening.empty:
+        raise RuntimeError("INSUFFICIENT DATA: selected week has no opening underlying candle")
+    underlying_open = float(opening.iloc[0]["open"])
     options = sorted(Path(option_dir).glob("*.csv"))
     usable = []
     for path in options:
@@ -44,14 +51,35 @@ def select_latest_completed_week(underlying_path, option_dir):
         grouped.setdefault((metadata["expiry"], metadata["option_type"]), []).append(path)
     eligible = []
     for (expiry, option_type), paths in grouped.items():
-        paths.sort(key=lambda path: _contract_metadata(path)["strike"],
-                   reverse=option_type == "CE")
-        for offset, path in enumerate(paths, start=2):
-            if offset in (2, 3):
-                eligible.append(path)
+        declared_ranks = {_file_itm_rank(path) for path in paths}
+        if declared_ranks.issubset({2, 3}) and None not in declared_ranks:
+            eligible.extend(paths)
+            continue
+        paths = [path for path in paths if (
+            option_type == "CE" and _contract_metadata(path)["strike"] < underlying_open
+        ) or (
+            option_type == "PE" and _contract_metadata(path)["strike"] > underlying_open
+        )]
+        paths.sort(key=lambda path: _contract_metadata(path)["strike"], reverse=option_type == "CE")
+        eligible.extend(paths[1:3])
     if len(eligible) < 4:
         raise RuntimeError("INSUFFICIENT DATA: fewer than four option files cover the latest completed week")
-    return {"start": monday, "end": friday, "trading_dates": dates, "option_files": sorted(eligible)}
+    eligible = sorted(eligible)
+    contract_eligibility = []
+    for path in eligible:
+        metadata = _contract_metadata(path)
+        same_type = [candidate for candidate in eligible
+                     if _contract_metadata(candidate)["expiry"] == metadata["expiry"]
+                     and _contract_metadata(candidate)["option_type"] == metadata["option_type"]]
+        same_type.sort(key=lambda candidate: _contract_metadata(candidate)["strike"],
+                       reverse=metadata["option_type"] == "CE")
+        rank = _file_itm_rank(path) or same_type.index(path) + 2
+        contract_eligibility.append({"date": str(dates[0]), "underlying_price": underlying_open,
+                                     "expiry": metadata["expiry"], "option_type": metadata["option_type"],
+                                     "strike": metadata["strike"], "itm_rank": rank,
+                                     "eligible": rank in (2, 3)})
+    return {"start": monday, "end": friday, "trading_dates": dates, "option_files": eligible,
+            "contract_eligibility": contract_eligibility, "underlying_open": underlying_open}
 
 
 def _load_week(path, dates):
@@ -70,10 +98,21 @@ def _contract_metadata(path):
             "option_type": match.group(3)}
 
 
+def _file_itm_rank(path):
+    try:
+        frame = pd.read_csv(path, usecols=["itm_rank"])
+    except (KeyError, ValueError):
+        return None
+    values = pd.to_numeric(frame["itm_rank"], errors="coerce").dropna().unique()
+    return int(values[0]) if len(values) == 1 else None
+
+
 def run_baseline_week(underlying_path, option_dir, selection):
     underlying = _load_week(underlying_path, selection["trading_dates"])
     quality = {"underlying": quality_report(underlying), "options": {}}
     rows = []
+    opening_price = float(underlying.sort_values("timestamp").iloc[0]["open"])
+    eligibility = []
     for path in selection["option_files"]:
         option = _load_week(path, selection["trading_dates"])
         quality["options"][path.name] = quality_report(option)
@@ -86,6 +125,14 @@ def run_baseline_week(underlying_path, option_dir, selection):
         group_paths.sort(key=lambda candidate: _contract_metadata(candidate)["strike"],
                  reverse=metadata["option_type"] == "CE")
         metadata["itm_rank"] = group_paths.index(path) + 2
+        is_itm = (metadata["option_type"] == "CE" and metadata["strike"] < opening_price) or \
+             (metadata["option_type"] == "PE" and metadata["strike"] > opening_price)
+        eligibility.append({"date": str(selection["start"]), "underlying_price": opening_price,
+                    "expiry": metadata["expiry"], "option_type": metadata["option_type"],
+                    "strike": metadata["strike"], "itm_rank": metadata["itm_rank"],
+                    "expected_itm_relationship": "CE strike < underlying" if metadata["option_type"] == "CE" else "PE strike > underlying",
+                    "actual_relationship": is_itm, "data_coverage": quality["options"][path.name],
+                    "eligible": bool(is_itm and metadata["itm_rank"] in (2, 3))})
         level = backtest_level_to_level(option, metadata)
         eka = analyze_ekalayava(option, metadata)
         for strategy, events in (("LEVEL_TO_LEVEL", level), ("EKALAYAVA", eka)):
@@ -109,6 +156,34 @@ def run_baseline_week(underlying_path, option_dir, selection):
         if column not in events or events.empty:
             return {}
         return {str(key): int(value) for key, value in events[column].value_counts(dropna=False).items()}
+    strategy_breakdown = {}
+    for strategy, group in events.groupby("strategy") if not events.empty else []:
+        group_points = pd.to_numeric(group["points_gained_lost"], errors="coerce")
+        valid_group = group_points.dropna()
+        local_dates = pd.to_datetime(group["timestamp"], utc=True).dt.tz_convert("Asia/Kolkata").dt.date
+        daily_points = valid_group.groupby(local_dates.loc[valid_group.index]).sum()
+        strategy_breakdown[strategy] = {
+            "days": int(local_dates.nunique()), "setups": int(len(group)),
+            "valid_setups": int(valid_group.count()), "target_hits": int((group.outcome == "TARGET").sum()),
+            "sl_hits": int(group.outcome.isin(["SL", "AMBIGUOUS_SL_FIRST"]).sum()),
+            "open_outcomes": int((group.outcome == "OPEN").sum()), "points": float(valid_group.sum()) if not valid_group.empty else 0.0,
+            "average_points_per_setup": float(valid_group.mean()) if not valid_group.empty else None,
+            "average_daily_points": float(daily_points.mean()) if not daily_points.empty else None,
+        }
+    metrics = {
+        "setup_count": int(len(events)), "valid_setups": int((events.outcome != "OPEN").sum()) if not events.empty else 0,
+        "target_hits": int((events.outcome == "TARGET").sum()) if not events.empty else 0,
+        "sl_hits": int(events.outcome.isin(["SL", "AMBIGUOUS_SL_FIRST"]).sum()) if not events.empty else 0,
+        "open_outcomes": outcomes, "average_points": float(points.dropna().mean()) if points.notna().any() else None,
+        "median_points": float(points.dropna().median()) if points.notna().any() else None,
+        "average_mfe": float(events.mfe.mean()) if "mfe" in events and not events.empty else None,
+        "average_mae": float(events.mae.mean()) if "mae" in events and not events.empty else None,
+        "average_holding_time_minutes": float(events.time_to_exit_minutes.mean()) if "time_to_exit_minutes" in events and events.time_to_exit_minutes.notna().any() else None,
+        "maximum_drawdown_points": drawdown, "maximum_winning_streak": max_win_streak,
+        "maximum_losing_streak": max_loss_streak, "by_strategy": strategy_breakdown,
+        "by_option_type": distribution("option_type"), "by_itm_rank": distribution("itm_rank"),
+        "by_entry_hour": distribution("entry_hour"),
+    }
     result = {
         "week": {"start": str(selection["start"]), "end": str(selection["end"]),
                  "trading_dates": [str(value) for value in selection["trading_dates"]]},
@@ -128,12 +203,14 @@ def run_baseline_week(underlying_path, option_dir, selection):
         "average_holding_time_minutes": float(events.time_to_exit_minutes.mean())
         if "time_to_exit_minutes" in events and events.time_to_exit_minutes.notna().any() else None,
         "outcomes": {str(key): int(value) for key, value in outcomes.items()},
-        "by_strategy": {str(key): int(value) for key, value in events.strategy.value_counts().items()} if not events.empty else {},
+        "by_strategy": strategy_breakdown,
         "by_option_type": distribution("option_type"),
         "by_itm_rank": distribution("itm_rank"),
         "by_entry_hour": distribution("entry_hour"),
         "data_quality": quality,
         "lookahead_check": "PASS: deterministic engine uses completed candles and future candles only after entry",
         "development_validation": "INSUFFICIENT OUT-OF-SAMPLE DATA: one completed week is reserved for this bounded demo",
+        "contract_eligibility": eligibility,
+        "metrics": metrics,
     }
     return result

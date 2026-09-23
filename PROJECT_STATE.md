@@ -30,4 +30,17 @@ Updated: 2026-09-23
 
 ## Next Objective
 
-Configure a real LLM provider, then run exactly one bounded autonomous experiment on 2026-09-07 through 2026-09-11. Do not promote any strategy change.
+Latest bounded demo EXP-8ee0e64d66 completed against a two-month Groww dataset and selected 2026-09-07 through 2026-09-11 after contract and data checks. Decision: NEED_MORE_DATA. Do not promote any strategy change.
+
+## EXP-425143a757 Follow-up
+
+- Previous SMA experiment request discarded as invalid/inconclusive for canonical research.
+- The experiment exposed missing result-metric enforcement: aggregate strategy counts did not include per-strategy points or average daily points.
+- Missing option intervals and one completed week limited evidence; no fabricated values were used.
+- ExperimentSpec validation and result-completeness enforcement now run before Groq interpretation.
+
+## Latest Demo
+
+- Result completeness: PASS; lookahead: PASS; safety: paper-only/read-only.
+- Deterministic result: 31 setups, 25 valid, 16 targets, 9 SL, 6 open; average 7.04 points.
+- Per-strategy average daily points: Level-to-Level 21.28; Ekalayava 17.40.

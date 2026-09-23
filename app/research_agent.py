@@ -4,6 +4,7 @@ import time
 from pathlib import Path
 
 from .config import CFG
+from .experiment_spec import ExperimentSpecError, validate_experiment_spec, validate_result_completeness
 from .llm import LLMConfigurationError, build_llm_provider
 from .research_state import ResearchState
 from .weekly_experiment import run_baseline_week, select_latest_completed_week
@@ -51,6 +52,9 @@ class ResearchAgent:
         provider = provider or build_llm_provider()
         selection = select_latest_completed_week(dataset, option_dir)
         context = {
+            "dataset": dataset,
+            "selected_period": {"start": str(selection["start"]), "end": str(selection["end"]),
+                                "trading_dates": [str(date) for date in selection["trading_dates"]]},
             "latest_completed_week": {"start": str(selection["start"]), "end": str(selection["end"]),
                                       "trading_dates": [str(date) for date in selection["trading_dates"]]},
             "option_file_count": len(selection["option_files"]),
@@ -61,28 +65,53 @@ class ResearchAgent:
             "prior_experiment": "Discard the previous SMA experiment as invalid/inconclusive for canonical project research.",
             "baseline": "baseline-v1 Level-to-Level and Ekalayava; no strategy changes",
         }
-        plan = self._json_reply(provider.complete(
+        spec_payload = self._json_reply(provider.complete(
             "You are a cautious quantitative research scientist. Return JSON only. "
             "The canonical project rules are Level-to-Level and Ekalayava for NIFTY options. "
             "Do not propose SMA, momentum, EMA, RSI, MACD, or other unapproved strategy changes. "
             "Use only ITM rank 2 and 3 CE/PE contracts. Use completed 5-minute candles in Asia/Kolkata. "
             "Missing option candles are unavailable data and must never be interpolated or fabricated. "
             "The previous SMA experiment is invalid/inconclusive and must not be used as canonical evidence.",
-            "Generate one falsifiable hypothesis and select one bounded experiment from the available context. "
-            "The experiment must test the unchanged canonical strategies, not invent a new strategy. "
-            "Do not claim certainty. Required JSON keys: hypothesis, experiment, rationale, next_question. "
+            "Generate exactly one structured ExperimentSpec. Do not return prose outside JSON. "
+            "dataset_period must describe the selected bounded period, not the full source-data window. "
+            "Required JSON keys: hypothesis, strategy_scope, dataset_period, comparison_dimension, "
+            "required_metrics, required_groupings, statistical_test, minimum_data_requirements, reason. "
+            "Use only supported metrics and groupings; statistical_test must be null. "
             f"Context: {json.dumps(context, sort_keys=True)}"
         ))
-        for key in ("hypothesis", "experiment", "rationale", "next_question"):
-            if not plan.get(key):
-                raise RuntimeError(f"LLM plan missing required key: {key}")
+        try:
+            spec = validate_experiment_spec(spec_payload, dataset, selection)
+        except ExperimentSpecError as error:
+            spec = None
+            correction_error = error
+            for _ in range(2):
+                corrected = self._json_reply(provider.complete(
+                    "Return ONLY one valid JSON object, with no markdown and no prose. "
+                    "Every list field must be a JSON array. Reject non-canonical strategies, indicators, "
+                    "interpolation, fabricated data, unsupported metrics, and statistical tests.",
+                    f"The previous specification failed validation: {correction_error}. Return exactly this shape: "
+                    '{"hypothesis":"...","strategy_scope":["LEVEL_TO_LEVEL","EKALAYAVA"],'
+                    '"dataset_period":"...","comparison_dimension":"strategy",'
+                    '"required_metrics":["strategy_breakdown","average_daily_points_by_strategy"],'
+                    '"required_groupings":["strategy"],"statistical_test":null,'
+                    '"minimum_data_requirements":["completed 5-minute candles","ITM 2 and 3 CE/PE"],'
+                    '"reason":"..."}. Context: '
+                    f"{json.dumps(context, sort_keys=True)}"
+                ))
+                try:
+                    spec = validate_experiment_spec(corrected, dataset, selection)
+                    break
+                except ExperimentSpecError as retry_error:
+                    correction_error = retry_error
+            if spec is None:
+                raise correction_error
         if dry_run:
-            return {"status": "DRY_RUN", "plan": plan, "context": context}
+            return {"status": "DRY_RUN", "experiment_spec": spec.as_dict(), "context": context}
         if time.monotonic() - started > max_runtime_seconds:
             raise TimeoutError("Autonomous research runtime limit exceeded before experiment")
         experiment_id = self.state.start_experiment(
-            plan["hypothesis"], dataset, strategy_version="baseline-v1",
-            ai_plan=plan, selected_week=context["latest_completed_week"], experiment=plan["experiment"]
+            spec.hypothesis, dataset, strategy_version="baseline-v1",
+            experiment_spec=spec.as_dict(), selected_week=context["latest_completed_week"]
         )
         failures = 0
         while True:
@@ -98,6 +127,12 @@ class ResearchAgent:
         if time.monotonic() - started > max_runtime_seconds:
             self.state.finish_experiment(experiment_id, "FAILED", error="runtime limit exceeded")
             raise TimeoutError("Autonomous research runtime limit exceeded")
+        try:
+            completeness = validate_result_completeness(spec, result)
+        except ExperimentSpecError as error:
+            self.state.record_error(experiment_id, error, context={"phase": "result_completeness"})
+            self.state.finish_experiment(experiment_id, "FAILED", error=str(error))
+            raise
         interpretation = self._json_reply(provider.complete(
             "You are a cautious quantitative research scientist. Return JSON only. "
             "Evaluate only the canonical NIFTY Level-to-Level and Ekalayava result. "
@@ -105,11 +140,12 @@ class ResearchAgent:
             "The previous SMA experiment is invalid/inconclusive and is not evidence.",
             "Interpret this actual deterministic experiment result. Required JSON keys: decision, "
             "supported_evidence, contradictory_evidence, data_limitations, strategy_change_proposed, "
-            "next_question. decision must be ACCEPT, REJECT, NEED_MORE_DATA, or INVESTIGATE. "
-            f"Hypothesis: {plan['hypothesis']}\nResult: {json.dumps(result, sort_keys=True, default=str)}"
+            "next_question. decision must be SUPPORTED, NOT_SUPPORTED, NEED_MORE_DATA, or INCONCLUSIVE. "
+            "Use METRIC NOT AVAILABLE for anything absent; do not estimate. "
+            f"ExperimentSpec: {json.dumps(spec.as_dict(), sort_keys=True)}\nResult: {json.dumps(result, sort_keys=True, default=str)}"
         ))
         decision = interpretation.get("decision")
-        if decision not in {"ACCEPT", "REJECT", "NEED_MORE_DATA", "INVESTIGATE"}:
+        if decision not in {"SUPPORTED", "NOT_SUPPORTED", "NEED_MORE_DATA", "INCONCLUSIVE"}:
             raise RuntimeError(f"LLM returned unsupported decision: {decision}")
         report_path = Path(report_dir) / f"ai_experiment_{experiment_id}.json"
         report_path.parent.mkdir(parents=True, exist_ok=True)
@@ -119,13 +155,15 @@ class ResearchAgent:
                       "discarded_experiment": "Previous SMA experiment marked invalid/inconclusive",
                       "missing_option_candles": "unavailable; no interpolation or fabrication",
                   },
-                  "plan": plan, "result": result,
+                  "experiment_spec": spec.as_dict(), "result_completeness": completeness,
+                  "plan": spec.as_dict(), "result": result,
                   "interpretation": interpretation, "provider": provider.provider,
                   "model": provider.model}
         report_path.write_text(json.dumps(report, indent=2, sort_keys=True, default=str) + "\n")
         self.state.finish_experiment(experiment_id, decision, result=result,
                                      interpretation=interpretation, report=str(report_path))
-        return {"experiment_id": experiment_id, "plan": plan, "result": result,
+        return {"experiment_id": experiment_id, "experiment_spec": spec.as_dict(),
+            "plan": spec.as_dict(), "result": result,
                 "interpretation": interpretation, "report": str(report_path),
                 "steps": 7, "provider": provider.provider, "model": provider.model}
 

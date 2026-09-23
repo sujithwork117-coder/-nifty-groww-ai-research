@@ -1,5 +1,66 @@
 {
+  "contract_eligibility": [
+    {
+      "date": "2026-09-07",
+      "eligible": true,
+      "expiry": "15Sep26",
+      "itm_rank": 3,
+      "option_type": "CE",
+      "strike": 23550.0,
+      "underlying_price": 23897.7
+    },
+    {
+      "date": "2026-09-07",
+      "eligible": true,
+      "expiry": "15Sep26",
+      "itm_rank": 2,
+      "option_type": "CE",
+      "strike": 23600.0,
+      "underlying_price": 23897.7
+    },
+    {
+      "date": "2026-09-07",
+      "eligible": true,
+      "expiry": "15Sep26",
+      "itm_rank": 2,
+      "option_type": "PE",
+      "strike": 24250.0,
+      "underlying_price": 23897.7
+    },
+    {
+      "date": "2026-09-07",
+      "eligible": true,
+      "expiry": "15Sep26",
+      "itm_rank": 3,
+      "option_type": "PE",
+      "strike": 24400.0,
+      "underlying_price": 23897.7
+    }
+  ],
   "experiment_id": "EXP-8ee0e64d66",
+  "experiment_spec": {
+    "comparison_dimension": "strategy",
+    "dataset_period": "2026-07-23 to 2026-09-23",
+    "hypothesis": "LEVEL_TO_LEVEL and EKALAYAVA strategies will achieve higher average daily points compared to the baseline over the two-month period ending 2026-09-23.",
+    "minimum_data_requirements": [
+      "completed 5-minute candles",
+      "ITM 2 and 3 CE/PE"
+    ],
+    "reason": "To validate the effectiveness of canonical strategies over the baseline, ensuring data completeness and contract eligibility for the specified period.",
+    "required_groupings": [
+      "strategy"
+    ],
+    "required_metrics": [
+      "strategy_breakdown",
+      "average_daily_points_by_strategy"
+    ],
+    "statistical_test": null,
+    "strategy_scope": [
+      "LEVEL_TO_LEVEL",
+      "EKALAYAVA"
+    ]
+  },
+  "generated_at_utc": "2026-09-23T15:23:31.516520+00:00",
   "interpretation": {
     "contradictory_evidence": "METRIC NOT AVAILABLE",
     "data_limitations": "1. Baseline average daily points metric is missing, preventing direct comparison. 2. Only 5 trading days (one week) of data are available, limiting statistical power. 3. Several option contracts have missing intervals (e.g., 125 missing for 24250-PE, 34 missing for 24400-PE), indicating incomplete candle data. 4. Contract coverage shows zero contract_count entries, suggesting potential data extraction issues. 5. The experiment notes insufficient out-of-sample data and reserves one week for validation, further limiting evidence.",
@@ -8,7 +69,36 @@
     "strategy_change_proposed": "Collect a full two-month period of completed 5\u2011minute candles for all relevant ITM contracts, ensure no missing intervals, and record baseline strategy performance metrics. Re\u2011run the experiment with the expanded dataset to enable a robust comparison.",
     "supported_evidence": "LEVEL_TO_LEVEL and EKALAYAVA strategies achieved average daily points of 21.28 and 17.40 respectively over the 5 trading days in the dataset, which are higher than the overall average points of 7.04 reported for all setups. However, the baseline average daily points for comparison are not provided in the result, so the hypothesis that these strategies outperform the baseline cannot be confirmed."
   },
-  "report": "data/runs/canonical_two_months_20260923_151545/reports/ai_experiment_EXP-8ee0e64d66.json",
+  "model": "openai/gpt-oss-20b",
+  "plan": {
+    "comparison_dimension": "strategy",
+    "dataset_period": "2026-07-23 to 2026-09-23",
+    "hypothesis": "LEVEL_TO_LEVEL and EKALAYAVA strategies will achieve higher average daily points compared to the baseline over the two-month period ending 2026-09-23.",
+    "minimum_data_requirements": [
+      "completed 5-minute candles",
+      "ITM 2 and 3 CE/PE"
+    ],
+    "reason": "To validate the effectiveness of canonical strategies over the baseline, ensuring data completeness and contract eligibility for the specified period.",
+    "required_groupings": [
+      "strategy"
+    ],
+    "required_metrics": [
+      "strategy_breakdown",
+      "average_daily_points_by_strategy"
+    ],
+    "statistical_test": null,
+    "strategy_scope": [
+      "LEVEL_TO_LEVEL",
+      "EKALAYAVA"
+    ]
+  },
+  "provider": "groq",
+  "research_lineage": {
+    "canonical_rules": "NIFTY Level-to-Level + Ekalayava",
+    "discarded_experiment": "Previous SMA experiment marked invalid/inconclusive",
+    "missing_option_candles": "unavailable; no interpolation or fabrication",
+    "previous_experiment": "EXP-425143a757 retained as historical evidence"
+  },
   "result": {
     "ambiguous_setups": 0,
     "average_holding_time_minutes": 23.6,
@@ -343,6 +433,28 @@
       ]
     }
   },
-  "status": "NEED_MORE_DATA",
-  "updated_at": "2026-09-23T15:23:31.515751+00:00"
+  "result_completeness": {
+    "missing_metrics": [],
+    "required_metrics": [
+      "strategy_breakdown",
+      "average_daily_points_by_strategy"
+    ],
+    "status": "PASS"
+  },
+  "safety": {
+    "execution_allowed": false,
+    "groww_read_only": true,
+    "paper_only": true
+  },
+  "selected_period": {
+    "end": "2026-09-11",
+    "start": "2026-09-07",
+    "trading_dates": [
+      "2026-09-07",
+      "2026-09-08",
+      "2026-09-09",
+      "2026-09-10",
+      "2026-09-11"
+    ]
+  }
 }

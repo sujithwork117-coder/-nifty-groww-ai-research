@@ -1,10 +1,10 @@
 # Next Task
 
-Configure `RESEARCH_LLM_PROVIDER` and `RESEARCH_LLM_API_KEY` in the environment, then run one bounded experiment on the latest completed historical week.
+Use the persisted EXP-8ee0e64d66 result as the baseline for the next bounded research question; do not treat its NEED_MORE_DATA decision as strategy approval.
 
 Hypothesis to test: CE and PE setup outcomes may differ by ITM rank and entry time, but the difference should be checked across a development period and an unseen validation period before proposing any strategy change.
 
-The repository selected 2026-09-07 through 2026-09-11 as the latest complete Monday-Friday week. The deterministic baseline path is ready; the AI demo is currently blocked by the external Groq API returning `HTTP 403 Forbidden` for the configured key, so the provider account/key permission must be corrected before the real autonomous run can complete.
+The repository previously selected 2026-09-07 through 2026-09-11, but the next run must re-check data quality rather than assume that week is suitable. Groq credentials are configured through `llmkey.md` for the bounded run.
 
 A current-week read-only snapshot is also available under `data/raw/live-2026-09-21_2026-09-23/` with a deterministic preflight report. It must not be treated as a completed-week validation result.
 

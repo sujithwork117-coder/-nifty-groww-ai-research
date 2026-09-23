@@ -8,3 +8,6 @@ Runtime failures from bounded experiments are appended to `data/agent_state/erro
 - Out-of-sample evidence is insufficient for accepting strategy modifications.
 - 2026-09-23: autonomous demo stopped before planning because `RESEARCH_LLM_PROVIDER` and `RESEARCH_LLM_API_KEY` were missing. This is a configuration block, not a research result; no fallback response was generated.
 - 2026-09-23: Groq provider access was attempted using the key from [llmkey.md](llmkey.md); the API responded with `HTTP 403 Forbidden`, so the real autonomous experiment is externally blocked until the Groq key or account permissions are valid.
+
+- EXP-425143a757: requested per-strategy daily metrics were absent from the deterministic result; this is now enforced by ExperimentSpec/result-completeness validation.
+- 2026-09-23: Two malformed Groq ExperimentSpec responses and one empty response were rejected before experiment start; the provider probe then succeeded and the single valid demo completed as EXP-8ee0e64d66.

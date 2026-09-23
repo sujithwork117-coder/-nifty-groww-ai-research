@@ -17,9 +17,14 @@ class FakeProvider:
         if len(self.prompts) == 1:
             return json.dumps({
                 "hypothesis": "PE and CE outcomes differ by entry time",
-                "experiment": "compare CE and PE baseline outcomes by entry hour",
-                "rationale": "The available contract data supports a bounded segment comparison.",
-                "next_question": "Does the difference persist in another completed week?",
+                "strategy_scope": ["LEVEL_TO_LEVEL", "EKALAYAVA"],
+                "dataset_period": "2026-09-14 to 2026-09-18",
+                "comparison_dimension": "option_type and entry_hour",
+                "required_metrics": [],
+                "required_groupings": ["option_type", "entry_hour"],
+                "statistical_test": None,
+                "minimum_data_requirements": ["completed 5-minute candles", "ITM 2/3 CE/PE"],
+                "reason": "The available contract data supports a bounded segment comparison.",
             })
         return json.dumps({
             "decision": "NEED_MORE_DATA",
