@@ -1,0 +1,138 @@
+{
+  "analysis_type": "CURRENT_WEEK_DETERMINISTIC_BASELINE_ONLY",
+  "period": {
+    "start": "2026-09-21",
+    "end": "2026-09-23",
+    "completed_candle_cutoff": "2026-09-23T15:25:00+05:30"
+  },
+  "ai_demo_status": "BLOCKED_MISSING_LLM_CONFIGURATION",
+  "result": {
+    "week": {
+      "start": "2026-09-21",
+      "end": "2026-09-23",
+      "trading_dates": [
+        "2026-09-21",
+        "2026-09-22",
+        "2026-09-23"
+      ]
+    },
+    "dataset": "data/raw/live_2026-09-21_2026-09-23/nifty_5m.csv",
+    "strategy_version": "baseline-v1",
+    "setup_count": 19,
+    "valid_setups": 13,
+    "skipped_setups": 6,
+    "ambiguous_setups": 0,
+    "target_hits": 6,
+    "sl_hits": 7,
+    "average_points": 2.2461538461538453,
+    "median_points": 1.8499999999999943,
+    "average_mfe": 34.26315789473684,
+    "average_mae": -53.263157894736835,
+    "maximum_drawdown_points": 14.000000000000028,
+    "maximum_winning_streak": 5,
+    "maximum_losing_streak": 3,
+    "average_holding_time_minutes": 27.692307692307693,
+    "outcomes": {
+      "SL": 7,
+      "TARGET": 6,
+      "OPEN": 6
+    },
+    "by_strategy": {
+      "EKALAYAVA": 12,
+      "LEVEL_TO_LEVEL": 7
+    },
+    "by_option_type": {
+      "PE": 11,
+      "CE": 8
+    },
+    "by_itm_rank": {
+      "2": 10,
+      "3": 9
+    },
+    "by_entry_hour": {
+      "9": 11,
+      "10": 8
+    },
+    "data_quality": {
+      "underlying": {
+        "total_candles": 240,
+        "trading_dates": [
+          "2026-09-21",
+          "2026-09-22",
+          "2026-09-23"
+        ],
+        "missing_intervals": 0,
+        "duplicate_count": 0,
+        "invalid_ohlc_count": 0,
+        "contract_count": 0,
+        "date_min": "2026-09-21 03:45:00+00:00",
+        "date_max": "2026-09-23 09:55:00+00:00",
+        "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware"
+      },
+      "options": {
+        "NSE-NIFTY-29Sep26-23250-CE.csv": {
+          "total_candles": 233,
+          "trading_dates": [
+            "2026-09-21",
+            "2026-09-22",
+            "2026-09-23"
+          ],
+          "missing_intervals": 0,
+          "duplicate_count": 0,
+          "invalid_ohlc_count": 0,
+          "contract_count": 0,
+          "date_min": "2026-09-21 03:45:00+00:00",
+          "date_max": "2026-09-23 10:05:00+00:00",
+          "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware"
+        },
+        "NSE-NIFTY-29Sep26-23350-CE.csv": {
+          "total_candles": 233,
+          "trading_dates": [
+            "2026-09-21",
+            "2026-09-22",
+            "2026-09-23"
+          ],
+          "missing_intervals": 0,
+          "duplicate_count": 0,
+          "invalid_ohlc_count": 0,
+          "contract_count": 0,
+          "date_min": "2026-09-21 03:45:00+00:00",
+          "date_max": "2026-09-23 10:05:00+00:00",
+          "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware"
+        },
+        "NSE-NIFTY-29Sep26-23500-PE.csv": {
+          "total_candles": 233,
+          "trading_dates": [
+            "2026-09-21",
+            "2026-09-22",
+            "2026-09-23"
+          ],
+          "missing_intervals": 0,
+          "duplicate_count": 0,
+          "invalid_ohlc_count": 0,
+          "contract_count": 0,
+          "date_min": "2026-09-21 03:45:00+00:00",
+          "date_max": "2026-09-23 10:05:00+00:00",
+          "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware"
+        },
+        "NSE-NIFTY-29Sep26-23550-PE.csv": {
+          "total_candles": 232,
+          "trading_dates": [
+            "2026-09-21",
+            "2026-09-22",
+            "2026-09-23"
+          ],
+          "missing_intervals": 0,
+          "duplicate_count": 0,
+          "invalid_ohlc_count": 0,
+          "contract_count": 0,
+          "date_min": "2026-09-21 03:45:00+00:00",
+          "date_max": "2026-09-23 10:05:00+00:00",
+          "timezone": "Asia/Kolkata for trading dates; timestamps stored timezone-aware"
+        }
+      }
+    },
+    "lookahead_check": "PASS: deterministic engine uses completed candles and future candles only after entry",
+    "development_validation": "INSUFFICIENT OUT-OF-SAMPLE DATA: one completed week is reserved for this bounded demo"
+  }
+}

@@ -10,3 +10,11 @@ The machine-readable experiment history is stored as JSON Lines in `data/agent_s
 - Result: 4 eligible ITM contracts; 2 Level-to-Level setups; 0 Ekalayava setups.
 - Data quality: underlying and option candles had zero invalid OHLC rows and zero duplicate timestamps.
 - Decision: observation only; insufficient evidence for a strategy change or out-of-sample claim.
+
+## PRECHECK-2026-09-23-CURRENT-WEEK
+
+- Type: deterministic paper-only preflight; not an AI experiment.
+- Dataset: read-only Groww snapshot for 2026-09-21 through 2026-09-23, through 15:25 IST.
+- Coverage: 240 underlying candles and four current 2nd/3rd ITM contracts; zero invalid OHLC rows and zero duplicates.
+- Result: 19 setups, 13 valid, 6 open/skipped, 6 targets, 7 SL outcomes; lookahead check passed.
+- AI status: blocked because no `RESEARCH_LLM_PROVIDER` or `RESEARCH_LLM_API_KEY` is configured.

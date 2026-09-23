@@ -18,6 +18,7 @@ Updated: 2026-09-23
 - Latest commit before this infrastructure task: `bbddabc`.
 - Latest completed-week candidate: 2026-09-07 through 2026-09-11; 16 eligible option files, zero invalid OHLC rows.
 - AI demo status: BLOCKED before experiment because `RESEARCH_LLM_PROVIDER` and `RESEARCH_LLM_API_KEY` are not configured. No fake response was used.
+- Current-week snapshot fetched read-only for 2026-09-21 through 2026-09-23: 240 underlying candles and four 2026-09-29 ITM contracts; deterministic baseline preflight produced 19 setups.
 
 ## Known Limitations
 

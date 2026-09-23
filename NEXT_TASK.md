@@ -6,6 +6,8 @@ Hypothesis to test: CE and PE setup outcomes may differ by ITM rank and entry ti
 
 The repository selected 2026-09-07 through 2026-09-11 as the latest complete Monday-Friday week. The deterministic baseline path is ready; the AI demo cannot begin until a real provider is configured.
 
+A current-week read-only snapshot is also available under `data/raw/live-2026-09-21_2026-09-23/` with a deterministic preflight report. It must not be treated as a completed-week validation result.
+
 Required steps:
 
 1. Select and document a completed week with sufficient underlying and option coverage.
