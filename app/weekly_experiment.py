@@ -39,17 +39,24 @@ def select_requested_period(underlying_path, option_dir, start=REQUESTED_START, 
     underlying["timestamp"] = pd.to_datetime(underlying["timestamp"], utc=True)
     local = underlying["timestamp"].dt.tz_convert("Asia/Kolkata")
     opening_prices = {}
+    missing_opening_dates = []
     for trading_date in dates:
-        opening = underlying[local.dt.date == trading_date].sort_values("timestamp")
-        if not opening.empty:
+        opening = underlying[(local.dt.date == trading_date) & (local.dt.strftime("%H:%M") == "09:15")]
+        if len(opening) == 1:
             opening_prices[trading_date] = float(opening.iloc[0]["open"])
+        else:
+            missing_opening_dates.append(str(trading_date))
     options = sorted(Path(option_dir).glob("*.csv"))
     option_dates = {path: _option_dates(path) for path in options}
     eligible_by_date = {}
+    contract_coverage_by_date = {}
     contract_eligibility = []
     for trading_date in dates:
         price = opening_prices.get(trading_date)
-        candidates = [path for path in options if trading_date in option_dates[path]]
+        # Rank from the available contract universe, not only files that happen
+        # to contain candles on this date; otherwise a missing ITM2 file can
+        # silently shift ITM3 into the ITM2 slot.
+        candidates = options
         by_type = {"CE": [], "PE": []}
         for path in candidates:
             metadata = _contract_metadata(path)
@@ -70,17 +77,36 @@ def select_requested_period(underlying_path, option_dir, start=REQUESTED_START, 
             for rank, path in enumerate(paths[1:3], start=2):
                 selected.append(path)
                 metadata = _contract_metadata(path)
-                coverage = quality_report(_load_week(path, [trading_date]))
+                option_day = _load_week(path, [trading_date])
+                coverage = quality_report(option_day)
+                local_option_times = option_day.timestamp.dt.tz_convert("Asia/Kolkata").dt.strftime("%H:%M")
+                opening_candle_available = bool((local_option_times == "09:15").any())
                 contract_eligibility.append({"date": str(trading_date), "underlying_price": price,
+                    "symbol": path.stem,
                     "expiry": metadata["expiry"], "option_type": option_type, "strike": metadata["strike"],
                     "itm_rank": rank, "expected_itm_relationship": "CE strike < underlying" if option_type == "CE" else "PE strike > underlying",
                     "actual_relationship": True, "data_coverage": coverage,
+                    "opening_candle_available": opening_candle_available,
+                    "contract_day_has_candles": not option_day.empty,
                     "missing_intervals": coverage["missing_intervals"], "eligible": True})
         eligible_by_date[trading_date] = selected
+        present_pairs = {(item["option_type"], item["itm_rank"]) for item in contract_eligibility
+                         if item["date"] == str(trading_date) and item["contract_day_has_candles"]}
+        expected_pairs = {(option_type, rank) for option_type in ("CE", "PE") for rank in (2, 3)}
+        contract_coverage_by_date[trading_date] = {
+            "present": sorted([{"option_type": option_type, "itm_rank": rank}
+                               for option_type, rank in present_pairs],
+                              key=lambda item: (item["option_type"], item["itm_rank"])),
+            "missing": sorted([{"option_type": option_type, "itm_rank": rank}
+                               for option_type, rank in expected_pairs - present_pairs],
+                              key=lambda item: (item["option_type"], item["itm_rank"])),
+        }
     eligible = sorted(set(path for paths in eligible_by_date.values() for path in paths))
     return {"start": start, "end": end, "requested_start": start, "requested_end": end,
             "trading_dates": dates, "option_files": eligible, "eligible_by_date": eligible_by_date,
-            "contract_eligibility": contract_eligibility, "underlying_open": next(iter(opening_prices.values()), None),
+            "contract_eligibility": contract_eligibility, "contract_coverage_by_date": contract_coverage_by_date,
+            "missing_underlying_opening_dates": missing_opening_dates,
+            "underlying_open": next(iter(opening_prices.values()), None),
             "underlying_dates": dates, "source_underlying_dates": source_dates}
 
 
@@ -125,17 +151,28 @@ def run_baseline_week(underlying_path, option_dir, selection):
         if day_underlying.empty:
             missing_data.append({"date": str(trading_date), "dataset": "underlying", "reason": "no candles"})
             continue
-        opening_price = float(day_underlying.sort_values("timestamp").iloc[0]["open"])
+        opening_rows = day_underlying[day_underlying.timestamp.dt.tz_convert("Asia/Kolkata").dt.strftime("%H:%M") == "09:15"]
+        if len(opening_rows) != 1:
+            missing_data.append({"date": str(trading_date), "dataset": "underlying",
+                                 "reason": "missing unique 09:15 opening candle"})
+            continue
+        opening_price = float(opening_rows.iloc[0]["open"])
         day_paths = selection.get("eligible_by_date", {}).get(trading_date, selection["option_files"])
-        if not day_paths:
+        for pair in selection.get("contract_coverage_by_date", {}).get(trading_date, {}).get("missing", []):
+            matching_pair = next((item for item in selection.get("contract_eligibility", [])
+                if item["date"] == str(trading_date) and item["option_type"] == pair["option_type"]
+                and item["itm_rank"] == pair["itm_rank"]), None)
             missing_data.append({"date": str(trading_date), "dataset": "options",
-                                 "reason": "no eligible ITM-2/ITM-3 CE/PE contracts with candles"})
+                "option_type": pair["option_type"], "itm_rank": pair["itm_rank"],
+                "contract": matching_pair.get("symbol") if matching_pair else None,
+                "expiry": matching_pair.get("expiry") if matching_pair else None,
+                "reason": "selected contract has no candle data for this date" if matching_pair
+                          else "no contract candidate for this CE/PE and ITM rank in available sources"})
         for path in day_paths:
             option = _load_week(path, [trading_date])
             coverage_key = f"{trading_date}:{path.name}"
             quality["options"][coverage_key] = quality_report(option)
             if option.empty:
-                missing_data.append({"date": str(trading_date), "contract": path.name, "reason": "no candles"})
                 continue
             metadata = {"symbol": path.stem, **_contract_metadata(path)}
             matching = [item for item in selection.get("contract_eligibility", [])
@@ -176,16 +213,21 @@ def run_baseline_week(underlying_path, option_dir, selection):
         daily_points = valid_group.groupby(local_dates.loc[valid_group.index]).sum()
         strategy_breakdown[strategy] = {
             "days": int(local_dates.nunique()), "setups": int(len(group)),
-            "valid_setups": int(valid_group.count()), "target_hits": int((group.outcome == "TARGET").sum()),
-            "sl_hits": int(group.outcome.isin(["SL", "AMBIGUOUS_SL_FIRST"]).sum()),
+            "valid_setups": int((group.outcome != "SKIPPED_SL_ALREADY_BREACHED").sum()),
+            "skipped_setups": int((group.outcome == "SKIPPED_SL_ALREADY_BREACHED").sum()),
+            "target_hits": int((group.outcome == "TARGET").sum()),
+            "sl_hits": int((group.outcome == "SL").sum()),
+            "ambiguous_setups": int(group.outcome.isin(["AMBIGUOUS", "AMBIGUOUS_SL_FIRST"]).sum()),
             "open_outcomes": int((group.outcome == "OPEN").sum()), "points": float(valid_group.sum()) if not valid_group.empty else 0.0,
             "average_points_per_setup": float(valid_group.mean()) if not valid_group.empty else None,
             "average_daily_points": float(daily_points.mean()) if not daily_points.empty else None,
         }
     metrics = {
-        "setup_count": int(len(events)), "valid_setups": int((events.outcome != "OPEN").sum()) if not events.empty else 0,
+        "setup_count": int(len(events)),
+        "valid_setups": int((events.outcome != "SKIPPED_SL_ALREADY_BREACHED").sum()) if not events.empty else 0,
+        "skipped_setups": int((events.outcome == "SKIPPED_SL_ALREADY_BREACHED").sum()) if not events.empty else 0,
         "target_hits": int((events.outcome == "TARGET").sum()) if not events.empty else 0,
-        "sl_hits": int(events.outcome.isin(["SL", "AMBIGUOUS_SL_FIRST"]).sum()) if not events.empty else 0,
+        "sl_hits": int((events.outcome == "SL").sum()) if not events.empty else 0,
         "open_outcomes": outcomes, "average_points": float(points.dropna().mean()) if points.notna().any() else None,
         "median_points": float(points.dropna().median()) if points.notna().any() else None,
         "average_mfe": float(events.mfe.mean()) if "mfe" in events and not events.empty else None,
@@ -213,11 +255,12 @@ def run_baseline_week(underlying_path, option_dir, selection):
         "contract_count": len({(item["expiry"], item["option_type"], item["strike"])
                     for item in eligibility}),
         "dataset": str(underlying_path), "strategy_version": "baseline-v1",
-        "setup_count": int(len(events)), "valid_setups": int((events.outcome != "OPEN").sum()) if not events.empty else 0,
-        "skipped_setups": int((events.outcome == "OPEN").sum()) if not events.empty else 0,
-        "ambiguous_setups": int((events.outcome == "AMBIGUOUS_SL_FIRST").sum()) if not events.empty else 0,
+        "setup_count": int(len(events)),
+        "valid_setups": int((events.outcome != "SKIPPED_SL_ALREADY_BREACHED").sum()) if not events.empty else 0,
+        "skipped_setups": int((events.outcome == "SKIPPED_SL_ALREADY_BREACHED").sum()) if not events.empty else 0,
+        "ambiguous_setups": int(events.outcome.isin(["AMBIGUOUS", "AMBIGUOUS_SL_FIRST"]).sum()) if not events.empty else 0,
         "target_hits": int((events.outcome == "TARGET").sum()) if not events.empty else 0,
-        "sl_hits": int(events.outcome.isin(["SL", "AMBIGUOUS_SL_FIRST"]).sum()) if not events.empty else 0,
+        "sl_hits": int((events.outcome == "SL").sum()) if not events.empty else 0,
         "average_points": float(points.dropna().mean()) if points.notna().any() else None,
         "median_points": float(points.dropna().median()) if points.notna().any() else None,
         "average_mfe": float(events.mfe.mean()) if "mfe" in events and not events.empty else None,
@@ -237,5 +280,6 @@ def run_baseline_week(underlying_path, option_dir, selection):
         "development_validation": "Coverage is reported from the requested period; missing source data is not substituted.",
         "contract_eligibility": eligibility,
         "metrics": metrics,
+        "events": rows,
     }
     return result

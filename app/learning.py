@@ -7,12 +7,28 @@ def enrich_events(events,candles):
     rows=[]
     for _,e in events.iterrows():
         event_timestamp=pd.to_datetime(e.timestamp,utc=True)
-        d=candles[candles.date.astype(str)==str(e.date)].sort_values("timestamp");f=d[d.timestamp>event_timestamp].head(78)
+        d=candles[candles.date.astype(str)==str(e.date)].sort_values("timestamp")
+        local_dates=pd.to_datetime(d.timestamp,utc=True).dt.tz_convert("Asia/Kolkata").dt.date
+        f=d[(d.timestamp>event_timestamp)&(local_dates==event_timestamp.tz_convert("Asia/Kolkata").date())].head(78)
         if f.empty:continue
         event_time=event_timestamp.tz_convert("Asia/Kolkata")
         r=e.to_dict();entry_rows=d[d.timestamp==event_timestamp]
         entry=entry_rows.iloc[0] if not entry_rows.empty else None
-        r.update({"mfe":float(f.high.max()-e.entry),"mae":float(f.low.min()-e.entry),
+        path=[];outcome="OPEN";exit_time=None
+        stop_already_breached=("sl" in e and pd.notna(e.get("sl")) and float(e.entry)<=float(e.sl))
+        if stop_already_breached:
+            outcome="SKIPPED_SL_ALREADY_BREACHED"
+        else:
+            for _,z in f.iterrows():
+                path.append(z)
+                if "target" not in e or pd.isna(e.get("target")):continue
+                sl="sl" in e and pd.notna(e.get("sl")) and z.low<=e.sl
+                tg=z.high>=e.target
+                if sl and tg:outcome="AMBIGUOUS";exit_time=z.timestamp;break
+                if sl:outcome="SL";exit_time=z.timestamp;break
+                if tg:outcome="TARGET";exit_time=z.timestamp;break
+        observed=pd.DataFrame(path)
+        r.update({"mfe":float(observed.high.max()-e.entry),"mae":float(observed.low.min()-e.entry),
             "entry_hour":event_time.hour,"entry_minute":event_time.minute,
             "entry_before_10":event_time.hour<10,"entry_after_10":event_time.hour>=10,
             "weekday":event_time.weekday()})
@@ -22,14 +38,7 @@ def enrich_events(events,candles):
             r["rejection_characteristic"]=entry.get("candle_type")
             r["breakout_characteristic"]=bool(entry.get("above_opening_high",False))
         if "target" in e and pd.notna(e.get("target")):
-            outcome="OPEN"
-            exit_time=None
-            for _,z in f.iterrows():
-                sl="sl" in e and pd.notna(e.get("sl")) and z.low<=e.sl;tg=z.high>=e.target
-                if sl and tg:outcome="AMBIGUOUS_SL_FIRST";exit_time=z.timestamp;break
-                if sl:outcome="SL";exit_time=z.timestamp;break
-                if tg:outcome="TARGET";exit_time=z.timestamp;break
-            r.update({"outcome":outcome,"false_breakout":outcome in ("SL","AMBIGUOUS_SL_FIRST"),
+            r.update({"outcome":outcome,"false_breakout":outcome in ("SL","AMBIGUOUS","AMBIGUOUS_SL_FIRST"),
                       "time_to_target_minutes":((exit_time-event_timestamp).total_seconds()/60 if outcome=="TARGET" else None)})
         rows.append(r)
     return pd.DataFrame(rows)
@@ -40,7 +49,7 @@ def build_report(events):
     tr,va=split_time(events)
     def stats(d):
         o={"n":int(len(d))}
-        if "outcome" in d:o.update(target_rate=float((d.outcome=="TARGET").mean()),sl_rate=float(d.outcome.isin(["SL","AMBIGUOUS_SL_FIRST"]).mean()))
+        if "outcome" in d:o.update(target_rate=float((d.outcome=="TARGET").mean()),sl_rate=float((d.outcome=="SL").mean()),ambiguous_rate=float(d.outcome.isin(["AMBIGUOUS","AMBIGUOUS_SL_FIRST"]).mean()))
         o.update(avg_mfe=float(d.mfe.mean()),avg_mae=float(d.mae.mean()))
         return o
     clf={"enabled":False}
@@ -93,11 +102,12 @@ def build_research_report(events,data_quality=None):
     report={"total_setups":int(len(x)),"data_quality":data_quality or {}}
     if x.empty:return report
     if "outcome" in x:
-        report.update({"valid_setups":int((x.outcome!="OPEN").sum()),
-                       "skipped_setups":int((x.outcome=="OPEN").sum()),
-                       "ambiguous_setups":int((x.outcome=="AMBIGUOUS_SL_FIRST").sum()),
+        report.update({"valid_setups":int((x.outcome!="SKIPPED_SL_ALREADY_BREACHED").sum()),
+                       "skipped_setups":int((x.outcome=="SKIPPED_SL_ALREADY_BREACHED").sum()),
+                       "unresolved_setups":int((x.outcome=="OPEN").sum()),
+                       "ambiguous_setups":int(x.outcome.isin(["AMBIGUOUS","AMBIGUOUS_SL_FIRST"]).sum()),
                        "target_hits":int((x.outcome=="TARGET").sum()),
-                       "sl_hits":int(x.outcome.isin(["SL","AMBIGUOUS_SL_FIRST"]).sum())})
+                       "sl_hits":int((x.outcome=="SL").sum())})
     else:report["valid_setups"]=int(len(x))
     for source,target in (("points_gained_lost","average_points"),("mfe","maximum_favorable_excursion"),
                           ("mae","maximum_adverse_excursion"),("time_to_exit_minutes","average_holding_time_minutes")):

@@ -11,7 +11,7 @@ def add_features(df):
     x["volatility_10"]=x.return_1.rolling(10).std()
     x["ema9"]=x.close.ewm(span=9,adjust=False).mean()
     x["ema21"]=x.close.ewm(span=21,adjust=False).mean()
-    if "volume" in x:x["volume_change"]=x.volume.pct_change()
+    if "volume" in x:x["volume_change"]=x.volume.pct_change(fill_method=None)
     if "oi" in x:x["oi_change"]=x.oi.diff()
     return x
 def add_opening_levels(df):
