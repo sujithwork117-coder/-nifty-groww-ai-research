@@ -1,6 +1,6 @@
 # Research State — NIFTY Groww Paper Research
 
-**Authoritative handoff:** this file supersedes stale task sequencing in older `PROJECT_STATE.md` / `NEXT_TASK.md` notes. Updated 2026-09-26. Research only; no live trading. `EXECUTION_ALLOWED=false`; `PAPER_ONLY=true`.
+**Authoritative handoff:** this file supersedes stale task sequencing in older `PROJECT_STATE.md` / `NEXT_TASK.md` notes. Updated 2026-09-28. Research only; no live trading. `EXECUTION_ALLOWED=false`; `PAPER_ONLY=true`.
 
 ## Current objective
 
@@ -10,6 +10,13 @@ Describe and validate canonical NIFTY 5-minute Level-to-Level and Ekalayava beha
 
 - **Level-to-Level:** NIFTY CE/PE ITM2/ITM3; completed 5-minute bars, Asia/Kolkata; opening range from first bar; premium breaks below Opening Low then first completed green bar enters at close; SL = Opening Low minus configured 4 premium points (baseline); target = Opening High; entry window 09:15–11:00.
 - **Ekalayava:** NIFTY CE/PE ITM2/ITM3, same bars/timezone; premium first breaks Opening Low; causal swing high is current high above previous two highs (left=2/right=0); a later completed bar with both high and close above that swing reference, while remaining below Opening High, enters at close; Opening High is target. Canonical spec defines **no SL, opposite-signal exit, forced EOD exit, expiry handling, or end-of-data valuation**. Do not invent one. Existing simulator observes same-day bars after entry (up to 78), stops at the first Opening-High touch, and otherwise labels OPEN; this is not a complete lifecycle/P&L engine.
+
+## Fresh session status — 2026-09-28 (blocked; no results measured)
+
+- Requested only today’s completed NIFTY 5-minute session. Local `data/raw/nifty_5m.csv` has no Sep 28 candles (latest timestamp Sep 22, 15:55 IST); inspected option files likewise have no Sep 28 bars. Root `.env` and `secrets.txt` are absent, process has no Groww credential variables, and read-only Groww retrieval could not authenticate in this checkout.
+- Neither strategy was run for Sep 28; setup count, outcomes, points, MFE/MAE, and journal are **unmeasured**, not zero. No substitute/fabricated data, strategy changes, or orders. Ekalayava lifecycle remains undefined as above.
+- Detailed blocker: `reports/2026-09-28_fresh_market_analysis.md`.
+- Next: use the existing protected Groww configuration in the authenticated checkout to fetch only Sep 28 underlying plus its selected ITM2/ITM3 CE/PE contracts; validate coverage; then run the unchanged strategies for that day only. Do not repeat prior-period research.
 
 ## Completed periods and numerical results
 
@@ -65,4 +72,5 @@ Obtain an explicit, versioned Ekalayava lifecycle decision from the strategy/spe
 - Period A and Period B data downloads, coverage calculations, canonical baseline backtests, Period A diagnostic, Ekalayava specification audit, and baseline cross-period comparison.
 - Current Ekalayava post-entry event/candle analysis. No additional market data or canonical backtest is needed to reproduce this report.
 - Older bounded weekly/AI experiments listed in `EXPERIMENT_LOG.md` are not substitutes for the two-period canonical baselines and should not be rerun as part of this objective.
+
 
