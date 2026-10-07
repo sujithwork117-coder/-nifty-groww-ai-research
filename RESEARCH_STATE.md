@@ -4,12 +4,28 @@
 
 ## Current objective
 
-Describe and validate canonical NIFTY 5-minute Level-to-Level and Ekalayava behavior across historical periods using existing Groww data. Preserve baseline strategy definitions. Ekalayava is not ready for complete P&L analysis until its missing exit lifecycle is specified.
+Describe and validate canonical NIFTY 5-minute Level-to-Level and Ekalayava behavior across historical periods using Groww data. The July–August 2026 audit/backtest is complete as an explicitly incomplete sample because 65 required daily contract slots are absent from Groww's returned expiry catalogs. Preserve baseline strategy definitions. Ekalayava is not ready for complete P&L analysis until its missing exit lifecycle is specified.
 
 ## Canonical strategies
 
 - **Level-to-Level:** NIFTY CE/PE ITM2/ITM3; completed 5-minute bars, Asia/Kolkata; opening range from first bar; premium breaks below Opening Low then first completed green bar enters at close; SL = Opening Low minus configured 4 premium points (baseline); target = Opening High; entry window 09:15–11:00.
 - **Ekalayava:** NIFTY CE/PE ITM2/ITM3, same bars/timezone; premium first breaks Opening Low; causal swing high is current high above previous two highs (left=2/right=0); a later completed bar with both high and close above that swing reference, while remaining below Opening High, enters at close; Opening High is target. Canonical spec defines **no SL, opposite-signal exit, forced EOD exit, expiry handling, or end-of-data valuation**. Do not invent one. Existing simulator observes same-day bars after entry (up to 78), stops at the first Opening-High touch, and otherwise labels OPEN; this is not a complete lifecycle/P&L engine.
+
+## July–August 2026 contract audit and baseline (incomplete)
+
+- Requested period kept inclusive: **2026-07-01 → 2026-08-31**, 44 NIFTY trading dates (23 July, 21 August). Underlying regular-session coverage: **3,300/3,300** five-minute bars (09:15–15:25 IST).
+- Groww expiry catalogs returned 07/14/21/28 July, 04/11/18/25 August, and 01 September; contract counts were **10, 166, 22, 205, 120, 103, 89, 181, 80**. All returned symbols matched the catalog expiry. Observed strike spacing was 50 NIFTY points.
+- Audit found the prior selector inferred expiry/ranks from local option files and could shift ranks when files were missing or select different expiries by side. Fixed it to require Groww expiry catalogs, recalculate daily from the NIFTY 09:15 open, select exact side/rank strikes, and mark absent symbols unavailable. Canonical rules were not changed. The canonical spec does not define strike spacing; 50-point spacing is documented as an observed catalog convention. No missing contract symbol was synthesized.
+- Expected options: **176 contract-days**, 75 regular candles each (13,200 expected). Exact Groww catalog slots available: **111/176 (63.1%)**; all 111 have complete 75/75 session bars and 09:15 openings. **0 partial contract-days; 65 missing/unavailable** (4,875 required bars). By slot: CE ITM2 29/44, CE ITM3 27/44, PE ITM2 26/44, PE ITM3 29/44. Usable dates: **17 full, 17 partial, 10 unusable**. July: 11 full/2 partial/10 unusable; August: 6 full/15 partial/0 unusable.
+- Fifteen locally missing but catalog-identified contract-days were fetched read-only from Groww (**1,168 raw rows**, 1,125 regular bars). No absent catalog slot was queried with a constructed symbol. The 111 selected contract-days' timestamps align with the underlying grid (8,325/8,325); volume/OI are present, though the strategy uses timestamp/OHLC only.
+- Underlying is one 5-minute CSV; options are individual symbol CSVs. Exact timestamp duplicates were deduplicated with no conflicting OHLC rows; no interpolation. Groww returned symbols but no numeric tokens. Source files included out-of-session rows, so the research runner now clips input to 09:15–15:25 IST. Strategy definitions and `app/paper.py` were unchanged.
+- **L2L July:** 34 setups; 25 resolved (3 target/22 SL), 9 skipped; gross resolved points **−64.70**, mean **−2.59**, median **−6.70**, target proportion among resolved **12.0%**, mean hold **30.0 min**, mean resolved MFE/MAE **+16.01/−11.64**, max drawdown **65.30**.
+- **L2L August:** 38 setups; 16 resolved (9 target/7 SL), 22 skipped; gross points **+146.10**, mean **+9.13**, median **+5.55**, target proportion **56.3%**, mean hold **26.25 min**, mean resolved MFE/MAE **+15.86/−7.08**, max drawdown **25.70**.
+- **L2L combined:** 72 setups; 41 resolved (12 target/29 SL), 31 skipped; gross resolved points **+81.40**, mean **+1.99**, median **−4.00**, target proportion **29.3%**, mean hold **28.54 min**, mean resolved MFE/MAE **+15.95/−9.86**, max drawdown **74.50**. August 22–28 contributed +111.85 points; 25-Aug alone +90.90. Gross contract premium points are not cost-adjusted returns.
+- **Ekalayava July:** 21 entries (6 CE/15 PE; 9 ITM2/12 ITM3), 11 target touches/10 OPEN; descriptive touch fraction **52.4%**; mean/median MFE **29.15/19.70**, mean/median MAE **−29.73/−18.15**, target distance **45.76/44.05**, mean target-touch time **119.5 min** (touches only).
+- **Ekalayava August:** 26 entries (16 CE/10 PE; 14 ITM2/12 ITM3), 11 touches/15 OPEN; descriptive touch fraction **42.3%**; mean/median MFE **23.92/17.45**, mean/median MAE **−20.44/−14.10**, target distance **46.90/33.78**, mean target-touch time **70.9 min**.
+- **Ekalayava combined:** 47 entries (22 CE/25 PE; 23 ITM2/24 ITM3), 22 target touches/25 OPEN; mean/median MFE **26.25/17.65**, mean/median MAE **−24.59/−15.60**, target distance **46.39/35.95**, mean target-touch time **95.2 min**. No SL/lifecycle was added; target points are not realized P&L.
+- Results are incomplete; missing contracts may suppress setups/outcomes. Tests: **61 passed**. Safety remained `EXECUTION_ALLOWED=false`, `PAPER_ONLY=true`. Full slot-level traces and breakdowns: `reports/july_august_2026_full_analysis.md`. Raw research datasets remain ignored/untracked.
 
 ## Fresh four-session observation — 2026-09-28 to 2026-10-01 (incomplete)
 
@@ -67,6 +83,7 @@ The user/spec owner must decide and version the exit/valuation lifecycle before 
 
 ## Evidence/report map
 
+- `reports/july_august_2026_full_analysis.md` — full July–August 2026 catalog/expiry audit, 176 daily slot traces, coverage, corrected canonical baselines, and July-vs-August breakdowns. Explicitly incomplete: 65 exact contract-days unavailable from the returned Groww catalogs.
 - `reports/baseline_diagnostic_2026-04-25_to_2026-09-25.md` — Period A diagnostic metrics and missing-data impact.
 - `reports/ekalayava_spec_implementation_audit.md` — canonical rule audit, current implementation, undefined lifecycle, 88 A opens, and why target points are not P&L.
 - `reports/cross_period_baseline_comparison.md` — A/B coverage and baseline strategy distributions.
@@ -76,12 +93,13 @@ The user/spec owner must decide and version the exit/valuation lifecycle before 
 
 ## Exact next research step
 
-First determine whether Groww can return the missing Sep 29 afternoon and Sep 30/Oct 1 candles; keep this four-date analysis marked incomplete unless exact requested data becomes available. Separately, obtain an explicit, versioned Ekalayava lifecycle decision from the strategy/spec owner before any Ekalayava P&L comparison or paper trading. Do not rerun older periods or change canonical rules in the meantime.
+For the July–August audit, first determine whether Groww can supply an authoritative historical instrument catalog/listing record for the 65 absent exact contract slots; only then fetch those exact symbols and rerun the affected period. If Groww cannot identify them, retain this baseline as incomplete and do not substitute. Separately, recover the missing Sep29 afternoon and Sep30/Oct1 data before treating the four-session observation as complete. Obtain a versioned Ekalayava exit-lifecycle decision before any Ekalayava P&L comparison or paper trading. Do not rerun completed periods or change canonical rules.
 
 ## Experiments already complete and not to repeat
 
 - Period A and Period B data downloads, coverage calculations, canonical baseline backtests, Period A diagnostic, Ekalayava specification audit, and baseline cross-period comparison.
 - Current Ekalayava post-entry event/candle analysis. No additional market data or canonical backtest is needed to reproduce this report.
+- July–August 2026 Groww contract/expiry audit, 15 exact-symbol missing-day downloads, regular-session coverage audit, and canonical L2L/Ekalayava baseline run. This run is complete but not a complete-period result because 65 contract-days were absent from Groww's current catalogs.
 - Older bounded weekly/AI experiments listed in `EXPERIMENT_LOG.md` are not substitutes for the two-period canonical baselines and should not be rerun as part of this objective.
 
 

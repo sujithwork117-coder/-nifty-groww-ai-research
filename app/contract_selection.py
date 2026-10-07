@@ -1,4 +1,5 @@
 import re
+from decimal import Decimal, ROUND_FLOOR
 
 CONTRACT_FIELDS=("symbol","expiry","strike","option_type","itm_rank")
 
@@ -35,16 +36,46 @@ def parse_contract(contract,expiry=None):
             "strike":float(strike),"option_type":option_type}
 
 def select_itm_contracts(contracts,underlying_open,itm_ranks=(2,3),option_types=("CE","PE"),expiry=None):
-    parsed=[parse_contract(contract,expiry) for contract in contracts]
-    parsed=[x for x in parsed if x and x["option_type"] in option_types]
-    calls=sorted([x for x in parsed if x["option_type"]=="CE" and x["strike"]<underlying_open],key=lambda x:x["strike"],reverse=True)
-    puts=sorted([x for x in parsed if x["option_type"]=="PE" and x["strike"]>underlying_open],key=lambda x:x["strike"])
-    out=[]
+    selected, _, _ = select_itm_contracts_from_ladder(
+        contracts, underlying_open, itm_ranks, option_types, expiry)
+    return selected
+
+
+def select_itm_contracts_from_ladder(contracts, underlying_open, itm_ranks=(2, 3),
+                                     option_types=("CE", "PE"), expiry=None):
+    """Select only exact 2nd/3rd strikes on the catalog's observed strike grid.
+
+    The historical contracts endpoint can return a sparse set. Ranking that
+    sparse list would silently substitute a farther strike, so missing ladder
+    entries are omitted and reported by the caller as unavailable.
+    """
+    if any(rank < 1 for rank in itm_ranks):
+        raise ValueError("ITM ranks must be positive")
+    parsed = [parse_contract(contract, expiry) for contract in contracts]
+    parsed = [item for item in parsed if item and item["option_type"] in option_types]
+    strikes = sorted({Decimal(str(item["strike"])) for item in parsed})
+    increments = [b - a for a, b in zip(strikes, strikes[1:]) if b > a]
+    if not increments:
+        return [], None, {}
+    step = min(increments)
+    offset = strikes[0] % step
+    spot = Decimal(str(underlying_open))
+    below = offset + ((spot - offset) / step).to_integral_value(rounding=ROUND_FLOOR) * step
+    if below >= spot:
+        below -= step
+    above = below + step
+    expected = {}
     for rank in itm_ranks:
-        if rank<1:raise ValueError("ITM ranks must be positive")
-        if rank<=len(calls):out.append({**calls[rank-1],"itm_rank":rank})
-        if rank<=len(puts):out.append({**puts[rank-1],"itm_rank":rank})
-    return [{field:contract.get(field) for field in CONTRACT_FIELDS} for contract in out]
+        expected[("CE", rank)] = below - (rank - 1) * step
+        expected[("PE", rank)] = above + (rank - 1) * step
+    out = []
+    for (option_type, rank), strike in expected.items():
+        match = next((item for item in parsed if item["option_type"] == option_type
+                      and Decimal(str(item["strike"])) == strike), None)
+        if match:
+            out.append({**{field: match.get(field) for field in CONTRACT_FIELDS}, "itm_rank": rank})
+    return out, float(step), {f"{kind}_ITM{rank}": float(strike)
+                              for (kind, rank), strike in expected.items()}
 
 def discover_itm_contracts(groww,underlying_price,underlying="NIFTY",expiry_date=None,itm_ranks=(2,3),option_types=("CE","PE")):
     expiries=_items(groww.get_expiries(exchange=groww.EXCHANGE_NSE,underlying_symbol=underlying),"expiries")
@@ -52,5 +83,7 @@ def discover_itm_contracts(groww,underlying_price,underlying="NIFTY",expiry_date
     result=[]
     for expiry in selected:
         contracts=_items(groww.get_contracts(exchange=groww.EXCHANGE_NSE,underlying_symbol=underlying,expiry_date=expiry),"contracts")
-        result.extend({**contract,"underlying":underlying} for contract in select_itm_contracts(contracts,underlying_price,itm_ranks,option_types,expiry))
+        selected, _, _ = select_itm_contracts_from_ladder(
+            contracts, underlying_price, itm_ranks, option_types, expiry)
+        result.extend({**contract,"underlying":underlying} for contract in selected)
     return result

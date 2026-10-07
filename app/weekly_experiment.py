@@ -5,8 +5,9 @@ import re
 import pandas as pd
 
 from .data_quality import quality_report
+from .contract_selection import select_itm_contracts_from_ladder
 from .paper import analyze_ekalayava, backtest_level_to_level
-from .groww_data import validate_candles
+from .groww_data import DATA_COLUMNS, validate_candles
 
 
 def _trading_dates(path):
@@ -27,10 +28,24 @@ def _option_dates(path):
 
 
 def _expiry_date(value):
-    return datetime.strptime(value.title(), "%d%b%y").date()
+    try:
+        return date.fromisoformat(str(value))
+    except ValueError:
+        return datetime.strptime(str(value).title(), "%d%b%y").date()
 
 
-def select_requested_period(underlying_path, option_dir, start=REQUESTED_START, end=REQUESTED_END):
+def select_requested_period(underlying_path, option_dir, start=REQUESTED_START, end=REQUESTED_END,
+                            contract_catalog=None):
+    """Select the nearest non-expired chain and daily ITM ranks from a full catalog.
+
+    Option files supply candle payloads only. They must not define the contract
+    universe because absent files can shift ITM ranks or silently roll expiry.
+    ``contract_catalog`` maps ISO expiry dates to the full Groww contract list.
+    """
+    if not contract_catalog:
+        raise ValueError("An authoritative expiry-to-contract catalog is required for daily selection")
+    catalog = {str(expiry): contracts for expiry, contracts in contract_catalog.items()}
+    ordered_expiries = sorted(catalog, key=_expiry_date)
     source_dates = _trading_dates(underlying_path)
     dates = [value for value in source_dates if start <= value <= end]
     if not dates:
@@ -46,52 +61,69 @@ def select_requested_period(underlying_path, option_dir, start=REQUESTED_START, 
             opening_prices[trading_date] = float(opening.iloc[0]["open"])
         else:
             missing_opening_dates.append(str(trading_date))
-    options = sorted(Path(option_dir).glob("*.csv"))
-    option_dates = {path: _option_dates(path) for path in options}
+    option_dir = Path(option_dir)
     eligible_by_date = {}
     contract_coverage_by_date = {}
     contract_eligibility = []
     for trading_date in dates:
         price = opening_prices.get(trading_date)
-        # Rank from the available contract universe, not only files that happen
-        # to contain candles on this date; otherwise a missing ITM2 file can
-        # silently shift ITM3 into the ITM2 slot.
-        candidates = options
-        by_type = {"CE": [], "PE": []}
-        for path in candidates:
-            metadata = _contract_metadata(path)
-            if price is None or _expiry_date(metadata["expiry"]) < trading_date:
-                continue
-            if metadata["option_type"] == "CE" and metadata["strike"] < price:
-                by_type["CE"].append(path)
-            if metadata["option_type"] == "PE" and metadata["strike"] > price:
-                by_type["PE"].append(path)
         selected = []
-        for option_type, paths in by_type.items():
-            paths.sort(key=lambda path: (_expiry_date(_contract_metadata(path)["expiry"]),
-                                         -_contract_metadata(path)["strike"] if option_type == "CE"
-                                         else _contract_metadata(path)["strike"]))
-            nearest_expiry = _expiry_date(_contract_metadata(paths[0])["expiry"]) if paths else None
-            paths = [path for path in paths if _expiry_date(_contract_metadata(path)["expiry"]) == nearest_expiry]
-            paths.sort(key=lambda path: _contract_metadata(path)["strike"], reverse=option_type == "CE")
-            for rank, path in enumerate(paths[1:3], start=2):
-                selected.append(path)
-                metadata = _contract_metadata(path)
-                option_day = _load_week(path, [trading_date])
-                coverage = quality_report(option_day)
-                local_option_times = option_day.timestamp.dt.tz_convert("Asia/Kolkata").dt.strftime("%H:%M")
-                opening_candle_available = bool((local_option_times == "09:15").any())
+        chosen_expiry = next((expiry for expiry in ordered_expiries
+                              if _expiry_date(expiry) >= trading_date), None)
+        chain = catalog.get(chosen_expiry, []) if chosen_expiry else []
+        chosen, strike_step, _expected_ladder = (select_itm_contracts_from_ladder(
+            chain, price, itm_ranks=(2, 3), option_types=("CE", "PE"), expiry=chosen_expiry)
+            if price is not None else ([], None, {}))
+        by_pair = {(item["option_type"], item["itm_rank"]): item for item in chosen}
+        expected_pairs = {(option_type, rank) for option_type in ("CE", "PE") for rank in (2, 3)}
+        present_pairs = set()
+        for option_type, rank in sorted(expected_pairs):
+            contract = by_pair.get((option_type, rank))
+            if contract is None:
+                has_open = price is not None
+                reason = ("MISSING_UNDERLYING_0915" if not has_open else
+                          "REQUIRED_ITM_CONTRACT_ABSENT_FROM_GROWW_CATALOG")
                 contract_eligibility.append({"date": str(trading_date), "underlying_price": price,
-                    "symbol": path.stem,
-                    "expiry": metadata["expiry"], "option_type": option_type, "strike": metadata["strike"],
-                    "itm_rank": rank, "expected_itm_relationship": "CE strike < underlying" if option_type == "CE" else "PE strike > underlying",
-                    "actual_relationship": True, "data_coverage": coverage,
-                    "opening_candle_available": opening_candle_available,
-                    "contract_day_has_candles": not option_day.empty,
-                    "missing_intervals": coverage["missing_intervals"], "eligible": True})
+                    "symbol": None, "expiry": chosen_expiry, "option_type": option_type,
+                    "strike": None, "itm_rank": rank, "expected_itm_relationship": None,
+                    "actual_relationship": False, "data_coverage": quality_report(pd.DataFrame(columns=DATA_COLUMNS)),
+                    "expected_session_candles": 75, "available_session_candles": 0,
+                    "missing_session_times": [value.strftime("%H:%M") for value in pd.date_range(
+                        f"{trading_date} 09:15", f"{trading_date} 15:25", freq="5min")],
+                    "first_candle": None, "last_candle": None, "opening_candle_available": False,
+                    "contract_day_has_candles": False, "missing_intervals": 75, "eligible": False,
+                    "selection_status": reason, "expiry_chain_count": len(chain),
+                    "observed_strike_step": strike_step})
+                continue
+            path = option_dir / f"{contract['symbol']}.csv"
+            option_day = _load_week(path, [trading_date]) if path.is_file() else pd.DataFrame(columns=DATA_COLUMNS)
+            coverage = quality_report(option_day)
+            local_option = (option_day.timestamp.dt.tz_convert("Asia/Kolkata")
+                            if not option_day.empty else pd.Series(dtype="datetime64[ns, Asia/Kolkata]"))
+            local_times = local_option.dt.strftime("%H:%M") if not option_day.empty else pd.Series(dtype=str)
+            session_times = set(local_times.loc[local_times.between("09:15", "15:25")])
+            expected_times = {value.strftime("%H:%M") for value in pd.date_range(
+                f"{trading_date} 09:15", f"{trading_date} 15:25", freq="5min")}
+            missing_times = sorted(expected_times - session_times)
+            has_candles = not option_day.empty
+            if has_candles:
+                selected.append(path)
+                present_pairs.add((option_type, rank))
+            contract_eligibility.append({"date": str(trading_date), "underlying_price": price,
+                "symbol": contract["symbol"], "expiry": chosen_expiry,
+                "option_type": option_type, "strike": contract["strike"], "itm_rank": rank,
+                "expected_itm_relationship": "CE strike < underlying" if option_type == "CE" else "PE strike > underlying",
+                "actual_relationship": (contract["strike"] < price if option_type == "CE" else contract["strike"] > price),
+                "data_coverage": coverage, "expected_session_candles": len(expected_times),
+                "available_session_candles": len(session_times), "missing_session_times": missing_times,
+                "first_candle": local_option.min().isoformat() if not option_day.empty else None,
+                "last_candle": local_option.max().isoformat() if not option_day.empty else None,
+                "opening_candle_available": "09:15" in session_times,
+                "contract_day_has_candles": has_candles,
+                "missing_intervals": len(missing_times), "eligible": True,
+                "selection_status": "SELECTED_EXACT_EXPECTED_STRIKE_PRESENT_IN_GROWW_CATALOG",
+                "expiry_chain_count": len(chain), "observed_strike_step": strike_step})
         eligible_by_date[trading_date] = selected
-        present_pairs = {(item["option_type"], item["itm_rank"]) for item in contract_eligibility
-                         if item["date"] == str(trading_date) and item["contract_day_has_candles"]}
         expected_pairs = {(option_type, rank) for option_type in ("CE", "PE") for rank in (2, 3)}
         contract_coverage_by_date[trading_date] = {
             "present": sorted([{"option_type": option_type, "itm_rank": rank}
@@ -110,9 +142,9 @@ def select_requested_period(underlying_path, option_dir, start=REQUESTED_START, 
             "underlying_dates": dates, "source_underlying_dates": source_dates}
 
 
-def select_latest_completed_week(underlying_path, option_dir):
+def select_latest_completed_week(underlying_path, option_dir, contract_catalog=None):
     """Compatibility name retained for callers; selection is now the requested period."""
-    return select_requested_period(underlying_path, option_dir)
+    return select_requested_period(underlying_path, option_dir, contract_catalog=contract_catalog)
 
 
 def _load_week(path, dates):
@@ -121,6 +153,15 @@ def _load_week(path, dates):
     frame = validate_candles(frame)
     local = frame.timestamp.dt.tz_convert("Asia/Kolkata")
     return frame[local.dt.date.isin(dates)].copy()
+
+
+def _regular_session_candles(frame):
+    """Keep NSE regular 5-minute bar starts only (09:15 through 15:25 IST)."""
+    if frame.empty:
+        return frame
+    local = frame.timestamp.dt.tz_convert("Asia/Kolkata")
+    times = local.dt.strftime("%H:%M")
+    return frame.loc[times.between("09:15", "15:25")].copy()
 
 
 def _contract_metadata(path):
@@ -169,10 +210,16 @@ def run_baseline_week(underlying_path, option_dir, selection):
                 "reason": "selected contract has no candle data for this date" if matching_pair
                           else "no contract candidate for this CE/PE and ITM rank in available sources"})
         for path in day_paths:
-            option = _load_week(path, [trading_date])
+            option = _regular_session_candles(_load_week(path, [trading_date]))
             coverage_key = f"{trading_date}:{path.name}"
             quality["options"][coverage_key] = quality_report(option)
             if option.empty:
+                continue
+            option_local = option.timestamp.dt.tz_convert("Asia/Kolkata")
+            option_opening = option.loc[option_local.dt.strftime("%H:%M") == "09:15"]
+            if len(option_opening) != 1:
+                missing_data.append({"date": str(trading_date), "dataset": "options",
+                    "contract": path.stem, "reason": "missing unique 09:15 option opening candle; strategy not run"})
                 continue
             metadata = {"symbol": path.stem, **_contract_metadata(path)}
             matching = [item for item in selection.get("contract_eligibility", [])

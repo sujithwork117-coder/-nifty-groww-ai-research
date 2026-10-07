@@ -44,13 +44,13 @@ class ResearchAgent:
     def run_autonomous(self, provider=None, max_experiments=1, max_failures=1,
                        max_retries=0, max_runtime_seconds=900, dry_run=False,
                        dataset="data/raw/nifty_5m.csv", option_dir="data/raw/options",
-                       report_dir="data/reports"):
+                       report_dir="data/reports", contract_catalog=None):
         if max_experiments != 1:
             raise ValueError("The bounded demo supports exactly one experiment")
         self.state.assert_safe(self.config)
         started = time.monotonic()
         provider = provider or build_llm_provider()
-        selection = select_latest_completed_week(dataset, option_dir)
+        selection = select_latest_completed_week(dataset, option_dir, contract_catalog)
         context = {
             "dataset": dataset,
             "requested_period": {"start": str(selection["start"]), "end": str(selection["end"]),
@@ -175,16 +175,21 @@ def main():
     parser.add_argument("--max-retries", type=int, default=0)
     parser.add_argument("--max-runtime-seconds", type=int, default=900)
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--contract-catalog",
+                        help="JSON mapping ISO expiry dates to Groww contract symbols; required for autonomous selection")
     args = parser.parse_args()
     agent = ResearchAgent()
     if args.status:
         print(json.dumps(agent.status(), indent=2, sort_keys=True))
     elif args.autonomous:
+        if not args.contract_catalog:
+            parser.error("--contract-catalog is required for autonomous daily contract selection")
         try:
+            contract_catalog = json.loads(Path(args.contract_catalog).read_text(encoding="utf-8"))
             output = agent.run_autonomous(
                 max_experiments=args.max_experiments, max_failures=args.max_failures,
                 max_retries=args.max_retries, max_runtime_seconds=args.max_runtime_seconds,
-                dry_run=args.dry_run)
+                dry_run=args.dry_run, contract_catalog=contract_catalog)
         except LLMConfigurationError as error:
             parser.error(str(error))
         else:

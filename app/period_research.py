@@ -208,19 +208,29 @@ def enrich_period_report(result, selection, requested_start, requested_end, mani
     complete_contract_days = 0
     partial_contract_days = 0
     missing_contract_days = 0
+    fully_usable_days = 0
+    partially_usable_days = 0
+    unusable_days = 0
     for trading_date in selection["trading_dates"]:
         records = [eligibility.get((str(trading_date), kind, rank))
                    for kind, rank in EXPECTED_CONTRACT_PAIRS]
-        present_records = [item for item in records if item is not None]
-        has_gaps = any(item.get("missing_intervals", 0) or not item.get("opening_candle_available", False)
-                       or not item.get("contract_day_has_candles", False)
-                       for item in present_records)
-        if len(present_records) == len(EXPECTED_CONTRACT_PAIRS) and not has_gaps:
-            complete_contract_days += 1
-        elif present_records or by_day.get(trading_date, {}).get("missing"):
-            partial_contract_days += 1
+        complete_slots = [item for item in records if item is not None
+                          and item.get("contract_day_has_candles", False)
+                          and item.get("opening_candle_available", False)
+                          and item.get("missing_intervals", 0) == 0]
+        partial_slots = [item for item in records if item is not None
+                         and item.get("contract_day_has_candles", False)
+                         and item not in complete_slots]
+        missing_slots = len(EXPECTED_CONTRACT_PAIRS) - len(complete_slots) - len(partial_slots)
+        complete_contract_days += len(complete_slots)
+        partial_contract_days += len(partial_slots)
+        missing_contract_days += missing_slots
+        if len(complete_slots) == len(EXPECTED_CONTRACT_PAIRS):
+            fully_usable_days += 1
+        elif complete_slots or partial_slots:
+            partially_usable_days += 1
         else:
-            missing_contract_days += 1
+            unusable_days += 1
     calendar_weekdays = (requested_end - requested_start).days + 1
     weekday_dates = [requested_start + timedelta(days=offset)
                      for offset in range(calendar_weekdays)
@@ -228,22 +238,39 @@ def enrich_period_report(result, selection, requested_start, requested_end, mani
     known_dates = set(selection.get("source_underlying_dates", selection["trading_dates"]))
     weekdays_without_source = [value.isoformat() for value in weekday_dates
                                if value not in known_dates]
+    underlying_session_candles = 0
+    try:
+        underlying_frame = pd.read_csv(result["dataset"], usecols=["timestamp"])
+        timestamps = pd.to_datetime(underlying_frame["timestamp"], utc=True, errors="coerce")
+        local = timestamps.dt.tz_convert("Asia/Kolkata")
+        session = local.dt.date.isin(selection["trading_dates"]) & local.dt.strftime("%H:%M").between("09:15", "15:25")
+        underlying_session_candles = int(session.sum())
+    except (OSError, KeyError, ValueError):
+        pass
+    expected_underlying_candles = len(selection["trading_dates"]) * 75
+    option_session_candles = sum(item.get("available_session_candles", 0)
+                                 for item in eligibility.values())
     result["data_completeness"] = {
         "available_underlying_trading_dates": len(selection["trading_dates"]),
-        "underlying_candles": result.get("data_quality", {}).get("underlying", {}).get("total_candles", 0),
-        "option_candles": sum(item.get("data_coverage", {}).get("total_candles", 0)
-                               for item in eligibility.values()),
+        "expected_underlying_candles": expected_underlying_candles,
+        "underlying_candles": underlying_session_candles,
+        "underlying_missing_session_candles": max(0, expected_underlying_candles - underlying_session_candles),
+        "expected_option_session_candles": pair_count * 75,
+        "option_candles": option_session_candles,
         "complete_contract_days": complete_contract_days,
         "partial_contract_days": partial_contract_days,
         "missing_contract_days": missing_contract_days,
         "missing_opening_candles": sum(1 for item in eligibility.values()
                                         if not item.get("opening_candle_available", False)),
         "missing_underlying_opening_dates": selection.get("missing_underlying_opening_dates", []),
-        "missing_option_intervals_between_observed_candles": sum(
+        "missing_required_session_candle_intervals": sum(
             item.get("missing_intervals", 0) for item in eligibility.values()),
+        "fully_usable_days": fully_usable_days,
+        "partially_usable_days": partially_usable_days,
+        "unusable_days": unusable_days,
         "weekday_dates_without_underlying_source_data_holiday_status_unknown": weekdays_without_source,
         "uncovered_calendar_ranges": uncovered_ranges,
-        "caveat": "A zero interval-gap count does not prove complete session edges; exchange calendar and session bounds are not inferred.",
+        "caveat": "Coverage is measured against 09:15–15:25 Asia/Kolkata 5-minute bar starts; catalog-unavailable contract-days count as 75 missing required intervals and are not assigned fabricated symbols.",
     }
     result["contract_day_coverage"] = {"expected": pair_count, "available": present,
         "missing": pair_count - present,
@@ -283,6 +310,8 @@ def main():
                         help="Underlying 5-minute CSV; repeat to merge sources in priority order")
     parser.add_argument("--option-dir", action="append", required=True,
                         help="Directory of option 5-minute CSV files; repeat to merge sources")
+    parser.add_argument("--contract-catalog", required=True,
+                        help="JSON object mapping ISO expiry dates to the full option contract list")
     parser.add_argument("--output-dir", default="data/derived/requested_period")
     parser.add_argument("--report", default="data/reports/baseline_v1_requested_period.json")
     args = parser.parse_args()
@@ -291,7 +320,9 @@ def main():
     manifest = assemble_sources(args.underlying, args.option_dir, args.output_dir)
     underlying_path = Path(args.output_dir) / "nifty_5m.csv"
     option_path = Path(args.output_dir) / "options"
-    selection = select_requested_period(underlying_path, option_path, args.start, args.end)
+    catalog = json.loads(Path(args.contract_catalog).read_text(encoding="utf-8"))
+    selection = select_requested_period(underlying_path, option_path, args.start, args.end,
+                                        contract_catalog=catalog)
     result = run_baseline_week(underlying_path, option_path, selection)
     result = enrich_period_report(result, selection, args.start, args.end, manifest)
     report_path = Path(args.report)
