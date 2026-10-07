@@ -11,6 +11,15 @@ Describe and validate canonical NIFTY 5-minute Level-to-Level and Ekalayava beha
 - **Level-to-Level:** NIFTY CE/PE ITM2/ITM3; completed 5-minute bars, Asia/Kolkata; opening range from first bar; premium breaks below Opening Low then first completed green bar enters at close; SL = Opening Low minus configured 4 premium points (baseline); target = Opening High; entry window 09:15–11:00.
 - **Ekalayava:** NIFTY CE/PE ITM2/ITM3, same bars/timezone; premium first breaks Opening Low; causal swing high is current high above previous two highs (left=2/right=0); a later completed bar with both high and close above that swing reference, while remaining below Opening High, enters at close; Opening High is target. Canonical spec defines **no SL, opposite-signal exit, forced EOD exit, expiry handling, or end-of-data valuation**. Do not invent one. Existing simulator observes same-day bars after entry (up to 78), stops at the first Opening-High touch, and otherwise labels OPEN; this is not a complete lifecycle/P&L engine.
 
+## Fresh four-session observation — 2026-09-28 to 2026-10-01 (incomplete)
+
+- Groww read-only authentication succeeded; direct underlying retries returned: Sep 28 75/75 regular bars; Sep 29 58/75 with 17 missing from 14:05–15:25; Sep 30 0/75; Oct 1 0/75. The NSE 2026 F&O holiday circular lists Oct 2 as a holiday, not Sep 30 or Oct 1; missing bars are treated as data unavailability.
+- The canonical selector could choose contracts only for Sep 28–29 because Sep 30/Oct 1 lack a unique 09:15 underlying open. Eight Sep 28–29 CE/PE ITM2/ITM3 contract-days were queried; 0 complete, all 8 partial. Sep 28: 228/300 option bars; Sep 29: 194/300. 0/4 dates fully usable; Sep 28–29 partial, Sep 30–Oct 1 unusable. No candles were filled. Retry added no bars to selected existing contracts.
+- L2L: 3 observed candidate setups on Sep 29 (CE ITM2, CE ITM3, PE ITM3), all `SKIPPED_SL_ALREADY_BREACHED`; 0 targets, 0 SL exits, 0 resolved trades, 0 resolved points. Sep 28 produced no observed setup on its only eligible contract (PE ITM3); other contracts lacked 09:15. Sep 30/Oct 1 were not runnable.
+- Ekalayava: 0 entries on eligible Sep 28 PE ITM3; three observed entries on Sep 29. CE ITM2 entered 10:40 at 276.70, touched 403.55 opening high at 12:00, observed MFE/MAE +140.50/-21.20. CE ITM3 entered 10:40 at 324.10, touched 436.15 at 11:30, observed MFE/MAE +140.20/-19.95. PE ITM3 entered 09:35 at 1353.70, no target touch in observed bars, MFE/MAE +13.55/-169.20. Thus 2/3 observed entries touched target, both CE; the PE entry remained unresolved. Option observations end by 13:55 and are gapped; EOD status and full-path extrema are unknown. No Ekalayava exit rule was added; target touches are not realized P&L.
+- These four dates do not support a complete L2L profitability/concentration conclusion or a reliable Ekalayava target rate. Context only: Period A/B Ekalayava target-touch rates were 48.2%/43.9%; current 2/3 is too small and censored to compare. Details: `reports/2026-09-28_to_2026-10-01_fresh_market_analysis.md`.
+- Next date-specific research step: determine whether Groww can return Sep 29 afternoon and Sep 30/Oct 1 historical candles; if unavailable, preserve the four dates as incomplete. Do not rerun older periods. Ekalayava lifecycle approval remains unresolved before P&L or paper trading.
+
 ## Fresh session results — 2026-09-28 (option coverage incomplete)
 
 - Groww read-only authentication succeeded. Underlying: 75/75 regular-session bars (09:15–15:25), no missing intervals. Sep 28 NIFTY opened at 23079.75, closed 22780.25 at 15:25 (-299.50); session range 317.50 points.
@@ -62,17 +71,19 @@ The user/spec owner must decide and version the exit/valuation lifecycle before 
 - `reports/ekalayava_spec_implementation_audit.md` — canonical rule audit, current implementation, undefined lifecycle, 88 A opens, and why target points are not P&L.
 - `reports/cross_period_baseline_comparison.md` — A/B coverage and baseline strategy distributions.
 - `reports/ekalayava_trade_behavior_cross_period.md` — event-level ledger and detailed behavioral comparison for all 302 Ekalayava entries.
+- `reports/2026-09-28_to_2026-10-01_fresh_market_analysis.md` — four-date fresh observation; incomplete coverage, observed candidate outcomes, and Ekalayava post-entry excursions.
 - Preserved event/data sources: `data/reports/baseline_v1_requested_period.json`, `data/reports/baseline_v1_period_b_2026-01-01_to_2026-04-24.json`, and the corresponding `data/derived/` period folders. Raw research datasets follow existing ignore policy and are not intended for Git.
 
 ## Exact next research step
 
-Obtain an explicit, versioned Ekalayava lifecycle decision from the strategy/spec owner. Then translate only that approved decision into tests and an implementation change, review safety, and rerun both existing periods. If no exit is authorized, continue censored/descriptive event analysis only; do not claim complete P&L.
+First determine whether Groww can return the missing Sep 29 afternoon and Sep 30/Oct 1 candles; keep this four-date analysis marked incomplete unless exact requested data becomes available. Separately, obtain an explicit, versioned Ekalayava lifecycle decision from the strategy/spec owner before any Ekalayava P&L comparison or paper trading. Do not rerun older periods or change canonical rules in the meantime.
 
 ## Experiments already complete and not to repeat
 
 - Period A and Period B data downloads, coverage calculations, canonical baseline backtests, Period A diagnostic, Ekalayava specification audit, and baseline cross-period comparison.
 - Current Ekalayava post-entry event/candle analysis. No additional market data or canonical backtest is needed to reproduce this report.
 - Older bounded weekly/AI experiments listed in `EXPERIMENT_LOG.md` are not substitutes for the two-period canonical baselines and should not be rerun as part of this objective.
+
 
 
 
