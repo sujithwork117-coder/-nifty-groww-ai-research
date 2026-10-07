@@ -83,4 +83,3 @@ There were no Ekalayava entries on the one eligible 28 September contract (PE IT
 ## Safety and verification
 
 Groww was used read-only; no order endpoints were called. Credentials and tokens are excluded. `EXECUTION_ALLOWED=false`; `PAPER_ONLY=true`. Existing tests were run after this report was generated: **57 passed**.
-
