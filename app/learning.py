@@ -49,7 +49,7 @@ def build_report(events):
     tr,va=split_time(events)
     def stats(d):
         o={"n":int(len(d))}
-        if "outcome" in d:o.update(target_rate=float((d.outcome=="TARGET").mean()),sl_rate=float((d.outcome=="SL").mean()),ambiguous_rate=float(d.outcome.isin(["AMBIGUOUS","AMBIGUOUS_SL_FIRST"]).mean()))
+        if "outcome" in d:o.update(target_touch_rate=float(d.outcome.isin(["TARGET","TARGET_TOUCH"]).mean()),sl_rate=float((d.outcome=="SL").mean()),ambiguous_rate=float(d.outcome.isin(["AMBIGUOUS","AMBIGUOUS_SL_FIRST"]).mean()))
         o.update(avg_mfe=float(d.mfe.mean()),avg_mae=float(d.mae.mean()))
         return o
     clf={"enabled":False}
@@ -90,7 +90,7 @@ def setup_quality_report(events):
             row={"value":None if pd.isna(value) else str(value),"n":int(len(subset)),
                  "avg_mfe":float(subset.mfe.mean()) if "mfe" in subset else None,
                  "avg_mae":float(subset.mae.mean()) if "mae" in subset else None}
-            if "outcome" in subset:row["target_rate"]=float((subset.outcome=="TARGET").mean())
+            if "outcome" in subset:row["target_touch_rate"]=float(subset.outcome.isin(["TARGET","TARGET_TOUCH"]).mean())
             if "time_to_target_minutes" in subset:row["avg_time_to_target_minutes"]=float(subset.time_to_target_minutes.mean())
             grouped.append(row)
         groups[dimension]=grouped
@@ -106,7 +106,7 @@ def build_research_report(events,data_quality=None):
                        "skipped_setups":int((x.outcome=="SKIPPED_SL_ALREADY_BREACHED").sum()),
                        "unresolved_setups":int((x.outcome=="OPEN").sum()),
                        "ambiguous_setups":int(x.outcome.isin(["AMBIGUOUS","AMBIGUOUS_SL_FIRST"]).sum()),
-                       "target_hits":int((x.outcome=="TARGET").sum()),
+                       "target_hits":int(x.outcome.isin(["TARGET","TARGET_TOUCH"]).sum()),
                        "sl_hits":int((x.outcome=="SL").sum())})
     else:report["valid_setups"]=int(len(x))
     for source,target in (("points_gained_lost","average_points"),("mfe","maximum_favorable_excursion"),

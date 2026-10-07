@@ -101,7 +101,7 @@ def assemble_sources(underlying_paths, option_dirs, output_dir):
 def _summary(group):
     outcomes = group.outcome if "outcome" in group else pd.Series(dtype=str)
     points = pd.to_numeric(group.get("points_gained_lost", pd.Series(dtype=float)), errors="coerce").dropna()
-    targets = int((outcomes == "TARGET").sum()) if len(outcomes) else 0
+    targets = int(outcomes.isin(["TARGET", "TARGET_TOUCH"]).sum()) if len(outcomes) else 0
     stop_losses = int((outcomes == "SL").sum()) if len(outcomes) else 0
     resolved_exits = targets + stop_losses
     strategy_values = set(group.strategy.astype(str)) if "strategy" in group else set()

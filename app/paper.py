@@ -70,17 +70,43 @@ def run_paper_level_to_level(df,contract=None,config=CFG,journal_path=None):
 def analyze_ekalayava(df,contract=None,start="09:15",end="15:15",horizon_bars=78):
     contract=contract or {}
     events=__import__("app.strategies",fromlist=["ekalayava_events"]).ekalayava_events(df,start,end)
+    candles=df.copy()
+    candles["timestamp"]=pd.to_datetime(candles.timestamp,utc=True)
     results=[]
     for _,event in events.iterrows():
         path=simulate_target(df,event,horizon_bars)
+        event_time=pd.to_datetime(event.timestamp,utc=True)
+        breakdown_time=pd.to_datetime(event.breakdown_timestamp,utc=True)
+        same_day=candles[candles.timestamp.dt.tz_convert("Asia/Kolkata").dt.date==
+                         event_time.tz_convert("Asia/Kolkata").date()]
+        pre_entry=same_day[(same_day.timestamp>=breakdown_time)&(same_day.timestamp<=event_time)]
+        entry_bar=same_day[same_day.timestamp==event_time]
+        future=_same_day_future(candles,event,horizon_bars)
+        structure_low=None;structure_low_time=None;breakout_low=None
+        if not pre_entry.empty:
+            structure_index=pre_entry.low.astype(float).idxmin()
+            structure_low=float(pre_entry.loc[structure_index,"low"])
+            structure_low_time=pre_entry.loc[structure_index,"timestamp"]
+        if not entry_bar.empty:
+            breakout_low=float(entry_bar.iloc[0].low)
+        future_lows=pd.to_numeric(future.low,errors="coerce") if not future.empty else pd.Series(dtype=float)
         row=event.to_dict()
         row.update({"symbol":contract.get("symbol"),"expiry":contract.get("expiry"),
                     "strike":contract.get("strike"),"option_type":contract.get("option_type"),
                     "itm_rank":contract.get("itm_rank"),"breakout_timestamp":event.timestamp,
-                    "confirmation_timestamp":event.timestamp,"target":float(event.opening_high),**path})
-        row["points_gained_lost"]=(row["exit_price"]-row["entry"] if row.get("exit_price") is not None else None)
-        row["time_to_exit_minutes"]=((row["exit_time"]-row["timestamp"]).total_seconds()/60
-                                      if row.get("exit_time") is not None else None)
+                    "confirmation_timestamp":event.timestamp,"target":float(event.opening_high),**path,
+                    "observed_reversal_structure_low":structure_low,
+                    "observed_reversal_structure_low_time":structure_low_time,
+                    "structure_low_measurement":"minimum low from first opening-low break through the completed entry candle; descriptive only",
+                    "breakout_candle_low":breakout_low,
+                    "reversal_structure_low_revisited":bool(not future_lows.empty and structure_low is not None and (future_lows<=structure_low).any()),
+                    "breakout_candle_low_revisited":bool(not future_lows.empty and breakout_low is not None and (future_lows<=breakout_low).any()),
+                    "opening_low_revisited":bool(not future_lows.empty and (future_lows<=float(event.opening_low)).any())})
+        # Ekalayava's opening-high touch is an observation, not a defined exit.
+        # Never encode target distance as realized P&L or target time as holding time.
+        row["points_gained_lost"] = None
+        row["time_to_exit_minutes"] = None
+        row["structural_sl_status"] = "UNDEFINED_REQUIRES_RULE"
         event_time=pd.to_datetime(row["timestamp"],utc=True).tz_convert("Asia/Kolkata")
         row["entry_hour"]=event_time.hour;row["entry_minute"]=event_time.minute
         row["before_10"]=event_time.hour<10
@@ -90,16 +116,29 @@ def analyze_ekalayava(df,contract=None,start="09:15",end="15:15",horizon_bars=78
 def simulate_target(df,event,horizon_bars=78):
     future=_same_day_future(df,event,horizon_bars)
     entry=float(event.entry);target=float(event.opening_high)
-    result={"exit_time":None,"exit_price":None,"outcome":"OPEN","mfe":0.0,"mae":0.0}
+    result={"exit_time":None,"exit_price":None,"outcome":"OPEN","target_touched":False,
+            "target_touch_time":None,"time_to_target_minutes":None,"mfe":0.0,"mae":0.0,
+            "time_to_mfe_minutes":None,"time_to_mae_minutes":None,
+            "observation_end_time":None,"observation_bars":0}
     if future.empty:return result
     path=[]
     for _,row in future.iterrows():
         path.append(row)
-        if row.high>=target:
-            result.update({"exit_time":row.timestamp,"exit_price":target,"outcome":"TARGET"})
-            break
+        if not result["target_touched"] and row.high>=target:
+            result.update({"outcome":"TARGET_TOUCH","target_touched":True,
+                           "target_touch_time":row.timestamp,
+                           "time_to_target_minutes":(row.timestamp-event.timestamp).total_seconds()/60})
     observed=pd.DataFrame(path)
-    result["mfe"]=float(observed.high.max()-entry);result["mae"]=float(observed.low.min()-entry)
+    if not observed.empty:
+        max_high=pd.to_numeric(observed.high,errors="coerce").max()
+        min_low=pd.to_numeric(observed.low,errors="coerce").min()
+        max_row=observed.loc[pd.to_numeric(observed.high,errors="coerce")==max_high].iloc[0]
+        min_row=observed.loc[pd.to_numeric(observed.low,errors="coerce")==min_low].iloc[0]
+        result.update({"mfe":float(max_high-entry),"mae":float(min_low-entry),
+                       "time_to_mfe_minutes":(max_row.timestamp-event.timestamp).total_seconds()/60,
+                       "time_to_mae_minutes":(min_row.timestamp-event.timestamp).total_seconds()/60,
+                       "observation_end_time":observed.iloc[-1].timestamp,
+                       "observation_bars":len(observed)})
     return result
 
 def evaluate_paper_signal(candles,signal,horizon_bars=78):

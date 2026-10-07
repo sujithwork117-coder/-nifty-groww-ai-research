@@ -181,7 +181,7 @@ def _file_itm_rank(path):
     return int(values[0]) if len(values) == 1 else None
 
 
-def run_baseline_week(underlying_path, option_dir, selection):
+def run_baseline_week(underlying_path, option_dir, selection, sl_points=4):
     underlying = _load_week(underlying_path, selection["trading_dates"])
     quality = {"underlying": quality_report(underlying), "options": {}}
     rows = []
@@ -229,7 +229,7 @@ def run_baseline_week(underlying_path, option_dir, selection):
             if metadata["itm_rank"] not in (2, 3):
                 continue
             eligibility.extend(matching)
-            level = backtest_level_to_level(option, metadata)
+            level = backtest_level_to_level(option, metadata, sl_points=sl_points)
             eka = analyze_ekalayava(option, metadata)
             for strategy, events in (("LEVEL_TO_LEVEL", level), ("EKALAYAVA", eka)):
                 for event in events.to_dict("records"):
@@ -262,18 +262,19 @@ def run_baseline_week(underlying_path, option_dir, selection):
             "days": int(local_dates.nunique()), "setups": int(len(group)),
             "valid_setups": int((group.outcome != "SKIPPED_SL_ALREADY_BREACHED").sum()),
             "skipped_setups": int((group.outcome == "SKIPPED_SL_ALREADY_BREACHED").sum()),
-            "target_hits": int((group.outcome == "TARGET").sum()),
+            "target_hits": int(group.outcome.isin(["TARGET", "TARGET_TOUCH"]).sum()),
             "sl_hits": int((group.outcome == "SL").sum()),
             "ambiguous_setups": int(group.outcome.isin(["AMBIGUOUS", "AMBIGUOUS_SL_FIRST"]).sum()),
-            "open_outcomes": int((group.outcome == "OPEN").sum()), "points": float(valid_group.sum()) if not valid_group.empty else 0.0,
-            "average_points_per_setup": float(valid_group.mean()) if not valid_group.empty else None,
+            "open_outcomes": int((group.outcome == "OPEN").sum()),
+            "points": (None if strategy == "EKALAYAVA" else float(valid_group.sum()) if not valid_group.empty else 0.0),
+            "average_points_per_setup": (None if strategy == "EKALAYAVA" else float(valid_group.mean()) if not valid_group.empty else None),
             "average_daily_points": float(daily_points.mean()) if not daily_points.empty else None,
         }
     metrics = {
         "setup_count": int(len(events)),
         "valid_setups": int((events.outcome != "SKIPPED_SL_ALREADY_BREACHED").sum()) if not events.empty else 0,
         "skipped_setups": int((events.outcome == "SKIPPED_SL_ALREADY_BREACHED").sum()) if not events.empty else 0,
-        "target_hits": int((events.outcome == "TARGET").sum()) if not events.empty else 0,
+        "target_hits": int(events.outcome.isin(["TARGET", "TARGET_TOUCH"]).sum()) if not events.empty else 0,
         "sl_hits": int((events.outcome == "SL").sum()) if not events.empty else 0,
         "open_outcomes": outcomes, "average_points": float(points.dropna().mean()) if points.notna().any() else None,
         "median_points": float(points.dropna().median()) if points.notna().any() else None,
@@ -306,7 +307,7 @@ def run_baseline_week(underlying_path, option_dir, selection):
         "valid_setups": int((events.outcome != "SKIPPED_SL_ALREADY_BREACHED").sum()) if not events.empty else 0,
         "skipped_setups": int((events.outcome == "SKIPPED_SL_ALREADY_BREACHED").sum()) if not events.empty else 0,
         "ambiguous_setups": int(events.outcome.isin(["AMBIGUOUS", "AMBIGUOUS_SL_FIRST"]).sum()) if not events.empty else 0,
-        "target_hits": int((events.outcome == "TARGET").sum()) if not events.empty else 0,
+        "target_hits": int(events.outcome.isin(["TARGET", "TARGET_TOUCH"]).sum()) if not events.empty else 0,
         "sl_hits": int((events.outcome == "SL").sum()) if not events.empty else 0,
         "average_points": float(points.dropna().mean()) if points.notna().any() else None,
         "median_points": float(points.dropna().median()) if points.notna().any() else None,

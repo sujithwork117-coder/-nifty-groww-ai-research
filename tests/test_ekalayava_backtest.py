@@ -22,10 +22,25 @@ def test_ekalayava_analysis_targets_opening_high():
     row=result.iloc[0]
     assert row.strategy=="EKALAYAVA"
     assert row.target==105
-    assert row.outcome=="TARGET"
+    assert row.outcome=="TARGET_TOUCH"
+    assert bool(row.target_touched) is True
+    assert row.target_touch_time==candles.iloc[5].timestamp
+    assert row.time_to_target_minutes==5
+    assert pd.isna(row.exit_time)
+    assert pd.isna(row.exit_price)
+    assert pd.isna(row.points_gained_lost)
+    assert pd.isna(row.time_to_exit_minutes)
+    assert row.structural_sl_status=="UNDEFINED_REQUIRES_RULE"
     assert row.breakout_timestamp==row.confirmation_timestamp==row.timestamp
-    assert row.mfe==2.5
-    assert row.mae==-1.5
+    assert row.mfe==76.5
+    assert row.mae==-13.5
+    assert row.time_to_mfe_minutes==10
+    assert row.time_to_mae_minutes==10
+    assert row.observed_reversal_structure_low==99
+    assert row.breakout_candle_low==101
+    assert bool(row.reversal_structure_low_revisited) is True
+    assert bool(row.breakout_candle_low_revisited) is True
+    assert bool(row.opening_low_revisited) is True
     assert row.option_type=="PE"
 
 

@@ -1,5 +1,12 @@
 .env
 secrets.txt
+11key.md
+*.pem
+*.key
+*api_key*
+*api_secret*
+*access_token*
+*refresh_token*
 .venv/
 __pycache__/
 *.pyc
