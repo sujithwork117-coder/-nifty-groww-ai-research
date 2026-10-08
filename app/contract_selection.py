@@ -1,5 +1,6 @@
 import re
 from decimal import Decimal, ROUND_FLOOR
+from datetime import date, datetime
 
 CONTRACT_FIELDS=("symbol","expiry","strike","option_type","itm_rank")
 
@@ -87,3 +88,54 @@ def discover_itm_contracts(groww,underlying_price,underlying="NIFTY",expiry_date
             contracts, underlying_price, itm_ranks, option_types, expiry)
         result.extend({**contract,"underlying":underlying} for contract in selected)
     return result
+
+
+def _expiry_as_date(value):
+    if isinstance(value, date):
+        return value
+    text = str(value)
+    try:
+        return date.fromisoformat(text)
+    except ValueError:
+        return datetime.strptime(text.title(), "%d%b%y").date()
+
+
+def _symbol_expiry(symbol):
+    match = re.search(r"(?:NSE-)?NIFTY-(\d{2}[A-Za-z]{3}\d{2})-", str(symbol))
+    return datetime.strptime(match.group(1).title(), "%d%b%y").date() if match else None
+
+
+def select_daily_itm_contracts(groww, underlying_open, trading_date, underlying="NIFTY",
+                               itm_ranks=(2, 3), option_types=("CE", "PE")):
+    """Resolve only the exact ITM2/ITM3 contracts from that day's first live expiry.
+
+    The full option chain for the earliest non-expired date is the source of
+    the strike ladder. Missing exact strikes remain absent; neither rank nor
+    expiry is substituted.
+    """
+    from .groww_data import get_contracts, get_expiries
+
+    trading_date = _expiry_as_date(trading_date)
+    expiries = _items(get_expiries(groww, underlying=underlying), "expiries")
+    normalized = sorted({str(value) for value in expiries}, key=_expiry_as_date)
+    expiry = next((value for value in normalized if _expiry_as_date(value) >= trading_date), None)
+    if expiry is None:
+        return {"trading_date": trading_date.isoformat(), "expiry": None,
+                "contracts": [], "missing": [(kind, rank) for kind in option_types for rank in itm_ranks],
+                "status": "NO_NON_EXPIRED_GROWW_EXPIRY"}
+    chain = _items(get_contracts(groww, expiry_date=expiry, underlying=underlying), "contracts")
+    for item in chain:
+        symbol = item if isinstance(item, str) else (
+            item.get("symbol") or item.get("trading_symbol") or item.get("groww_symbol")
+            if isinstance(item, dict) else None)
+        labeled_expiry = _symbol_expiry(symbol) if symbol else None
+        if labeled_expiry is not None and labeled_expiry != _expiry_as_date(expiry):
+            raise ValueError("Groww contract symbol expiry does not match the selected expiry catalog")
+    contracts, step, expected = select_itm_contracts_from_ladder(
+        chain, underlying_open, itm_ranks=itm_ranks, option_types=option_types, expiry=expiry)
+    pairs = {(item["option_type"], item["itm_rank"]) for item in contracts}
+    missing = [(kind, rank) for kind in option_types for rank in itm_ranks if (kind, rank) not in pairs]
+    return {"trading_date": trading_date.isoformat(), "underlying_open": float(underlying_open),
+            "expiry": expiry, "contracts": contracts, "missing": missing,
+            "observed_strike_step": step, "expected_strikes": expected,
+            "status": "SELECTED" if not missing else "PARTIAL_EXACT_CONTRACT_SET"}
