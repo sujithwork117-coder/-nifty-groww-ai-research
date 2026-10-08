@@ -40,6 +40,14 @@ Groww returned 39 expiry catalogs for Jan–Sep 2026 and the Oct 6 next-expiry c
 - Monthly points Jan→Sep: **+47.35, +41.60, −92.35, −65.65, +298.00, −96.70, −64.70, +146.10, +21.20**. May alone exceeds the total; five daily contributions sum +545.40. These are gross points, not net returns/profitability.
 - Descriptive 3-point-buffer sensitivity on the same full sample: 51 target/137 SL/172 skipped/1 ambiguous; +78.20 points. No rule changed and no parameter was selected.
 
+### L2L target-hit timing study — 2026-10-08
+
+- Reused the corrected stored Jan–Sep baseline and existing option candles; no full rerun or new download. The 361 L2L setups comprise 203 resolved (58 TARGET / 145 SL), 157 skipped, and 1 ambiguous. Target hits are 58/203 = **28.6%** of resolved trades.
+- Target timing is measured from the completed entry-candle close. Of 58 targets, 14 (24.1%) first appear in the first post-entry candle (0–5 minute window), 25 (43.1%) within two bars (≤10m), 34 (58.6%) within three bars (≤15m), 39 (67.2%) within six bars (≤30m), 49 (84.5%) within twelve bars (≤60m), 57 (98.3%) within eighteen bars (≤90m), and 1 in the 110–115m window. Median actual time is bounded by **10–15m**; mean by **23.6–28.6m**. Fastest observed window is 0–5m.
+- Target hits by side/rank: CE 26/104 resolved, PE 32/99; ITM2 27/102, ITM3 31/101. Monthly target counts Jan–Sep: **11, 6, 2, 4, 14, 5, 3, 9, 4**. Entry-close hour: 40 targets from 09:xx and 18 from 10:xx; none from 11:00.
+- 5-minute OHLC cannot provide the exact intrabar target instant or target-vs-low ordering; report candle windows, not exact touch times. All 58 first observed target bars matched the stored exit timestamp, with no missing expected candles between entry and that bar. Two entry candles had high ≥ target, but entry is at candle close so these cannot establish a post-entry touch. One target outcome had entry 129.10 already above target 126.50, a baseline `high >= target` interpretation artifact; do not read that as an upward target move. Full evidence and 203 resolved-setup ledger: `reports/l2l_target_timing_research.md`.
+- Observed timing shows material short-duration behavior (14 target hits in the first post-entry bar), alongside a long tail; no time filter/exit optimization was performed and no canonical rule changed.
+
 ### Ekalayava (observation only)
 
 - **253 entries; 109 opening-high touches (43.1%); 144 no-touch observations. All 253 lifecycle outcomes remain unresolved.** No SL count, win rate, realized P&L, or target-point total is defined.
