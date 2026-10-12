@@ -61,6 +61,13 @@ def _fetch(groww,symbol,start,end,segment):
         groww_symbol=_groww_symbol(groww.EXCHANGE_NSE,symbol),start_time=start.strftime("%Y-%m-%d %H:%M:%S"),
         end_time=end.strftime("%Y-%m-%d %H:%M:%S"),candle_interval="5minute")
 
+
+def get_session_candles(groww,symbol,start,end,segment):
+    """Fetch and validate one session's five-minute candles from Groww read-only API."""
+    if start.date()!=end.date():
+        raise ValueError("Live observer candle requests must stay within one trading date")
+    return validate_candles(_df(_fetch(groww,symbol,start,end,segment)))
+
 def get_historical(groww,symbol,start,end,chunk_days=14,segment=None):
     segment=segment or groww.SEGMENT_FNO
     out=[]; cur=start

@@ -7,6 +7,7 @@ import pytest
 from app.candle_builder import FiveMinuteCandleBuilder
 from app.live_listener import completed_5m_candle, market_open_now, paper_signal, select_live_contracts
 from app.paper_engine import PaperContractEngine
+from app.nse_calendar import DEFAULT_NSE_CALENDAR
 
 
 CONFIG = SimpleNamespace(execution_allowed=False, paper_only=True, kill_switch=False,
@@ -208,7 +209,9 @@ def test_ekalayava_entry_is_causal_and_keeps_structural_candidate_observational(
     (111, 96, "AMBIGUOUS"),
 ])
 def test_ekalayava_configured_structural_stop_lifecycle(high, low, expected, tmp_path):
-    configured = SimpleNamespace(**{**CONFIG.__dict__, "ekalayava_sl_buffer_points": 2})
+    configured = SimpleNamespace(**{**CONFIG.__dict__, "ekalayava_sl_buffer_points": 2,
+                                    "ekalayava_experimental_exit_simulation": True,
+                                    "strategy_version": "ek-test-v1"})
     journal = tmp_path / "paper.jsonl"
     engine = PaperContractEngine(CONTRACT, configured, journal_path=journal)
     engine.process_candle(candle("09:15", 103, 110, 100, 102))
@@ -223,6 +226,9 @@ def test_ekalayava_configured_structural_stop_lifecycle(high, low, expected, tmp
     assert signal["sl"] == 97
     assert signal["sl_buffer_points"] == 2
     assert signal["status"] == "OPEN"
+    assert signal["simulation_mode"] == "EXPERIMENTAL_CANDIDATE_SIMULATION"
+    assert signal["strategy_version"] == "ek-test-v1"
+    assert signal["exit_model_version"] == "candidate-reversal-trough-buffer-2-v1"
 
     updates = engine.process_candle(candle("09:40", 105, high, low, 108))
     trade = engine.state["ekalayava"]["trade"]
@@ -299,3 +305,7 @@ def test_market_hours_use_ist_session_bounds():
     assert market_open_now(datetime.fromisoformat("2026-09-01T09:15:00+05:30"))
     assert not market_open_now(datetime.fromisoformat("2026-09-01T15:30:00+05:30"))
     assert not market_open_now(datetime.fromisoformat("2026-09-05T10:00:00+05:30"))
+    assert not market_open_now(datetime.fromisoformat("2026-10-02T10:00:00+05:30"))
+    assert market_open_now(datetime.fromisoformat("2026-02-01T10:00:00+05:30"))
+    assert not market_open_now(datetime.fromisoformat("2027-01-04T10:00:00+05:30"))
+    assert DEFAULT_NSE_CALENDAR.session_for(datetime.fromisoformat("2026-11-08").date()) is None

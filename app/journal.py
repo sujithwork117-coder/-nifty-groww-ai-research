@@ -13,7 +13,8 @@ def append_event(event,path,model_version):
 
 
 PAPER_RECORD_FIELDS = (
-    "record_id", "event_id", "event_type", "model_version", "recorded_at", "entry_reason", "candle_type",
+    "record_id", "event_id", "event_type", "model_version", "strategy_version",
+    "simulation_mode", "exit_model_version", "recorded_at", "entry_reason", "candle_type",
     "date", "timestamp", "close_time", "strategy", "symbol", "expiry", "strike",
     "option_type", "itm_rank", "nifty_price", "entry", "entry_timestamp", "sl",
     "candidate_sl", "candidate_sl_status", "structural_sl_anchor", "structural_low_price",

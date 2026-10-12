@@ -1,10 +1,20 @@
 # Research State — NIFTY Groww Paper Research
 
-**Updated:** 2026-10-08. This is the single handoff summary. Research and paper observation only; no live trading. `EXECUTION_ALLOWED=false`; `PAPER_ONLY=true`. The latest authoritative cumulative run is the corrected Jan–Sep 2026 validation below. Earlier reports are preserved but some used the old selector and must not be merged with the corrected results.
+**Updated:** 2026-10-12. This is the single handoff summary. Research and paper observation only; no live trading. `EXECUTION_ALLOWED=false`; `PAPER_ONLY=true`. The latest authoritative cumulative run is the corrected Jan–Sep 2026 validation below. Earlier reports are preserved but some used the old selector and must not be merged with the corrected results.
+
+## Paper observer finalization — 2026-10-12
+
+- Implemented a read-only `GrowwPaperObserver`: completed NIFTY 09:15 opening bar → existing exact daily expiry/ITM2/ITM3 CE/PE selector → same-session 5-minute option candles → per-contract-day paper engines → durable state and append-only journal. No adjacent contract substitution or fabricated bars.
+- Closed-bar gating excludes an in-progress bucket, including the 09:30 bar at 09:32; a one-bar grace through 15:35 permits retrieval of the completed 15:25–15:30 candle. No new polling is done after the grace window.
+- Restart/reconnect resumes strictly after each saved last candle; duplicate records are journal-deduplicated. Stream errors are sanitized, rate limits use bounded retries/backoff, exact-contract failures are isolated, and candle gaps invalidate new entries through the existing engine.
+- Added fail-closed 2026 NSE session calendar: normal weekdays and published holidays, Feb 1 published Budget session, and closure for unsupported years / Nov 8 special session pending timings. Recheck calendar against future NSE notices.
+- `reports/paper_trading_readiness.md` updated. **L2L: READY FOR LIVE PAPER OBSERVATION**, for paper-only observation with a supervised first session; no real-money readiness. **Ekalayava: READY FOR OBSERVATION ONLY**. Its exit lifecycle remains unresolved; default buffer is unset. Candidate simulation requires explicit buffer plus experimental opt-in and remains noncanonical.
+- Focused observer/calendar/config/engine/data tests passed **29/29**; full repository suite passed **89/89**. No Groww call, market polling, data download, continuous observer, or order call was made during this task; Groww service behavior remains for the first supervised session to confirm.
+- Runtime observer files under `data/paper_observer/` are ignored by Git. Paper journal and health output contain no credential fields.
 
 ## Project objective and current status
 
-Validate canonical NIFTY 5-minute Level-to-Level and Ekalayava behavior using exact daily Groww contracts, maintain data-quality evidence, and only then assess controlled paper observation. No broker orders are allowed. Current readiness: **L2L NOT READY; Ekalayava OBSERVATION-ONLY**.
+Validate canonical NIFTY 5-minute Level-to-Level and Ekalayava behavior using exact daily Groww contracts, maintain data-quality evidence, and only then assess controlled paper observation. No broker orders are allowed. Current readiness: **L2L READY FOR LIVE PAPER OBSERVATION; Ekalayava READY FOR OBSERVATION ONLY**.
 
 ## Latest finalization results — 2026-10-08
 
@@ -14,7 +24,7 @@ This section supersedes the originally saved raw L2L counts below where they dif
 - **L2L timing:** median interval 10–15 min; mean bounds 24.0–29.0 min; 13/57 within 5 min, 24/57 within 10 min, 33/57 within 15 min, 48/57 within 60 min, 56/57 within 90 min, one at 110–115 min. No 90-minute holding rule follows from these observations.
 - **Ekalayava baseline:** 253 entries; 109 Opening-High touches (43.1%), 144 no-touch paths; all 253 canonical lifecycle outcomes remain unresolved. Mean MFE/MAE +57.35/−53.27; median +31.05/−45.60; target distance mean/median 61.10/54.80; target-touch time mean/median 93.72/65 min.
 - **Ekalayava structural research:** Primary causal candidate is minimum premium low from first Opening-Low-break candle through the completed bar immediately before entry; valid below entry in 253/253, median distance 22.95, later revisited 187/253 (73.9%). Hypothetical buffer 0/2/4 outcomes (target/SL/unresolved) are 87/151/15, 89/146/18, 91/142/20; resolved target fractions 36.6%, 37.9%, 39.1%. These are not canonical P&L. No numeric buffer is justified; optional `EKALAYAVA_SL_BUFFER_POINTS` remains unset by default, preserving observation-only behavior. The canonical strategy document remains unchanged.
-- **Readiness/safety:** L2L **NOT READY**; Ekalayava **READY FOR OBSERVATION ONLY**. The Groww coordinator, exchange calendar, and reconnect integration are not end-to-end. `EXECUTION_ALLOWED=false`; `PAPER_ONLY=true`; no market observer or order was run.
+- **Readiness/safety at the 2026-10-08 report date:** L2L **NOT READY**; Ekalayava **READY FOR OBSERVATION ONLY**. The Groww coordinator, exchange calendar, and reconnect integration were not end-to-end then. These components were implemented on 2026-10-12; see the current section above. `EXECUTION_ALLOWED=false`; `PAPER_ONLY=true`; no order was run.
 - Detailed artifacts: `reports/l2l_final_validation.md` and `reports/L2L_FINAL_VALIDATION.json` (existing lowercase Markdown convention retained), `reports/EKALAYAVA_FINAL_RESEARCH.md/.json`, `reports/STRATEGY_FINAL_COMPARISON.md`, and `reports/paper_trading_readiness.md` (existing lowercase convention retained).
 
 ## Canonical strategy definitions
@@ -76,7 +86,7 @@ Groww returned 39 expiry catalogs for Jan–Sep 2026 and the Oct 6 next-expiry c
 - Candle-by-candle replay used existing complete local data, not new downloads or a full-period rerun. Eight signal examples (5 L2L, 3 Ekalayava) plus one no-setup contract-day were replayed; each selected option day had 75/75 session bars. All selected entry times/prices matched stored baselines. L2L target/SL/skip/ambiguous outcomes, exit times, SL/target levels, and MFE/MAE matched. Ekalayava entry, target-touch time, MFE/MAE, and candidate structural low matched. Jan 1 CE ITM2 Ekalayava: 09:50 entry, no touch, MFE +1.65 / MAE −43.80, candidate low 127.40; Jan 2 PE ITM2: 14:35, no touch, +2.40 / −14.30, candidate 39.70; Jan 5 CE ITM3: 09:50, target touched 10:20, +62.85 / −78.55, candidate 105.90. All remained unresolved; no Ekalayava P&L.
 - Prefix replay had no L2L signal before the completed first-green entry candle; adding that candle generated the same timestamp as full-day replay. Missing bars, late/out-of-order ticks, duplicate candles, state restore, and parameter mismatch are tested.
 - Latest full test suite: **82 passed** after adding stop-buffer default/configuration, optional Ekalayava lifecycle, journaling, and L2L target-already-reached guard tests. Canonical strategy entry definitions remain unchanged. No live polling was started; no order APIs were called.
-- Readiness remains **L2L NOT READY; Ekalayava READY FOR OBSERVATION ONLY**. Components pass replay/unit checks, but a live Groww observer coordinator is not wired end-to-end to capture the underlying open, subscribe/build four exact option streams, persist all engines, or recover through real network reconnects. NSE holiday/special-session calendar integration is also missing. Ekalayava anchor proposal is documented; numeric buffer and canonical adoption/lifecycle decisions remain unresolved.
+- At the 2026-10-08 replay report date, readiness remained **L2L NOT READY; Ekalayava READY FOR OBSERVATION ONLY**. The coordinator/calendar/reconnect wiring was added and tested 2026-10-12. Ekalayava anchor proposal is documented; numeric buffer and canonical adoption/lifecycle decisions remain unresolved.
 
 ## Earlier phases and selector caveat
 
@@ -85,12 +95,11 @@ Groww returned 39 expiry catalogs for Jan–Sep 2026 and the Oct 6 next-expiry c
 - Earlier Sep 28–Oct 1 fresh reports are preserved, but their Sep 28–29 option selection does not resolve to the exact required ITM2/ITM3 symbols in the returned catalog. Their trade observations are excluded from corrected final OOS. Sep 30 underlying remains unavailable.
 - Older Period A/B Ekalayava behavior comparison (302 events) remains archival evidence from the earlier selector; use corrected Jan–Sep events for current cumulative conclusions.
 
-## Paper readiness and safety
+## Paper readiness and safety — current decision 2026-10-12
 
 - `app.config` hard-fails if execution is enabled or paper-only is false; current values are false/true. No order API calls exist in application code; no orders were placed.
 - `app.candle_builder` and `app.paper_engine` now provide close-aware candles, exact daily selection, stateful L2L and observational Ekalayava, duplicate/restart protection, and append-only journal events. Representative selected-day replays match stored historical baseline signals/outcomes.
-- End-to-end live wiring remains incomplete: no Groww read-only observer coordinator connects NIFTY open → daily selector → four option streams → persisted engines/journal. Reconnect/error recovery has component tests but no live-feed integration test. NSE holiday/special-session calendar is not wired.
-- L2L remains **NOT READY** for controlled live paper observation until observer integration and calendar/recovery checks pass. Ekalayava remains **OBSERVATION-ONLY**; no executable structural SL or full exit lifecycle exists. Target touch is not an exit or win.
+- Read-only observer wiring, calendar, persistent engines/journal, exact-session contract selection, completed-candle gating, and deterministic reconnect/restart checks are implemented. L2L is **READY FOR LIVE PAPER OBSERVATION** under `EXECUTION_ALLOWED=false` and `PAPER_ONLY=true`; its first supervised live session must confirm real Groww endpoint behavior and data quality. Ekalayava is **READY FOR OBSERVATION ONLY**; no canonical structural SL or full exit lifecycle exists. Target touch is not an exit or win.
 - Market code is deterministic; LLM use is limited to research-agent tasks, not every candle.
 - `.env`, `secrets.txt`, tokens, and keys are ignored/untracked and never included in reports.
 
@@ -110,9 +119,9 @@ Checklist and replay trace: `reports/paper_engine_replay_validation.md`.
 
 ## Exact next research step
 
-1. Implement a read-only Groww observer coordinator and exchange calendar; verify completed NIFTY 09:15 capture, exact daily expiry/strikes, four option streams, durable per-contract state/journal, and real reconnect/error recovery through replay or a controlled dry run. Do not start continuous execution.
-2. Obtain a versioned Ekalayava decision for exact structural anchor, numeric buffer/trigger, target behavior, same-candle ambiguity, opposite signal, EOD, expiry, and end-of-data before P&L or paper-trade lifecycle work.
-3. Separately request authoritative Groww listings for the 174 absent exact historical slots and retry Sep 30 underlying; preserve any unavailable data without substitution.
+1. In a supervised paper-only session, validate Groww authentication and candle endpoint behavior, opening-bar capture, exact four-contract selection where catalog data supports it, actual completeness, and disconnect/reconnect recovery. Do not place orders or start unattended continuous execution.
+2. Obtain an owner-approved, versioned Ekalayava lifecycle decision for the exact structural anchor, buffer/trigger, target behavior, same-candle ambiguity, opposite signal, EOD, expiry, and end-of-data before reporting P&L or simulating an approved lifecycle.
+3. Separately request authoritative Groww listings for the 174 absent exact historical slots and retry Sep 30 underlying only if historical-data recovery is explicitly resumed; do not repeat the completed baselines.
 
 ## Completed experiments — do not repeat
 

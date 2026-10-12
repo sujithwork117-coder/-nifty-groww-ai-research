@@ -3,6 +3,7 @@
 from datetime import time, timedelta
 import hashlib
 import json
+import math
 from pathlib import Path
 import uuid
 
@@ -35,383 +36,21 @@ class PaperContractEngine:
                  data_quality_status="AVAILABLE"):
         ExecutionLock(config).assert_paper_only()
         self.config = config
+        buffer_points = getattr(config, "ekalayava_sl_buffer_points", None)
+        experimental = bool(getattr(config, "ekalayava_experimental_exit_simulation", False))
+        if buffer_points is not None and (not math.isfinite(float(buffer_points)) or float(buffer_points) < 0):
+            raise ValueError("Ekalayava stop buffer must be finite and nonnegative")
+        if buffer_points is not None and not experimental:
+            raise ValueError("Candidate Ekalayava exits require explicit experimental simulation opt-in")
+        if experimental and buffer_points is None:
+            raise ValueError("Experimental Ekalayava exits require an explicit stop buffer")
+        self.ekalayava_simulation_mode = (
+            "EXPERIMENTAL_CANDIDATE_SIMULATION" if experimental else "OBSERVATION_ONLY"
+        )
+        self.strategy_version = str(getattr(config, "strategy_version", config.model_version))
+        self.ekalayava_exit_model_version = (
+            f"candidate-reversal-trough-buffer-{float(buffer_points):g}-v1"
+            if experimental else "canonical-exit-undefined-observation-v1"
+        )
         self.contract = dict(contract)
-        self.journal_path = Path(journal_path) if journal_path else None
-        self.state_path = Path(state_path) if state_path else None
-        self.data_quality_status = data_quality_status
-        self.state = self._empty_state()
-        if self.state_path and self.state_path.exists():
-            self.restore(json.loads(self.state_path.read_text(encoding="utf-8")))
-
-    def _empty_state(self):
-        return {
-            "version": 1, "symbol": self.contract.get("symbol"),
-            "config_signature": self._config_signature(),
-            "date": None, "last_timestamp": None, "opening_high": None,
-            "opening_low": None, "nifty_open": None, "nifty_last": None,
-            "previous_highs": [], "data_quality_status": self.data_quality_status,
-            "missing_intervals": 0, "entries_disabled": False,
-            "l2l": {"phase": "WAITING_FOR_OPENING_CANDLE", "red_break_timestamp": None,
-                    "signal": None, "trade": None, "daily_entry_used": False},
-            "ekalayava": {"phase": "WAITING_FOR_OPENING_CANDLE", "breakdown_timestamp": None,
-                           "candidate_low": None, "candidate_low_timestamp": None,
-                           "swing_high": None, "swing_high_timestamp": None,
-                           "signal": None, "daily_entry_used": False,
-                           "setup_invalidated": False},
-        }
-
-    def _config_signature(self):
-        return {"level_sl_points": float(self.config.level_sl_points),
-                "level_entry_start": str(self.config.level_entry_start),
-                "level_entry_end": str(self.config.level_entry_end),
-                "ek_start": str(self.config.ek_start), "ek_end": str(self.config.ek_end),
-                "ekalayava_sl_buffer_points": getattr(self.config, "ekalayava_sl_buffer_points", None)}
-
-    def snapshot(self):
-        return self.state.copy()
-
-    def restore(self, state):
-        if state.get("symbol") != self.contract.get("symbol"):
-            raise ValueError("Paper state contract does not match the selected exact symbol")
-        if state.get("config_signature") != self._config_signature():
-            raise ValueError("Paper state strategy parameters do not match the active configuration")
-        self.state = state
-        return self
-
-    def _persist(self):
-        if not self.state_path:
-            return
-        self.state_path.parent.mkdir(parents=True, exist_ok=True)
-        temp = self.state_path.with_suffix(self.state_path.suffix + ".tmp")
-        temp.write_text(json.dumps(self.state, sort_keys=True, default=str) + "\n", encoding="utf-8")
-        temp.replace(self.state_path)
-
-    def _emit(self, strategy, kind, candle, **values):
-        state_key = "l2l" if strategy == "LEVEL_TO_LEVEL" else "ekalayava"
-        record = {
-            "event_type": kind, "strategy": strategy,
-            "date": self.state["date"], "timestamp": candle["timestamp"].isoformat(),
-            "close_time": candle["close_time"].isoformat(),
-            "symbol": self.contract.get("symbol"), "expiry": self.contract.get("expiry"),
-            "strike": self.contract.get("strike"), "option_type": self.contract.get("option_type"),
-            "itm_rank": self.contract.get("itm_rank"), "nifty_price": self.state.get("nifty_last"),
-            "opening_high": self.state.get("opening_high"), "opening_low": self.state.get("opening_low"),
-            "data_quality_status": self.state.get("data_quality_status"),
-            "missing_intervals": self.state.get("missing_intervals", 0),
-            "execution": "DISABLED", "paper_only": True, **values,
-        }
-        event = self.state[state_key].get("signal")
-        if kind == "SIGNAL":
-            namespace = L2L_ID if strategy == "LEVEL_TO_LEVEL" else EKA_ID
-            raw = f"{record['symbol']}|{record['date']}|{strategy}|{record['timestamp']}"
-            record["event_id"] = str(uuid.uuid5(namespace, raw))
-            self.state[state_key]["signal"] = record
-            event = record
-        elif event:
-            record["event_id"] = event["event_id"]
-            merged = {**event, **values}
-            self.state[state_key]["signal"] = merged
-        record_id = hashlib.sha256(
-            f"{record.get('event_id', self.contract.get('symbol'))}|{kind}|{record['timestamp']}".encode()
-        ).hexdigest()
-        record["record_id"] = record_id
-        if self.journal_path:
-            append_paper_record(record, self.journal_path, self.config.model_version)
-        return record
-
-    def process_candle(self, candle, nifty_price=None):
-        """Consume one finalized bar. Duplicates are ignored; out-of-order bars fail closed."""
-        ExecutionLock(self.config).assert_paper_only()
-        if candle.get("completed") is not True:
-            raise ValueError("Only a proven completed 5-minute candle can enter the paper engine")
-        stamp = _local_timestamp(candle["timestamp"])
-        close_time = _local_timestamp(candle.get("close_time", stamp + BAR))
-        if close_time != stamp + BAR:
-            raise ValueError("Candle close time must equal the end of its five-minute bucket")
-        if not (time(9, 15) <= stamp.time().replace(tzinfo=None) <= time(15, 25)):
-            return []
-        if stamp.minute % 5 or stamp.second or stamp.microsecond:
-            raise ValueError("Candle timestamp must be a five-minute session bucket start")
-        values = {key: float(candle[key]) for key in ("open", "high", "low", "close")}
-        if (values["low"] > values["high"] or not values["low"] <= values["open"] <= values["high"]
-                or not values["low"] <= values["close"] <= values["high"]):
-            raise ValueError("Malformed OHLC candle")
-        day = stamp.date().isoformat()
-        last_value = self.state.get("last_timestamp")
-        if last_value:
-            last = _local_timestamp(last_value)
-            if stamp == last:
-                return []
-            if stamp < last:
-                raise ValueError("Out-of-order completed candle; replay/reconnect must resume from saved state")
-            if stamp.date().isoformat() != day:
-                raise ValueError("PaperContractEngine is scoped to one contract-day")
-            gap = max(0, int((stamp - last) / BAR) - 1)
-        else:
-            gap = max(0, int((stamp - (stamp.normalize() + timedelta(hours=9, minutes=15))) / BAR))
-            if stamp.time().replace(tzinfo=None) != time(9, 15):
-                self.state["entries_disabled"] = True
-                self.state["data_quality_status"] = "MISSING_OPENING_CANDLE"
-        normalized = {**values, "timestamp": stamp, "close_time": close_time}
-        if "missing_intervals_before" in candle:
-            gap = max(gap, int(candle["missing_intervals_before"] or 0))
-        if gap:
-            self.state["missing_intervals"] = int(self.state.get("missing_intervals", 0)) + gap
-            self.state["entries_disabled"] = True
-            self.state["data_quality_status"] = "PARTIAL_MISSING_CANDLES"
-            for key in ("l2l", "ekalayava"):
-                if self.state[key].get("signal") is None:
-                    self.state[key]["phase"] = "INVALIDATED_BY_DATA_GAP"
-                if self.state[key].get("trade") and self.state[key]["trade"]["status"] == "OPEN":
-                    self.state[key]["trade"]["status"] = "DATA_GAP_UNRESOLVED"
-        self.state["date"] = day
-        self.state["last_timestamp"] = stamp.isoformat()
-        self.state["nifty_last"] = None if nifty_price is None else float(nifty_price)
-        events = []
-
-        if self.state["opening_high"] is None:
-            if stamp.time().replace(tzinfo=None) == time(9, 15) and not gap:
-                self.state["opening_high"] = values["high"]
-                self.state["opening_low"] = values["low"]
-                self.state["nifty_open"] = self.state["nifty_last"]
-                self.state["l2l"]["phase"] = "WAITING_FOR_RED_BREAK"
-                self.state["ekalayava"]["phase"] = "WAITING_FOR_OPENING_LOW_BREAK"
-                self.state["previous_highs"] = [values["high"]]
-            self._persist()
-            return events
-
-        prior_highs = self.state["previous_highs"][-2:]
-        causal_swing = len(prior_highs) == 2 and values["high"] > max(prior_highs)
-
-        self._update_l2l_trade(normalized, events)
-        self._update_ekalayava_trade(normalized, events)
-        self._detect_l2l(normalized, events)
-        self._detect_ekalayava(normalized, events, causal_swing)
-        self.state["previous_highs"].append(values["high"])
-        self.state["previous_highs"] = self.state["previous_highs"][-3:]
-
-        if stamp.time().replace(tzinfo=None) == time(15, 25):
-            for strategy, key in (("LEVEL_TO_LEVEL", "l2l"), ("EKALAYAVA", "ekalayava")):
-                current = self.state[key].get("signal")
-                trade = self.state[key].get("trade")
-                if current and trade and trade.get("status") in ("OPEN", "DATA_GAP_UNRESOLVED", "UNRESOLVED"):
-                    final_status = "OPEN_AT_SESSION_END" if strategy == "LEVEL_TO_LEVEL" else "UNRESOLVED_AT_SESSION_END"
-                    if trade.get("status") in ("OPEN", "UNRESOLVED"):
-                        trade["status"] = final_status
-                    events.append(self._emit(strategy, "SESSION_END_OBSERVATION", normalized,
-                                             **trade))
-        self._persist()
-        return events
-
-    def _detect_l2l(self, candle, events):
-        setup = self.state["l2l"]
-        if setup["daily_entry_used"] or self.state["entries_disabled"]:
-            return
-        now = candle["timestamp"].time().replace(tzinfo=None)
-        if not (_parse_time(self.config.level_entry_start) <= now <= _parse_time(self.config.level_entry_end)):
-            return
-        opening_low = self.state["opening_low"]
-        if setup["phase"] == "WAITING_FOR_RED_BREAK":
-            if candle["close"] < candle["open"] and candle["low"] < opening_low:
-                setup["red_break_timestamp"] = candle["timestamp"].isoformat()
-                setup["phase"] = "WAITING_FOR_FIRST_GREEN"
-            return
-        if setup["phase"] != "WAITING_FOR_FIRST_GREEN" or candle["timestamp"].isoformat() == setup["red_break_timestamp"]:
-            return
-        if candle["close"] <= candle["open"]:
-            return
-        sl = opening_low - float(self.config.level_sl_points)
-        target = self.state["opening_high"]
-        if candle["close"] <= sl:
-            status = "SKIPPED_SL_ALREADY_BREACHED"
-        elif candle["close"] >= target:
-            status = "SKIPPED_TARGET_ALREADY_REACHED"
-        else:
-            status = "OPEN"
-        setup["daily_entry_used"] = True
-        setup["phase"] = "ENTRY_SKIPPED" if status.startswith("SKIPPED") else "TRACKING_PAPER_TRADE"
-        signal = self._emit("LEVEL_TO_LEVEL", "SIGNAL", candle,
-                            entry=candle["close"], sl=sl, target=target,
-                            entry_reason="first completed green candle after red opening-low breakdown",
-                            candle_type="GREEN",
-                            status=status, outcome=status, exit_timestamp=None, exit_reason=None,
-                            exit_price=None, points_gained_lost=None,
-                            red_break_timestamp=setup["red_break_timestamp"],
-                            first_green_timestamp=candle["timestamp"].isoformat(),
-                            reversal_structure=None, structural_low_candidate=None,
-                            swing_high=None, breakout_timestamp=None,
-                            mfe=0.0 if status.startswith("SKIPPED") else None,
-                            mae=0.0 if status.startswith("SKIPPED") else None,
-                            target_touch_timestamp=None,
-                            structural_low_revisited=None, breakout_candle_low_revisited=None)
-        events.append(signal)
-        if status == "OPEN":
-            setup["trade"] = {"entry": candle["close"], "entry_timestamp": candle["timestamp"].isoformat(),
-                              "sl": sl, "target": target, "status": "OPEN", "mfe": None, "mae": None,
-                              "exit_timestamp": None, "exit_reason": None}
-            setup["phase"] = "TRACKING_PAPER_TRADE"
-
-    def _update_l2l_trade(self, candle, events):
-        setup = self.state["l2l"]
-        trade = setup.get("trade")
-        if not trade or candle["timestamp"].isoformat() <= trade["entry_timestamp"]:
-            return
-        if trade["status"] not in ("OPEN", "DATA_GAP_UNRESOLVED"):
-            return
-        high_delta = candle["high"] - trade["entry"]
-        low_delta = candle["low"] - trade["entry"]
-        trade["mfe"] = high_delta if trade["mfe"] is None else max(trade["mfe"], high_delta)
-        trade["mae"] = low_delta if trade["mae"] is None else min(trade["mae"], low_delta)
-        if trade["status"] == "OPEN":
-            hit_sl, hit_target = candle["low"] <= trade["sl"], candle["high"] >= trade["target"]
-            if hit_sl and hit_target:
-                trade.update(status="AMBIGUOUS", exit_timestamp=candle["timestamp"].isoformat(),
-                             exit_reason="SL_AND_TARGET_TOUCHED_SAME_CANDLE", exit_price=None)
-            elif hit_sl:
-                trade.update(status="SL", exit_timestamp=candle["timestamp"].isoformat(),
-                             exit_reason="STOP_LOSS", exit_price=trade["sl"])
-            elif hit_target:
-                trade.update(status="TARGET", exit_timestamp=candle["timestamp"].isoformat(),
-                             exit_reason="TARGET", exit_price=trade["target"])
-        update = {**trade, "points_gained_lost": (
-            trade["exit_price"] - trade["entry"] if trade.get("exit_price") is not None else None),
-            "outcome": trade["status"]}
-        events.append(self._emit("LEVEL_TO_LEVEL", "TRADE_UPDATE", candle, **update))
-
-    def _detect_ekalayava(self, candle, events, causal_swing):
-        setup = self.state["ekalayava"]
-        if setup["daily_entry_used"] or setup["setup_invalidated"] or self.state["entries_disabled"]:
-            return
-        now = candle["timestamp"].time().replace(tzinfo=None)
-        if now < _parse_time(self.config.ek_start):
-            return
-        if now > _parse_time(self.config.ek_end):
-            setup["setup_invalidated"] = True
-            setup["phase"] = "ENTRY_WINDOW_CLOSED"
-            return
-        if candle["high"] >= self.state["opening_high"]:
-            setup["setup_invalidated"] = True
-            setup["phase"] = "TARGET_REACHED_BEFORE_ENTRY"
-            return
-        if setup["breakdown_timestamp"] is None:
-            if candle["low"] < self.state["opening_low"]:
-                setup["breakdown_timestamp"] = candle["timestamp"].isoformat()
-                setup["candidate_low"] = candle["low"]
-                setup["candidate_low_timestamp"] = candle["timestamp"].isoformat()
-                setup["phase"] = "RECOVERY_AND_SWING_OBSERVATION"
-            return
-        if setup["swing_high"] is not None and candle["high"] > setup["swing_high"] and candle["close"] > setup["swing_high"]:
-            # Freeze the reversal trough before the breakout candle; the entry bar cannot
-            # redefine the structural low after its breakout has been observed.
-            candidate_low = setup["candidate_low"]
-            buffer_points = getattr(self.config, "ekalayava_sl_buffer_points", None)
-            if buffer_points is not None and float(buffer_points) < 0:
-                raise ValueError("Ekalayava stop buffer cannot be negative")
-            configured_sl = None if buffer_points is None else candidate_low - float(buffer_points)
-            candidate_sl_status = ("OBSERVATION_ONLY_BUFFER_UNSET" if configured_sl is None
-                                   else "PAPER_STOP_CONFIGURED")
-            signal = self._emit("EKALAYAVA", "SIGNAL", candle,
-                                entry=candle["close"], sl=configured_sl, candidate_sl=configured_sl,
-                                structural_sl_anchor="reversal_sequence_trough_before_breakout_candle",
-                                structural_low_price=candidate_low, sl_buffer_points=buffer_points,
-                                entry_reason="completed causal swing-high breakout before opening-high target",
-                                candle_type="GREEN" if candle["close"] > candle["open"] else "RED_OR_DOJI",
-                                candidate_sl_status=candidate_sl_status,
-                                target=self.state["opening_high"],
-                                status="UNRESOLVED" if configured_sl is None else "OPEN",
-                                outcome="UNRESOLVED" if configured_sl is None else "OPEN",
-                                exit_timestamp=None, exit_reason=None,
-                                breakdown_timestamp=setup["breakdown_timestamp"],
-                                reversal_structure="research candidate: minimum premium low from breakdown through bar before breakout; canonical adoption pending",
-                                structural_low_candidate=candidate_low,
-                                structural_low_timestamp=setup["candidate_low_timestamp"],
-                                swing_high=setup["swing_high"],
-                                swing_high_timestamp=setup["swing_high_timestamp"],
-                                breakout_timestamp=candle["timestamp"].isoformat(),
-                                breakout_candle_low=candle["low"], mfe=None, mae=None,
-                                time_to_mfe_minutes=None, time_to_mae_minutes=None,
-                                target_touch_timestamp=None, time_to_target_minutes=None,
-                                structural_low_revisited=False,
-                                breakout_candle_low_revisited=False,
-                                opening_low_revisited=False,
-                                target_and_candidate_low_same_candle=False,
-                                realized_pnl=None)
-            events.append(signal)
-            setup["daily_entry_used"] = True
-            setup["phase"] = "OBSERVING_UNRESOLVED_ENTRY" if configured_sl is None else "TRACKING_PAPER_TRADE"
-            setup["signal"] = signal
-            setup["trade"] = {"entry": candle["close"], "entry_timestamp": candle["timestamp"].isoformat(),
-                              "target": self.state["opening_high"], "sl": configured_sl,
-                              "candidate_sl": configured_sl, "candidate_low": candidate_low,
-                              "structural_sl_anchor": "reversal_sequence_trough_before_breakout_candle",
-                              "structural_low_price": candidate_low, "sl_buffer_points": buffer_points,
-                              "candidate_sl_status": candidate_sl_status,
-                              "breakout_candle_low": candle["low"],
-                              "status": "UNRESOLVED" if configured_sl is None else "OPEN", "mfe": None, "mae": None,
-                              "time_to_mfe_minutes": None, "time_to_mae_minutes": None,
-                              "target_touch_timestamp": None, "time_to_target_minutes": None,
-                              "structural_low_revisited": False,
-                              "breakout_candle_low_revisited": False, "opening_low_revisited": False,
-                              "target_and_candidate_low_same_candle": False,
-                              "realized_pnl": None}
-            return
-        if candle["low"] < setup["candidate_low"]:
-            setup["candidate_low"] = candle["low"]
-            setup["candidate_low_timestamp"] = candle["timestamp"].isoformat()
-        if causal_swing:
-            setup["swing_high"] = candle["high"]
-            setup["swing_high_timestamp"] = candle["timestamp"].isoformat()
-
-    def _update_ekalayava_trade(self, candle, events):
-        setup = self.state["ekalayava"]
-        trade = setup.get("trade")
-        if not trade or candle["timestamp"].isoformat() <= trade["entry_timestamp"]:
-            return
-        if trade["status"] in ("SL", "TARGET", "AMBIGUOUS"):
-            return
-        high_delta, low_delta = candle["high"] - trade["entry"], candle["low"] - trade["entry"]
-        elapsed = (candle["timestamp"] - _local_timestamp(trade["entry_timestamp"])).total_seconds() / 60
-        if trade["mfe"] is None or high_delta > trade["mfe"]:
-            trade["mfe"] = high_delta
-            trade["time_to_mfe_minutes"] = elapsed
-        if trade["mae"] is None or low_delta < trade["mae"]:
-            trade["mae"] = low_delta
-            trade["time_to_mae_minutes"] = elapsed
-        if trade["target_touch_timestamp"] is None and candle["high"] >= trade["target"]:
-            trade["target_touch_timestamp"] = candle["timestamp"].isoformat()
-            trade["time_to_target_minutes"] = elapsed
-        trade["structural_low_revisited"] = trade["structural_low_revisited"] or candle["low"] <= trade["candidate_low"]
-        trade["breakout_candle_low_revisited"] = trade["breakout_candle_low_revisited"] or candle["low"] <= trade["breakout_candle_low"]
-        trade["opening_low_revisited"] = trade["opening_low_revisited"] or candle["low"] <= self.state["opening_low"]
-        trade["target_and_candidate_low_same_candle"] = (
-            trade["target_and_candidate_low_same_candle"] or
-            (candle["high"] >= trade["target"] and candle["low"] <= trade["candidate_low"]))
-        if trade["status"] == "OPEN" and trade.get("sl") is not None:
-            hit_sl, hit_target = candle["low"] <= trade["sl"], candle["high"] >= trade["target"]
-            if hit_sl and hit_target:
-                trade.update(status="AMBIGUOUS", exit_timestamp=candle["timestamp"].isoformat(),
-                             exit_reason="SL_AND_TARGET_TOUCHED_SAME_CANDLE", exit_price=None)
-            elif hit_sl:
-                trade.update(status="SL", exit_timestamp=candle["timestamp"].isoformat(),
-                             exit_reason="STRUCTURAL_STOP", exit_price=trade["sl"])
-            elif hit_target:
-                trade.update(status="TARGET", exit_timestamp=candle["timestamp"].isoformat(),
-                             exit_reason="OPENING_HIGH_TARGET", exit_price=trade["target"])
-            if trade["status"] in ("SL", "TARGET", "AMBIGUOUS"):
-                trade["holding_time_minutes"] = elapsed
-                trade["points_gained_lost"] = (None if trade["exit_price"] is None else
-                                               trade["exit_price"] - trade["entry"])
-                trade["realized_pnl"] = trade["points_gained_lost"]
-                trade["outcome"] = trade["status"]
-                events.append(self._emit("EKALAYAVA", "TRADE_UPDATE", candle, **trade))
-                return
-            trade["outcome"] = trade["status"]
-            events.append(self._emit("EKALAYAVA", "TRADE_UPDATE", candle, **trade))
-        else:
-            trade["outcome"] = "UNRESOLVED"
-            candidate_sl_status = ("DATA_GAP_UNRESOLVED" if trade["status"] == "DATA_GAP_UNRESOLVED"
-                                   else "OBSERVATION_ONLY_BUFFER_UNSET")
-            observation = {**trade, "sl": None,
-                           "candidate_sl_status": candidate_sl_status,
-                           "outcome": "UNRESOLVED"}
-            events.append(self._emit("EKALAYAVA", "OBSERVATION_UPDATE", candle, **observation))
+        self.journal_path = PawÞ7öÚ$z{-®éÜj×­…±…å…Ù„Í¥µÕ±…Ñ¥½¸É•ÅÕ¥É•Ì…¸•áÁ±¥¥ÐÍÑ½À‰Õ™™•Èˆ¤(€€€€€€€¥˜‰Õ™™•É}Á½¥¹ÑÌ¥Ì¹½Ð9½¹”…¹¹½Ð•áÁ•É¥µ•¹Ñ…°è(€€€€€€€€€€€É…¥Í”Y…±Õ•ÉÉ½È ‰‰Õ™™•ÈÉ•ÅÕ¥É•Ì-1eY}aAI%59Q1}a%Q}M%5U1Q%=8õÑÉÕ”ˆ¤((€€€‘•˜}ÍÑ…Ñ•}Á…Ñ ¡Í•±˜°ÑÉ…‘¥¹}‘…Ñ”°Íåµ‰½°¤è(€€€€€€€‘¥É•Ñ½Éä€ôÍ•±˜¹ÍÑ…Ñ•}‘¥È€¼ÑÉ…‘¥¹}‘…Ñ”¹¥Í½™½Éµ…Ð ¤(€€€€€€€‘¥É•Ñ½Éä¹µ­‘¥È¡Á…É•¹ÑÌõQÉÕ”°•á¥ÍÑ}½¬õQÉÕ”¤(€€€€€€€É•ÑÕÉ¸‘¥É•Ñ½Éä€¼˜‰í}Íåµ‰½±}­•ä¡Íåµ‰½°¥ô¹©Í½¸ˆ((€€€‘•˜}©½ÕÉ¹…±}Á…Ñ ¡Í•±˜°ÑÉ…‘¥¹}‘…Ñ”¤è(€€€€€€€‘¥É•Ñ½Éä€ôÍ•±˜¹ÍÑ…Ñ•}‘¥È€¼ÑÉ…‘¥¹}‘…Ñ”¹¥Í½™½Éµ…Ð ¤(€€€€€€€‘¥É•Ñ½Éä¹µ­‘¥È¡Á…É•¹ÑÌõQÉÕ”°•á¥ÍÑ}½¬õQÉÕ”¤(€€€€€€€É•ÑÕÉ¸‘¥É•Ñ½Éä€¼€‰Á…Á•É}©½ÕÉ¹…°¹©Í½¹°ˆ((€€€‘•˜}™•Ñ ¡Í•±˜°Íåµ‰½°°ÍÑ…ÉÐ°•¹°Í•µ•¹Ð¤è(€€€€€€€É•ÑÕÉ¸•Ñ}Í•ÍÍ¥½¹}…¹‘±•Ì¡Í•±˜¹É½ÝÜ°Íåµ‰½°°ÍÑ…ÉÐ°•¹°Í•µ•¹Ð¤((€€€‘•˜}µ…­•}•¹¥¹•Ì¡Í•±˜°ÑÉ…‘¥¹}‘…Ñ”°Í•±•Ñ¥½¸¤è(€€€€€€€•¹¥¹•Ì€ôíô(€€€€€€€™½È½¹ÑÉ…Ð¥¸Í•±•Ñ¥½¹l‰½¹ÑÉ…ÑÌ‰tè(€€€€€€€€€€€Íåµ‰½°€ô½¹ÑÉ…Ñl‰Íåµ‰½°‰t(€€€€€€€€€€€Á…Ñ €ôÍ•±˜¹}ÍÑ…Ñ•}Á…Ñ ¡ÑÉ…‘¥¹}‘…Ñ”°Íåµ‰½°¤(€€€€€€€€€€€•¹¥¹”€ôA…Á•É½¹ÑÉ…Ñ¹¥¹” (€€€€€€€€€€€€€€€½¹ÑÉ…Ð°Í•±˜¹½¹™¥œ°©½ÕÉ¹…±}Á…Ñ õÍ•±˜¹}©½ÕÉ¹…±}Á…Ñ ¡ÑÉ…‘¥¹}‘…Ñ”¤°(€€€€€€€€€€€€€€€ÍÑ…Ñ•}Á…Ñ õÁ…Ñ °(€€€€€€€€€€€€¤(€€€€€€€€€€€•¹¥¹•ÍmÍåµ‰½±t€ô•¹¥¹”(€€€€€€€É•ÑÕÉ¸•¹¥¹•Ì((€€€‘•˜ÉÕ¹}½¹”¡Í•±˜°¹½Üõ9½¹”¤è(€€€€€€€€ˆˆ‰•Ñ …¹ÁÉ½•ÍÌ½¹”Í…™”Í¹…ÁÍ¡½ÐìÁÉ½Ù¥‘•È•ÉÉ½ÉÌ…É”Í…¹¥Ñ¥é•¸ˆˆˆ(€€€€€€€ÕÉÉ•¹Ð€ô¹½Ü½È‘…Ñ•Ñ¥µ”¹¹½Ü¡%MP¤(€€€€€€€ÕÉÉ•¹Ð€ôÕÉÉ•¹Ð¹É•Á±…”¡Ñé¥¹™¼õ%MP¤¥˜ÕÉÉ•¹Ð¹Ñé¥¹™¼¥Ì9½¹”•±Í”ÕÉÉ•¹Ð¹…ÍÑ¥µ•é½¹”¡%MP¤(€€€€€€€Ý¥Ñ Í•±˜¹}±½¬è(€€€€€€€€€€€á•ÕÑ¥½¹1½¬¡Í•±˜¹½¹™¥œ¤¹…ÍÍ•ÉÑ}Á…Á•É}½¹±ä ¤(€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰­¥±±}ÍÝ¥Ñ ‰t€ô‰½½°¡Í•±˜¹½¹™¥œ¹­¥±±}ÍÝ¥Ñ ¤(€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰•ÉÉ½ÉÌ‰t€ômt(€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰Í­¥ÁÁ•‰t€ômt(€€€€€€€€€€€ÑÉ…‘¥¹}‘…Ñ”€ôÕÉÉ•¹Ð¹‘…Ñ” ¤(€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰ÑÉ…‘¥¹}‘…Ñ”‰t€ôÑÉ…‘¥¹}‘…Ñ”¹¥Í½™½Éµ…Ð ¤(€€€€€€€€€€€Í•ÍÍ¥½¸€ôÍ•±˜¹…±•¹‘…È¹Í•ÍÍ¥½¹}™½È¡ÑÉ…‘¥¹}‘…Ñ”¤(€€€€€€€€€€€¥˜Í•ÍÍ¥½¸¥Ì9½¹”è(€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰¡•…±Ñ ‰t€ô€‰1=M}=I}19I}U9MUAA=IQˆ(€€€€€€€€€€€€€€€É•ÑÕÉ¸Í•±˜¹}™¥¹¥Í¡}ÍÑ…ÑÕÌ¡ÕÉÉ•¹Ð¤(€€€€€€€€€€€Í•ÍÍ¥½¹}½Á•¸€ô‘…Ñ•Ñ¥µ”¹½µ‰¥¹”¡ÑÉ…‘¥¹}‘…Ñ”°Í•ÍÍ¥½¸¹½Á•¹Í}…Ð°%MP¤(€€€€€€€€€€€Í•ÍÍ¥½¹}±½Í”€ô‘…Ñ•Ñ¥µ”¹½µ‰¥¹”¡ÑÉ…‘¥¹}‘…Ñ”°Í•ÍÍ¥½¸¹±½Í•Í}…Ð°%MP¤(€€€€€€€€€€€€Œ=¹”™¥Ù”µµ¥¹ÕÑ”É…”Ý¥¹‘½Ü…™Ñ•ÈÑ¡”½™™¥¥…°±½Í”¥Ì…±±½Ý•Ñ¼(€€€€€€€€€€€€ŒÉ•ÑÉ¥•Ù”Ñ¡”™¥¹…°€ÄÔèÈÔ´ÄÔèÌÀ½µÁ±•Ñ•…¹‘±”¸9¼±…Ñ•ÈÁ½±±¥¹œ¸(€€€€€€€€€€€¥˜ÕÉÉ•¹Ð€ðÍ•ÍÍ¥½¹}½Á•¸½ÈÕÉÉ•¹Ð€øÍ•ÍÍ¥½¹}±½Í”€¬	Hè(€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰¡•…±Ñ ‰t€ô€‰1=M}=I}19I}U9MUAA=IQˆ(€€€€€€€€€€€€€€€É•ÑÕÉ¸Í•±˜¹}™¥¹¥Í¡}ÍÑ…ÑÕÌ¡ÕÉÉ•¹Ð¤(€€€€€€€€€€€¥˜Í•±˜¹}Í•±•Ñ¥½¹}‘…Ñ”€„ôÑÉ…‘¥¹}‘…Ñ”è(€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰±…ÍÑ}½ÁÑ¥½¹}…¹‘±•Ì‰t€ôíô(€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰Á…Á•É}Á½Í¥Ñ¥½¹Ì‰t€ôíô(€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰Í¥¹…±Ì‰t€ômt(€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰±…ÍÑ}Õ¹‘•É±å¥¹}…¹‘±”‰t€ô9½¹”(€€€€€€€€€€€Í•ÍÍ¥½¹}ÍÑ…ÉÐ€ôÍ•ÍÍ¥½¹}½Á•¸(€€€€€€€€€€€É•ÅÕ•ÍÑ}•¹€ôµ¥¸¡ÕÉÉ•¹Ð°Í•ÍÍ¥½¹}±½Í”¤(€€€€€€€€€€€¥˜É•ÅÕ•ÍÑ}•¹€ðÍ•ÍÍ¥½¹}ÍÑ…ÉÐ€¬	Hè(€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰¡•…±Ñ ‰t€ô€‰]%Q%9}=I}=5A1Q}=A9%9}91ˆ(€€€€€€€€€€€€€€€É•ÑÕÉ¸Í•±˜¹}™¥¹¥Í¡}ÍÑ…ÑÕÌ¡ÕÉÉ•¹Ð¤((€€€€€€€€€€€ÑÉäè(€€€€€€€€€€€€€€€Õ¹‘•É±å¥¹}™É…µ”€ôÍ•±˜¹}™•Ñ  (€€€€€€€€€€€€€€€€€€€Í•±˜¹½¹™¥œ¹Õ¹‘•É±å¥¹œ°Í•ÍÍ¥½¹}ÍÑ…ÉÐ°É•ÅÕ•ÍÑ}•¹°Í•±˜¹½¹™¥œ¹Í•µ•¹Ñ}…Í ¤(€€€€€€€€€€€•á•ÁÐá•ÁÑ¥½¸…Ì•áŒè(€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰¡•…±Ñ ‰t€ô€‰I}U9I1e%9}Qˆ(€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰•ÉÉ½ÉÌ‰t¹…ÁÁ•¹¡ì‰ÍÑÉ•…´ˆè€‰9%Qdˆ°€‰•ÉÉ½É}ÑåÁ”ˆèÑåÁ”¡•áŒ¤¹}}¹…µ•}}ô¤(€€€€€€€€€€€€€€€1=¹Ý…É¹¥¹œ ‰9%Qd…¹‘±”É•ÅÕ•ÍÐ™…¥±•€ •Ì¤ˆ°ÑåÁ”¡•áŒ¤¹}}¹…µ•}|¤(€€€€€€€€€€€€€€€É•ÑÕÉ¸Í•±˜¹}™¥¹¥Í¡}ÍÑ…ÑÕÌ¡ÕÉÉ•¹Ð¤((€€€€€€€€€€€Õ¹‘•É±å¥¹}‰…ÉÌ€ô}½µÁ±•Ñ•‘}Í•ÍÍ¥½¹}‰…ÉÌ¡Õ¹‘•É±å¥¹}™É…µ”°ÑÉ…‘¥¹}‘…Ñ”°ÕÉÉ•¹Ð¤(€€€€€€€€€€€½Á•¹¥¹œ€ô¹•áÐ ¡‰…È™½È‰…È¥¸Õ¹‘•É±å¥¹}‰…ÉÌ(€€€€€€€€€€€€€€€€€€€€€€€€€€€¥˜‰…Él‰Ñ¥µ•ÍÑ…µÀ‰t¹Ñ¥µ” ¤¹É•Á±…”¡Ñé¥¹™¼õ9½¹”¤€ôôÑ¥µ” ä°€ÄÔ¤¤°9½¹”¤(€€€€€€€€€€€¥˜½Á•¹¥¹œ¥Ì9½¹”è(€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰¡•…±Ñ ‰t€ô€‰5%MM%9}=I}U9%9%M!}9%Qe}=A8ˆ(€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰Í­¥ÁÁ•‰t€ômì‰ÍÑÉ•…´ˆè€‰9%Qdˆ°€‰É•…Í½¸ˆè€‰½µÁ±•Ñ•€ÀäèÄÔ½Á•¹¥¹œ…¹‘±”Õ¹…Ù…¥±…‰±”‰õt(€€€€€€€€€€€€€€€É•ÑÕÉ¸Í•±˜¹}™¥¹¥Í¡}ÍÑ…ÑÕÌ¡ÕÉÉ•¹Ð¤(€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰±…ÍÑ}Õ¹‘•É±å¥¹}…¹‘±”‰t€ôÕ¹‘•É±å¥¹}‰…ÉÍl´Åul‰Ñ¥µ•ÍÑ…µÀ‰t¹¥Í½™½Éµ…Ð ¤((€€€€€€€€€€€¥˜Í•±˜¹}Í•±•Ñ¥½¹}‘…Ñ”€„ôÑÉ…‘¥¹}‘…Ñ”è(€€€€€€€€€€€€€€€ÑÉäè(€€€€€€€€€€€€€€€€€€€Í•±•Ñ¥½¸€ôÍ•±•Ñ}‘…¥±å}¥Ñµ}½¹ÑÉ…ÑÌ (€€€€€€€€€€€€€€€€€€€€€€€Í•±˜¹É½ÝÜ°½Á•¹¥¹l‰½Á•¸‰t°ÑÉ…‘¥¹}‘…Ñ”°(€€€€€€€€€€€€€€€€€€€€€€€Õ¹‘•É±å¥¹œõÍ•±˜¹½¹™¥œ¹Õ¹‘•É±å¥¹œ°(€€€€€€€€€€€€€€€€€€€€€€€¥Ñµ}É…¹­ÌõÍ•±˜¹½¹™¥œ¹¥Ñµ}É…¹­Ì°(€€€€€€€€€€€€€€€€€€€€€€€½ÁÑ¥½¹}ÑåÁ•ÌõÍ•±˜¹½¹™¥œ¹½ÁÑ¥½¹}ÑåÁ•Ì°(€€€€€€€€€€€€€€€€€€€€¤(€€€€€€€€€€€€€€€•á•ÁÐá•ÁÑ¥½¸…Ì•áŒè(€€€€€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰¡•…±Ñ ‰t€ô€‰I}=9QIQ}M1Q%=8ˆ(€€€€€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰•ÉÉ½ÉÌ‰t¹…ÁÁ•¹¡ì‰ÍÑÉ•…´ˆè€‰=9QIQ}Q1=ˆ°€‰•ÉÉ½É}ÑåÁ”ˆèÑåÁ”¡•áŒ¤¹}}¹…µ•}}ô¤(€€€€€€€€€€€€€€€€€€€1=¹Ý…É¹¥¹œ ‰á…Ð‘…¥±ä½¹ÑÉ…ÐÍ•±•Ñ¥½¸™…¥±•€ •Ì¤ˆ°ÑåÁ”¡•áŒ¤¹}}¹…µ•}|¤(€€€€€€€€€€€€€€€€€€€É•ÑÕÉ¸Í•±˜¹}™¥¹¥Í¡}ÍÑ…ÑÕÌ¡ÕÉÉ•¹Ð¤(€€€€€€€€€€€€€€€Í•±˜¹}Í•ÍÍ¥½¹}Í•±•Ñ¥½¸€ôÍ•±•Ñ¥½¸(€€€€€€€€€€€€€€€Í•±˜¹}Í•±•Ñ¥½¹}‘…Ñ”€ôÑÉ…‘¥¹}‘…Ñ”(€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰Í•±•Ñ•‘}•áÁ¥Éä‰t€ôÍ•±•Ñ¥½¸¹•Ð ‰•áÁ¥Éäˆ¤(€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰Í•±•Ñ•‘}½¹ÑÉ…ÑÌ‰t€ôm‘¥Ð¡¥Ñ•´¤™½È¥Ñ•´¥¸Í•±•Ñ¥½¹l‰½¹ÑÉ…ÑÌ‰ut(€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰µ¥ÍÍ¥¹}½¹ÑÉ…ÑÌ‰t€ôl(€€€€€€€€€€€€€€€€€€€ì‰½ÁÑ¥½¹}ÑåÁ”ˆè­¥¹°€‰¥Ñµ}É…¹¬ˆèÉ…¹­ô™½È­¥¹°É…¹¬¥¸Í•±•Ñ¥½¹l‰µ¥ÍÍ¥¹œ‰t(€€€€€€€€€€€€€€€t((€€€€€€€€€€€Í•±•Ñ¥½¸€ôÍ•±˜¹}Í•ÍÍ¥½¹}Í•±•Ñ¥½¸(€€€€€€€€€€€¥˜¹½ÐÍ•±•Ñ¥½¸½È¹½ÐÍ•±•Ñ¥½¹l‰½¹ÑÉ…ÑÌ‰tè(€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰¡•…±Ñ ‰t€ô€‰9=}aQ}%1e}=9QIQLˆ(€€€€€€€€€€€€€€€É•ÑÕÉ¸Í•±˜¹}™¥¹¥Í¡}ÍÑ…ÑÕÌ¡ÕÉÉ•¹Ð¤((€€€€€€€€€€€•¹¥¹•Ì€ôÍ•±˜¹}µ…­•}•¹¥¹•Ì¡ÑÉ…‘¥¹}‘…Ñ”°Í•±•Ñ¥½¸¤(€€€€€€€€€€€¹¥™Ñå}‰å}Ñ¥µ”€ôí‰…Él‰Ñ¥µ•ÍÑ…µÀ‰t¹¥Í½™½Éµ…Ð ¤è‰…Él‰±½Í”‰t™½È‰…È¥¸Õ¹‘•É±å¥¹}‰…ÉÍô(€€€€€€€€€€€½ÁÑ¥½¹}™…¥±ÕÉ•Ì€ômt(€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰±…ÍÑ}½ÁÑ¥½¹}…¹‘±•Ì‰t€ôíô(€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰Á…Á•É}Á½Í¥Ñ¥½¹Ì‰t€ôíô(€€€€€€€€€€€™½È½¹ÑÉ…Ð¥¸Í•±•Ñ¥½¹l‰½¹ÑÉ…ÑÌ‰tè(€€€€€€€€€€€€€€€Íåµ‰½°€ô½¹ÑÉ…Ñl‰Íåµ‰½°‰t(€€€€€€€€€€€€€€€•¹¥¹”€ô•¹¥¹•ÍmÍåµ‰½±t(€€€€€€€€€€€€€€€ÑÉäè(€€€€€€€€€€€€€€€€€€€½ÁÑ¥½¹}™É…µ”€ôÍ•±˜¹}™•Ñ ¡Íåµ‰½°°Í•ÍÍ¥½¹}ÍÑ…ÉÐ°É•ÅÕ•ÍÑ}•¹°Í•±˜¹½¹™¥œ¹Í•µ•¹Ñ}™¹¼¤(€€€€€€€€€€€€€€€€€€€½ÁÑ¥½¹}‰…ÉÌ€ô}½µÁ±•Ñ•‘}Í•ÍÍ¥½¹}‰…ÉÌ¡½ÁÑ¥½¹}™É…µ”°ÑÉ…‘¥¹}‘…Ñ”°ÕÉÉ•¹Ð¤(€€€€€€€€€€€€€€€•á•ÁÐá•ÁÑ¥½¸…Ì•áŒè(€€€€€€€€€€€€€€€€€€€É•…Í½¸€ôÑåÁ”¡•áŒ¤¹}}¹…µ•}|(€€€€€€€€€€€€€€€€€€€½ÁÑ¥½¹}™…¥±ÕÉ•Ì¹…ÁÁ•¹¡ì‰Íåµ‰½°ˆèÍåµ‰½°°€‰É•…Í½¸ˆèÉ•…Í½¹ô¤(€€€€€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰Á…Á•É}Á½Í¥Ñ¥½¹Ì‰umÍåµ‰½±t€ôì(€€€€€€€€€€€€€€€€€€€€€€€€‰°É°ˆèÍ•±˜¹}Á½Í¥Ñ¥½¹}ÍÕµµ…Éä¡•¹¥¹”¹ÍÑ…Ñ”¹•Ð ‰°É°ˆ°íô¤¹•Ð ‰ÑÉ…‘”ˆ¤¤°(€€€€€€€€€€€€€€€€€€€€€€€€‰•­…±…å…Ù„ˆèÍ•±˜¹}Á½Í¥Ñ¥½¹}ÍÕµµ…Éä¡•¹¥¹”¹ÍÑ…Ñ”¹•Ð ‰•­…±…å…Ù„ˆ°íô¤¹•Ð ‰ÑÉ…‘”ˆ¤¤°(€€€€€€€€€€€€€€€€€€€€€€€€‰±…ÍÑ}½µÁ±•Ñ•‘}…¹‘±”ˆè•¹¥¹”¹ÍÑ…Ñ”¹•Ð ‰±…ÍÑ}Ñ¥µ•ÍÑ…µÀˆ¤°(€€€€€€€€€€€€€€€€€€€€€€€€‰ÍÑ…±”ˆèQÉÕ”°(€€€€€€€€€€€€€€€€€€€€€€€€‰‘…Ñ…}ÅÕ…±¥Ñå}ÍÑ…ÑÕÌˆè•¹¥¹”¹ÍÑ…Ñ”¹•Ð ‰‘…Ñ…}ÅÕ…±¥Ñå}ÍÑ…ÑÕÌˆ¤°(€€€€€€€€€€€€€€€€€€€€€€€€‰µ¥ÍÍ¥¹}¥¹Ñ•ÉÙ…±Ìˆè•¹¥¹”¹ÍÑ…Ñ”¹•Ð ‰µ¥ÍÍ¥¹}¥¹Ñ•ÉÙ…±Ìˆ°€À¤°(€€€€€€€€€€€€€€€€€€€ô(€€€€€€€€€€€€€€€€€€€1=¹Ý…É¹¥¹œ ‰á…Ð½ÁÑ¥½¸½¹ÑÉ…ÐÍ­¥ÁÁ•€ •Ì°€•Ì¤ˆ°Íåµ‰½°°É•…Í½¸¤(€€€€€€€€€€€€€€€€€€€½¹Ñ¥¹Õ”(€€€€€€€€€€€€€€€¥˜¹½Ð½ÁÑ¥½¹}‰…ÉÌè(€€€€€€€€€€€€€€€€€€€½ÁÑ¥½¹}™…¥±ÕÉ•Ì¹…ÁÁ•¹¡ì‰Íåµ‰½°ˆèÍåµ‰½°°€‰É•…Í½¸ˆè€‰9=}=5A1Q}91L‰ô¤(€€€€€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰Á…Á•É}Á½Í¥Ñ¥½¹Ì‰umÍåµ‰½±t€ôì(€€€€€€€€€€€€€€€€€€€€€€€€‰°É°ˆèÍ•±˜¹}Á½Í¥Ñ¥½¹}ÍÕµµ…Éä¡•¹¥¹”¹ÍÑ…Ñ”¹•Ð ‰°É°ˆ°íô¤¹•Ð ‰ÑÉ…‘”ˆ¤¤°(€€€€€€€€€€€€€€€€€€€€€€€€‰•­…±…å…Ù„ˆèÍ•±˜¹}Á½Í¥Ñ¥½¹}ÍÕµµ…Éä¡•¹¥¹”¹ÍÑ…Ñ”¹•Ð ‰•­…±…å…Ù„ˆ°íô¤¹•Ð ‰ÑÉ…‘”ˆ¤¤°(€€€€€€€€€€€€€€€€€€€€€€€€‰±…ÍÑ}½µÁ±•Ñ•‘}…¹‘±”ˆè•¹¥¹”¹ÍÑ…Ñ”¹•Ð ‰±…ÍÑ}Ñ¥µ•ÍÑ…µÀˆ¤°(€€€€€€€€€€€€€€€€€€€€€€€€‰ÍÑ…±”ˆèQÉÕ”°(€€€€€€€€€€€€€€€€€€€€€€€€‰‘…Ñ…}ÅÕ…±¥Ñå}ÍÑ…ÑÕÌˆè•¹¥¹”¹ÍÑ…Ñ”¹•Ð ‰‘…Ñ…}ÅÕ…±¥Ñå}ÍÑ…ÑÕÌˆ¤°(€€€€€€€€€€€€€€€€€€€€€€€€‰µ¥ÍÍ¥¹}¥¹Ñ•ÉÙ…±Ìˆè•¹¥¹”¹ÍÑ…Ñ”¹•Ð ‰µ¥ÍÍ¥¹}¥¹Ñ•ÉÙ…±Ìˆ°€À¤°(€€€€€€€€€€€€€€€€€€€ô(€€€€€€€€€€€€€€€€€€€½¹Ñ¥¹Õ”(€€€€€€€€€€€€€€€±…ÍÑ}Í••¸€ô•¹¥¹”¹ÍÑ…Ñ”¹•Ð ‰±…ÍÑ}Ñ¥µ•ÍÑ…µÀˆ¤(€€€€€€€€€€€€€€€¥˜±…ÍÑ}Í••¸è(€€€€€€€€€€€€€€€€€€€±…ÍÑ}Í••¸€ô}±½…°¡±…ÍÑ}Í••¸¤(€€€€€€€€€€€€€€€€€€€½ÁÑ¥½¹}‰…ÉÌ€ôm‰…È™½È‰…È¥¸½ÁÑ¥½¹}‰…ÉÌ¥˜‰…Él‰Ñ¥µ•ÍÑ…µÀ‰t€ø±…ÍÑ}Í••¹t(€€€€€€€€€€€€€€€ÑÉäè(€€€€€€€€€€€€€€€€€€€™½È‰…È¥¸½ÁÑ¥½¹}‰…ÉÌè(€€€€€€€€€€€€€€€€€€€€€€€¹¥™Ñå}ÁÉ¥”€ô¹¥™Ñå}‰å}Ñ¥µ”¹•Ð¡‰…Él‰Ñ¥µ•ÍÑ…µÀ‰t¹¥Í½™½Éµ…Ð ¤¤(€€€€€€€€€€€€€€€€€€€€€€€•Ù•¹ÑÌ€ô•¹¥¹”¹ÁÉ½•ÍÍ}…¹‘±”¡‰…È°¹¥™Ñå}ÁÉ¥”õ¹¥™Ñå}ÁÉ¥”¤(€€€€€€€€€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰Í¥¹…±Ì‰t¹•áÑ•¹ (€€€€€€€€€€€€€€€€€€€€€€€€€€€•Ù•¹Ð™½È•Ù•¹Ð¥¸•Ù•¹ÑÌ¥˜•Ù•¹Ð¹•Ð ‰•Ù•¹Ñ}ÑåÁ”ˆ¤€ôô€‰M%90ˆ¤(€€€€€€€€€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰Í¥¹…±Ì‰t€ôÍ•±˜¹ÍÑ…ÑÕÍl‰Í¥¹…±Ì‰ul´ÔÀét(€€€€€€€€€€€€€€€•á•ÁÐá•ÁÑ¥½¸…Ì•áŒè(€€€€€€€€€€€€€€€€€€€É•…Í½¸€ô˜‰%9Y1%}91}MEU9}íÑåÁ”¡•áŒ¤¹}}¹…µ•}}ôˆ(€€€€€€€€€€€€€€€€€€€½ÁÑ¥½¹}™…¥±ÕÉ•Ì¹…ÁÁ•¹¡ì‰Íåµ‰½°ˆèÍåµ‰½°°€‰É•…Í½¸ˆèÉ•…Í½¹ô¤(€€€€€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰Á…Á•É}Á½Í¥Ñ¥½¹Ì‰umÍåµ‰½±t€ôì(€€€€€€€€€€€€€€€€€€€€€€€€‰°É°ˆèÍ•±˜¹}Á½Í¥Ñ¥½¹}ÍÕµµ…Éä¡•¹¥¹”¹ÍÑ…Ñ”¹•Ð ‰°É°ˆ°íô¤¹•Ð ‰ÑÉ…‘”ˆ¤¤°(€€€€€€€€€€€€€€€€€€€€€€€€‰•­…±…å…Ù„ˆèÍ•±˜¹}Á½Í¥Ñ¥½¹}ÍÕµµ…Éä¡•¹¥¹”¹ÍÑ…Ñ”¹•Ð ‰•­…±…å…Ù„ˆ°íô¤¹•Ð ‰ÑÉ…‘”ˆ¤¤°(€€€€€€€€€€€€€€€€€€€€€€€€‰±…ÍÑ}½µÁ±•Ñ•‘}…¹‘±”ˆè•¹¥¹”¹ÍÑ…Ñ”¹•Ð ‰±…ÍÑ}Ñ¥µ•ÍÑ…µÀˆ¤°(€€€€€€€€€€€€€€€€€€€€€€€€‰ÍÑ…±”ˆèQÉÕ”°(€€€€€€€€€€€€€€€€€€€€€€€€‰‘…Ñ…}ÅÕ…±¥Ñå}ÍÑ…ÑÕÌˆè•¹¥¹”¹ÍÑ…Ñ”¹•Ð ‰‘…Ñ…}ÅÕ…±¥Ñå}ÍÑ…ÑÕÌˆ¤°(€€€€€€€€€€€€€€€€€€€€€€€€‰µ¥ÍÍ¥¹}¥¹Ñ•ÉÙ…±Ìˆè•¹¥¹”¹ÍÑ…Ñ”¹•Ð ‰µ¥ÍÍ¥¹}¥¹Ñ•ÉÙ…±Ìˆ°€À¤°(€€€€€€€€€€€€€€€€€€€ô(€€€€€€€€€€€€€€€€€€€1=¹Ý…É¹¥¹œ ‰á…Ð½ÁÑ¥½¸ÍÑÉ•…´É•©•Ñ•€ •Ì°€•Ì¤ˆ°Íåµ‰½°°ÑåÁ”¡•áŒ¤¹}}¹…µ•}|¤(€€€€€€€€€€€€€€€€€€€½¹Ñ¥¹Õ”(€€€€€€€€€€€€€€€±…ÍÑ}‰…È€ô€¡½ÁÑ¥½¹}‰…ÉÍl´Åul‰Ñ¥µ•ÍÑ…µÀ‰t¹¥Í½™½Éµ…Ð ¤¥˜½ÁÑ¥½¹}‰…ÉÌ•±Í”(€€€€€€€€€€€€€€€€€€€€€€€€€€€•¹¥¹”¹ÍÑ…Ñ”¹•Ð ‰±…ÍÑ}Ñ¥µ•ÍÑ…µÀˆ¤¤(€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰±…ÍÑ}½ÁÑ¥½¹}…¹‘±•Ì‰umÍåµ‰½±t€ô±…ÍÑ}‰…È(€€€€€€€€€€€€€€€ÑÉ…‘”€ô•¹¥¹”¹ÍÑ…Ñ”¹•Ð ‰°É°ˆ°íô¤¹•Ð ‰ÑÉ…‘”ˆ¤½È•¹¥¹”¹ÍÑ…Ñ”¹•Ð ‰•­…±…å…Ù„ˆ°íô¤¹•Ð ‰ÑÉ…‘”ˆ¤(€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰Á…Á•É}Á½Í¥Ñ¥½¹Ì‰umÍåµ‰½±t€ôì(€€€€€€€€€€€€€€€€€€€€‰°É°ˆèÍ•±˜¹}Á½Í¥Ñ¥½¹}ÍÕµµ…Éä¡•¹¥¹”¹ÍÑ…Ñ”¹•Ð ‰°É°ˆ°íô¤¹•Ð ‰ÑÉ…‘”ˆ¤¤°(€€€€€€€€€€€€€€€€€€€€‰•­…±…å…Ù„ˆèÍ•±˜¹}Á½Í¥Ñ¥½¹}ÍÕµµ…Éä¡•¹¥¹”¹ÍÑ…Ñ”¹•Ð ‰•­…±…å…Ù„ˆ°íô¤¹•Ð ‰ÑÉ…‘”ˆ¤¤°(€€€€€€€€€€€€€€€€€€€€‰±…ÍÑ}½µÁ±•Ñ•‘}…¹‘±”ˆè±…ÍÑ}‰…È°(€€€€€€€€€€€€€€€€€€€€‰ÍÑ…±”ˆè…±Í”°(€€€€€€€€€€€€€€€€€€€€‰‘…Ñ…}ÅÕ…±¥Ñå}ÍÑ…ÑÕÌˆè•¹¥¹”¹ÍÑ…Ñ”¹•Ð ‰‘…Ñ…}ÅÕ…±¥Ñå}ÍÑ…ÑÕÌˆ¤°(€€€€€€€€€€€€€€€€€€€€‰µ¥ÍÍ¥¹}¥¹Ñ•ÉÙ…±Ìˆè•¹¥¹”¹ÍÑ…Ñ”¹•Ð ‰µ¥ÍÍ¥¹}¥¹Ñ•ÉÙ…±Ìˆ°€À¤°(€€€€€€€€€€€€€€€ô(€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰Í­¥ÁÁ•‰t€ô½ÁÑ¥½¹}™…¥±ÕÉ•Ì€¬l(€€€€€€€€€€€€€€€ì‰½ÁÑ¥½¹}ÑåÁ”ˆè­¥¹°€‰¥Ñµ}É…¹¬ˆèÉ…¹¬°€‰É•…Í½¸ˆè€‰9=}aQ}Q1=}=9QIP‰ô(€€€€€€€€€€€€€€€™½È­¥¹°É…¹¬¥¸Í•±•Ñ¥½¹l‰µ¥ÍÍ¥¹œ‰t(€€€€€€€€€€€t(€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰¡•…±Ñ ‰t€ô€‰I}=AQ%=9}Qˆ¥˜½ÁÑ¥½¹}™…¥±ÕÉ•Ì½ÈÍ•±•Ñ¥½¹l‰µ¥ÍÍ¥¹œ‰t•±Í”€‰!1Q!dˆ(€€€€€€€€€€€¥˜ÕÉÉ•¹Ð€øôÍ•ÍÍ¥½¹}±½Í”…¹Í•±˜¹ÍÑ…ÑÕÍl‰¡•…±Ñ ‰t€ôô€‰!1Q!dˆè(€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰¡•…±Ñ ‰t€ô€‰MMM%=9}=5A1Qˆ(€€€€€€€€€€€É•ÑÕÉ¸Í•±˜¹}™¥¹¥Í¡}ÍÑ…ÑÕÌ¡ÕÉÉ•¹Ð¤((€€€ÍÑ…Ñ¥µ•Ñ¡½(€€€‘•˜}Á½Í¥Ñ¥½¹}ÍÕµµ…Éä¡ÑÉ…‘”¤è(€€€€€€€¥˜¹½ÐÑÉ…‘”è(€€€€€€€€€€€É•ÑÕÉ¸9½¹”(€€€€€€€É•ÑÕÉ¸í­•äèÑÉ…‘”¹•Ð¡­•ä¤™½È­•ä¥¸€ (€€€€€€€€€€€€‰ÍÑ…ÑÕÌˆ°€‰½ÕÑ½µ”ˆ°€‰•¹ÑÉäˆ°€‰•¹ÑÉå}Ñ¥µ•ÍÑ…µÀˆ°€‰Í°ˆ°€‰Ñ…É•Ðˆ°(€€€€€€€€€€€€‰Í±}‰Õ™™•É}Á½¥¹ÑÌˆ°€‰•á¥Ñ}Ñ¥µ•ÍÑ…µÀˆ°€‰•á¥Ñ}ÁÉ¥”ˆ°€‰•á¥Ñ}É•…Í½¸ˆ°(€€€€€€€€€€€€‰µ™”ˆ°€‰µ…”ˆ°€‰¡½±‘¥¹}Ñ¥µ•}µ¥¹ÕÑ•Ìˆ°€‰É•…±¥é•‘}Á¹°ˆ°(€€€€€€€€¥ô((€€€‘•˜}Á•ÉÍ¥ÍÑ}¡•…±Ñ ¡Í•±˜¤è(€€€€€€€‘•ÍÑ¥¹…Ñ¥½¸€ôÍ•±˜¹ÍÑ…Ñ•}‘¥È€¼€‰½‰Í•ÉÙ•É}¡•…±Ñ ¹©Í½¸ˆ(€€€€€€€Ñ•µÁ½É…Éä€ô‘•ÍÑ¥¹…Ñ¥½¸¹Ý¥Ñ¡}ÍÕ™™¥à ˆ¹©Í½¸¹ÑµÀˆ¤(€€€€€€€Ñ•µÁ½É…Éä¹ÝÉ¥Ñ•}Ñ•áÐ¡©Í½¸¹‘ÕµÁÌ¡Í•±˜¹ÍÑ…ÑÕÌ°Í½ÉÑ}­•åÌõQÉÕ”°‘•™…Õ±ÐõÍÑÈ¤€¬€‰q¸ˆ°•¹½‘¥¹œô‰ÕÑ˜´àˆ¤(€€€€€€€Ñ•µÁ½É…Éä¹É•Á±…”¡‘•ÍÑ¥¹…Ñ¥½¸¤((€€€‘•˜}™¥¹¥Í¡}ÍÑ…ÑÕÌ¡Í•±˜°ÕÉÉ•¹Ð¤è(€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰ÕÁ‘…Ñ•‘}…Ð‰t€ôÕÉÉ•¹Ð¹¥Í½™½Éµ…Ð ¤(€€€€€€€Í•±˜¹}Á•ÉÍ¥ÍÑ}¡•…±Ñ  ¤(€€€€€€€É•ÑÕÉ¸Í•±˜¹¡•…±Ñ¡}ÍÑ…ÑÕÌ ¤((€€€‘•˜¡•…±Ñ¡}ÍÑ…ÑÕÌ¡Í•±˜¤è(€€€€€€€€ˆˆ‰I•ÑÕÉ¸…¸½Á•É…Ñ½ÈµÍ…™”Í¹…ÁÍ¡½ÐÝ¥Ñ ¹¼É•‘•¹Ñ¥…°½ÈÑ½­•¸™¥•±‘Ì¸ˆˆˆ(€€€€€€€É•ÑÕÉ¸©Í½¸¹±½…‘Ì¡©Í½¸¹‘ÕµÁÌ¡Í•±˜¹ÍÑ…ÑÕÌ°‘•™…Õ±ÐõÍÑÈ¤¤((€€€‘•˜ÉÕ¹}™½É•Ù•È¡Í•±˜°ÍÑ½Á}É•ÅÕ•ÍÑ•õ9½¹”°Á½±±}Í•½¹‘ÌôØÀ°µ…á}‰…­½™™}Í•½¹‘ÌôÌÀÀ°(€€€€€€€€€€€€€€€€€€€¹½Ý}™¸õ9½¹”°Í±••Á•Èõ9½¹”¤è(€€€€€€€€ˆˆ‰IÕ¸Õ¹Ñ¥°ÍÑ½ÁÁ•½Í•ÍÍ¥½¸±½Í”ìÑÉ…¹Í¥•¹ÐÁÉ½Ù¥‘•È™…¥±ÕÉ•Ì‰…¬½™˜…¹É•½¹¹•Ð¸ˆˆˆ(€€€€€€€¹½Ý}™¸€ô¹½Ý}™¸½È€¡±…µ‰‘„è‘…Ñ•Ñ¥µ”¹¹½Ü¡%MP¤¤(€€€€€€€Í±••Á•È€ôÍ±••Á•È½ÈÍ±••Á}Ñ¥µ”¹Í±••À(€€€€€€€‰…­½™˜€ôµ…à Ä°¥¹Ð¡Á½±±}Í•½¹‘Ì¤¤(€€€€€€€Ý¡¥±”¹½Ð€¡ÍÑ½Á}É•ÅÕ•ÍÑ•…¹ÍÑ½Á}É•ÅÕ•ÍÑ• ¤¤è(€€€€€€€€€€€ÕÉÉ•¹Ð€ô¹½Ý}™¸ ¤(€€€€€€€€€€€ÕÉÉ•¹Ð€ôÕÉÉ•¹Ð¹É•Á±…”¡Ñé¥¹™¼õ%MP¤¥˜ÕÉÉ•¹Ð¹Ñé¥¹™¼¥Ì9½¹”•±Í”ÕÉÉ•¹Ð¹…ÍÑ¥µ•é½¹”¡%MP¤(€€€€€€€€€€€Í•ÍÍ¥½¸€ôÍ•±˜¹…±•¹‘…È¹Í•ÍÍ¥½¹}™½È¡ÕÉÉ•¹Ð¹‘…Ñ” ¤¤(€€€€€€€€€€€¥˜Í•ÍÍ¥½¸¥Ì9½¹”è(€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰¡•…±Ñ ‰t€ô€‰1=M}=I}19I}U9MUAA=IQˆ(€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰ÕÁ‘…Ñ•‘}…Ð‰t€ôÕÉÉ•¹Ð¹¥Í½™½Éµ…Ð ¤(€€€€€€€€€€€€€€€Í•±˜¹}Á•ÉÍ¥ÍÑ}¡•…±Ñ  ¤(€€€€€€€€€€€€€€€É•ÑÕÉ¸Í•±˜¹¡•…±Ñ¡}ÍÑ…ÑÕÌ ¤(€€€€€€€€€€€Í•ÍÍ¥½¹}±½Í”€ô‘…Ñ•Ñ¥µ”¹½µ‰¥¹”¡ÕÉÉ•¹Ð¹‘…Ñ” ¤°Í•ÍÍ¥½¸¹±½Í•Í}…Ð°%MP¤(€€€€€€€€€€€¥˜ÕÉÉ•¹Ð€øÍ•ÍÍ¥½¹}±½Í”€¬	Hè(€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰¡•…±Ñ ‰t€ô€‰MMM%=9}1=Mˆ(€€€€€€€€€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰ÕÁ‘…Ñ•‘}…Ð‰t€ôÕÉÉ•¹Ð¹¥Í½™½Éµ…Ð ¤(€€€€€€€€€€€€€€€Í•±˜¹}Á•ÉÍ¥ÍÑ}¡•…±Ñ  ¤(€€€€€€€€€€€€€€€É•ÑÕÉ¸Í•±˜¹¡•…±Ñ¡}ÍÑ…ÑÕÌ ¤(€€€€€€€€€€€¥˜ÕÉÉ•¹Ð€ð‘…Ñ•Ñ¥µ”¹½µ‰¥¹”¡ÕÉÉ•¹Ð¹‘…Ñ” ¤°Í•ÍÍ¥½¸¹½Á•¹Í}…Ð°%MP¤è(€€€€€€€€€€€€€€€Í±••Á•È¡µ…à Ä°¥¹Ð¡Á½±±}Í•½¹‘Ì¤¤¤(€€€€€€€€€€€€€€€½¹Ñ¥¹Õ”(€€€€€€€€€€€Í¹…ÁÍ¡½Ð€ôÍ•±˜¹ÉÕ¹}½¹”¡ÕÉÉ•¹Ð¤(€€€€€€€€€€€¥˜Í¹…ÁÍ¡½Ñl‰¡•…±Ñ ‰t¹ÍÑ…ÉÑÍÝ¥Ñ  ‰Iˆ¤è(€€€€€€€€€€€€€€€Ý…¥Ð€ôµ¥¸¡‰…­½™˜°µ…á}‰…­½™™}Í•½¹‘Ì¤(€€€€€€€€€€€€€€€1=¹Ý…É¹¥¹œ ‰=‰Í•ÉÙ•È‘•É…‘•ìÉ•ÑÉå¥¹œÝ¥Ñ ‰½Õ¹‘•‰…­½™˜€ •ÍÌ¤ˆ°Ý…¥Ð¤(€€€€€€€€€€€€€€€¥˜Í•±˜¹É½ÝÝ}™…Ñ½Éä¥Ì¹½Ð9½¹”è(€€€€€€€€€€€€€€€€€€€ÑÉäè(€€€€€€€€€€€€€€€€€€€€€€€Í•±˜¹É½ÝÜ€ôÍ•±˜¹É½ÝÝ}™…Ñ½Éä ¤(€€€€€€€€€€€€€€€€€€€•á•ÁÐá•ÁÑ¥½¸…Ì•áŒè(€€€€€€€€€€€€€€€€€€€€€€€1=¹Ý…É¹¥¹œ ‰I•…µ½¹±ä±¥•¹ÐÉ•½¹¹•Ð™…¥±•€ •Ì¤ˆ°ÑåÁ”¡•áŒ¤¹}}¹…µ•}|¤(€€€€€€€€€€€€€€€‰…­½™˜€ôµ¥¸¡µ…á}‰…­½™™}Í•½¹‘Ì°µ…à¡‰…­½™˜€¨€È°€Ä¤¤(€€€€€€€€€€€€€€€Í±••Á•È¡Ý…¥Ð¤(€€€€€€€€€€€•±Í”è(€€€€€€€€€€€€€€€‰…­½™˜€ôµ…à Ä°¥¹Ð¡Á½±±}Í•½¹‘Ì¤¤(€€€€€€€€€€€€€€€¥˜ÕÉÉ•¹Ð€øôÍ•ÍÍ¥½¹}±½Í”è(€€€€€€€€€€€€€€€€€€€Í•±˜¹}Á•ÉÍ¥ÍÑ}¡•…±Ñ  ¤(€€€€€€€€€€€€€€€€€€€É•ÑÕÉ¸Í•±˜¹¡•…±Ñ¡}ÍÑ…ÑÕÌ ¤(€€€€€€€€€€€€€€€Í±••Á•È¡µ…à Ä°¥¹Ð¡Á½±±}Í•½¹‘Ì¤¤¤(€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰¡•…±Ñ ‰t€ô€‰MQ=AA}	e}=AIQ=Hˆ(€€€€€€€Í•±˜¹ÍÑ…ÑÕÍl‰ÕÁ‘…Ñ•‘}…Ð‰t€ô‘…Ñ•Ñ¥µ”¹¹½Ü¡%MP¤¹¥Í½™½Éµ…Ð ¤(€€€€€€€Í•±˜¹}Á•ÉÍ¥ÍÑ}¡•…±Ñ  ¤(€€€€€€€É•ÑÕÉ¸Í•±˜¹¡•…±Ñ¡}ÍÑ…ÑÕÌ ¤(()‘•˜…ÕÑ¡•¹Ñ¥…Ñ•‘}É½ÝÝ}™…Ñ½Éä¡½¹™¥œõ¤è(€€€€ˆˆ‰I•ÑÕÉ¸„É•…µ½¹±äÉ½ÝÜ±¥•¹Ð™…Ñ½ÉäÝ¥Ñ¡½ÕÐ•áÁ½Í¥¹œÉ•‘•¹Ñ¥…±Ì¸ˆˆˆ(€€€™É½´€¹É½ÝÝ}…ÕÑ ¥µÁ½ÉÐ…ÕÑ¡•¹Ñ¥…Ñ”(€€€É•ÑÕÉ¸±…µ‰‘„è…ÕÑ¡•¹Ñ¥…Ñ”¡½¹™¥œ¤(()}}…±±}|€ôl‰É½ÝÝA…Á•É=‰Í•ÉÙ•Èˆ°€‰…ÕÑ¡•¹Ñ¥…Ñ•‘}É½ÝÝ}™…Ñ½Éä‰t(

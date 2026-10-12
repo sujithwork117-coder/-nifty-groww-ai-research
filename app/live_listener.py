@@ -7,6 +7,7 @@ import time as sleep_time
 from .candle_builder import FiveMinuteCandleBuilder, completed_5m_candle
 from .config import CFG
 from .contract_selection import select_daily_itm_contracts
+from .nse_calendar import DEFAULT_NSE_CALENDAR, NSECalendar
 from .paper_engine import PaperContractEngine
 from .safety import ExecutionLock
 
@@ -41,12 +42,12 @@ def select_live_contracts(groww, opening_candle, trading_date=None):
     return select_daily_itm_contracts(groww, opening_candle["open"], day)
 
 
-def market_open_now(now=None):
+def market_open_now(now=None, calendar: NSECalendar = DEFAULT_NSE_CALENDAR):
     current = now or datetime.now(IST)
     if current.tzinfo is None:
         current = current.replace(tzinfo=IST)
     current = current.astimezone(IST)
-    return current.weekday() < 5 and time(9, 15) <= current.time().replace(tzinfo=None) < time(15, 30)
+    return calendar.market_open(current)
 
 
 def observe_ltp(groww, symbols, poll_seconds=5, on_tick=None, stop_requested=None):

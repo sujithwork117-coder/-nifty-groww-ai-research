@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from dotenv import load_dotenv
+import math
 import os
 from pathlib import Path
 load_dotenv()
@@ -52,10 +53,25 @@ class Config:
     ek_end: str=os.getenv("EKALAYAVA_END","15:15")
     # No evidence-backed numeric buffer has been selected. Unset keeps Ekalayava observational.
     ekalayava_sl_buffer_points: float|None=_optional_float("EKALAYAVA_SL_BUFFER_POINTS")
+    ekalayava_experimental_exit_simulation: bool=os.getenv(
+        "EKALAYAVA_EXPERIMENTAL_EXIT_SIMULATION","false").lower()=="true"
+    strategy_version: str=os.getenv("STRATEGY_VERSION","nifty-paper-v1")
     execution_allowed: bool=os.getenv("EXECUTION_ALLOWED","false").lower()=="true"
     paper_only: bool=os.getenv("PAPER_ONLY","true").lower()=="true"
     kill_switch: bool=os.getenv("KILL_SWITCH","false").lower()=="true"
     model_version: str=os.getenv("MODEL_VERSION","v001")
+
+    def __post_init__(self):
+        buffer_points=self.ekalayava_sl_buffer_points
+        if buffer_points is not None and (not math.isfinite(buffer_points) or buffer_points < 0):
+            raise ValueError("EKALAYAVA_SL_BUFFER_POINTS must be finite and nonnegative")
+        if self.ekalayava_experimental_exit_simulation and buffer_points is None:
+            raise ValueError("Experimental Ekalayava exit simulation requires an explicit buffer")
+        if buffer_points is not None and not self.ekalayava_experimental_exit_simulation:
+            raise ValueError("Set EKALAYAVA_EXPERIMENTAL_EXIT_SIMULATION=true to use a candidate buffer")
+        if not self.strategy_version.strip():
+            raise ValueError("STRATEGY_VERSION must be nonempty")
+
 CFG=Config()
 if CFG.execution_allowed or not CFG.paper_only:
     raise RuntimeError("SAFETY LOCK: research build requires EXECUTION_ALLOWED=false and PAPER_ONLY=true.")
