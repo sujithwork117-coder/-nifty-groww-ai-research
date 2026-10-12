@@ -1,0 +1,130 @@
+{
+  "base_git_commit": "dfbdae7fe26325f94f9d50616754f3794e1b529b",
+  "baseline_replay_mismatches": [],
+  "candle_resolution": "Completed 5-minute OHLC; same-bar stop+target is ambiguous; missing intervals before touch remain unresolved; no forced EOD exit",
+  "canonical_strategy_version": "baseline-v1",
+  "chronological_oos_check_not_untouched_holdout": "2026-09-01_to_2026-09-30; actual underlying available only through 2026-09-29; option coverage is incomplete and inherited research had already examined candidate target policies",
+  "combined_candidate_matrix": [
+    {
+      "policy": "SL_2_TP_100",
+      "stop_points_below_opening_low": 2,
+      "target_fraction_of_entry_to_opening_high": 1.0
+    },
+    {
+      "policy": "SL_2_TP_75",
+      "stop_points_below_opening_low": 2,
+      "target_fraction_of_entry_to_opening_high": 0.75
+    },
+    {
+      "policy": "SL_2_TP_50",
+      "stop_points_below_opening_low": 2,
+      "target_fraction_of_entry_to_opening_high": 0.5
+    },
+    {
+      "policy": "SL_2_TP_25",
+      "stop_points_below_opening_low": 2,
+      "target_fraction_of_entry_to_opening_high": 0.25
+    },
+    {
+      "policy": "SL_4_TP_100",
+      "stop_points_below_opening_low": 4,
+      "target_fraction_of_entry_to_opening_high": 1.0
+    },
+    {
+      "policy": "SL_4_TP_75",
+      "stop_points_below_opening_low": 4,
+      "target_fraction_of_entry_to_opening_high": 0.75
+    },
+    {
+      "policy": "SL_4_TP_50",
+      "stop_points_below_opening_low": 4,
+      "target_fraction_of_entry_to_opening_high": 0.5
+    },
+    {
+      "policy": "SL_4_TP_25",
+      "stop_points_below_opening_low": 4,
+      "target_fraction_of_entry_to_opening_high": 0.25
+    },
+    {
+      "policy": "SL_6_TP_100",
+      "stop_points_below_opening_low": 6,
+      "target_fraction_of_entry_to_opening_high": 1.0
+    },
+    {
+      "policy": "SL_6_TP_75",
+      "stop_points_below_opening_low": 6,
+      "target_fraction_of_entry_to_opening_high": 0.75
+    },
+    {
+      "policy": "SL_6_TP_50",
+      "stop_points_below_opening_low": 6,
+      "target_fraction_of_entry_to_opening_high": 0.5
+    },
+    {
+      "policy": "SL_6_TP_25",
+      "stop_points_below_opening_low": 6,
+      "target_fraction_of_entry_to_opening_high": 0.25
+    }
+  ],
+  "costs": "Not modeled; all points gross premium-point thresholds, no spread/slippage/fees/taxes",
+  "data_source": "existing Groww-derived local cache only; no API calls or downloads",
+  "execution_allowed": false,
+  "experiment": "multi_year_nifty_l2l_ekalayava_validation",
+  "generated_at_ist": "2026-10-13T00:17:17.160980+05:30",
+  "independent_stop_candidates_points_below_opening_low": [
+    2,
+    4,
+    6
+  ],
+  "independent_target_candidates": [
+    {
+      "fraction_of_entry_to_opening_high": 1.0,
+      "policy": "OPENING_HIGH_BASELINE"
+    },
+    {
+      "fraction_of_entry_to_opening_high": 0.75,
+      "policy": "TARGET_75_PERCENT"
+    },
+    {
+      "fraction_of_entry_to_opening_high": 0.5,
+      "policy": "TARGET_50_PERCENT"
+    },
+    {
+      "fraction_of_entry_to_opening_high": 0.25,
+      "policy": "TARGET_25_PERCENT"
+    }
+  ],
+  "missing_contract_files": [],
+  "paper_only": true,
+  "predeclared_selection_rule": "Within each experiment family, maximize gross resolved points per all baseline setups in Jan-Jun; tie-break on lower equal-unit chronological resolved-sequence drawdown, then shorter longest loss streak. No September-based selection.",
+  "research_code_sha256": {
+    "app/research_target_policies.py": "b3253d32ef451cc6bcaa9d22ecc4bb99414d392a7d54963f5952f33da7c98b2a",
+    "tools/run_multi_year_research.py": "5419509d217d7d6ec9e5968e2902d8aad6f6cd3d7f5bc790e0cf28b16328927b"
+  },
+  "source_artifacts": {
+    "data\\derived\\final_jan_sep_2026\\final_baseline.json": "3b9135371239ed35ccb903e3449d6897b10e53730032c50f4c33f08e606d19ec",
+    "reports\\EKALAYAVA_FINAL_RESEARCH.json": "4b0dcf61bcc54b0d451b811caf5c03133713a98c8eecd70044756ec6dbbe3ee1",
+    "reports\\L2L_FINAL_VALIDATION.json": "068956e615a226cf4db175246683885acf42df78b23de52ad968d3893f94b64f"
+  },
+  "target_fractions": [
+    {
+      "fraction": 1.0,
+      "policy": "OPENING_HIGH_BASELINE"
+    },
+    {
+      "fraction": 0.75,
+      "policy": "TARGET_75_PERCENT"
+    },
+    {
+      "fraction": 0.5,
+      "policy": "TARGET_50_PERCENT"
+    },
+    {
+      "fraction": 0.25,
+      "policy": "TARGET_25_PERCENT"
+    }
+  ],
+  "train": "2026-01-01_to_2026-06-30",
+  "training_selected_research_candidate": "TARGET_50_PERCENT",
+  "validation": "2026-07-01_to_2026-08-31"
+}

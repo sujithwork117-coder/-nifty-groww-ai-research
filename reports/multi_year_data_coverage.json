@@ -1,0 +1,1716 @@
+{
+  "local_inventory": {
+    "all_local_csv_snapshot": {
+      "csv_files_inspected": 1755,
+      "earliest_timestamp_utc": "2026-01-01 03:30:00+00:00",
+      "latest_timestamp_utc": "2026-09-29 08:30:00+00:00",
+      "note": "Counts include duplicate run/cache copies; they are not unique bars or additional coverage.",
+      "snapshot_date": "2026-10-12",
+      "timestamped_rows_across_duplicate_caches": 347783,
+      "years_present": [
+        2026
+      ]
+    },
+    "authoritative_dataset": "data/derived/final_jan_sep_2026/assembled",
+    "authoritative_option_bars": 42149,
+    "authoritative_underlying_bars": 13783,
+    "calendar": "NSECalendar 2026 session list; includes 2026-02-01 Budget Sunday session",
+    "date_range_requested": [
+      "2026-01-01",
+      "2026-09-30"
+    ],
+    "date_range_with_underlying": [
+      "2026-01-01",
+      "2026-09-29"
+    ],
+    "earlier_years_2022_2025_local_data": "none found in repository market-data directories",
+    "option_symbol_files": 525,
+    "tracked_or_ignored_market_files_are_not_published": true,
+    "underlying_file": "data/derived/final_jan_sep_2026/assembled/nifty_5m.csv"
+  },
+  "periods": {
+    "2022": {
+      "reason": "no local 5-minute datasets; Groww 5-minute history is documented as last 3 months",
+      "status": "UNAVAILABLE"
+    },
+    "2023": {
+      "reason": "no local 5-minute datasets; Groww 5-minute history is documented as last 3 months",
+      "status": "UNAVAILABLE"
+    },
+    "2024": {
+      "reason": "no local 5-minute datasets; Groww 5-minute history is documented as last 3 months",
+      "status": "UNAVAILABLE"
+    },
+    "2025": {
+      "reason": "no local 5-minute datasets; Groww 5-minute history is documented as last 3 months",
+      "status": "UNAVAILABLE"
+    },
+    "2026-01-01_to_2026-09-30": {
+      "complete_contract_days": 561,
+      "expected_option_bars": 55500,
+      "expected_option_contract_days": 740,
+      "expected_sessions": 185,
+      "fully_usable_days": 112,
+      "missing_or_unselectable_contract_days": 178,
+      "missing_slots_manifest": [
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-04",
+          "expiry": "2026-03-10",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-04",
+          "expiry": "2026-03-10",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-05",
+          "expiry": "2026-03-10",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-05",
+          "expiry": "2026-03-10",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-06",
+          "expiry": "2026-03-10",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-06",
+          "expiry": "2026-03-10",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-09",
+          "expiry": "2026-03-10",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-09",
+          "expiry": "2026-03-10",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-09",
+          "expiry": "2026-03-10",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-10",
+          "expiry": "2026-03-10",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-10",
+          "expiry": "2026-03-10",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-11",
+          "expiry": "2026-03-17",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-11",
+          "expiry": "2026-03-17",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-11",
+          "expiry": "2026-03-17",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-12",
+          "expiry": "2026-03-17",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-12",
+          "expiry": "2026-03-17",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-13",
+          "expiry": "2026-03-17",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-13",
+          "expiry": "2026-03-17",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-13",
+          "expiry": "2026-03-17",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-16",
+          "expiry": "2026-03-17",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-16",
+          "expiry": "2026-03-17",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-17",
+          "expiry": "2026-03-17",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-17",
+          "expiry": "2026-03-17",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-17",
+          "expiry": "2026-03-17",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-18",
+          "expiry": "2026-03-24",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-18",
+          "expiry": "2026-03-24",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-19",
+          "expiry": "2026-03-24",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-20",
+          "expiry": "2026-03-24",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-20",
+          "expiry": "2026-03-24",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-23",
+          "expiry": "2026-03-24",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-23",
+          "expiry": "2026-03-24",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-23",
+          "expiry": "2026-03-24",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-24",
+          "expiry": "2026-03-24",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-24",
+          "expiry": "2026-03-24",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-24",
+          "expiry": "2026-03-24",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-25",
+          "expiry": "2026-03-30",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-30",
+          "expiry": "2026-03-30",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-30",
+          "expiry": "2026-03-30",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-03-30",
+          "expiry": "2026-03-30",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-04-01",
+          "expiry": "2026-04-07",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-04-01",
+          "expiry": "2026-04-07",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-04-01",
+          "expiry": "2026-04-07",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-04-01",
+          "expiry": "2026-04-07",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-04-02",
+          "expiry": "2026-04-07",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-04-02",
+          "expiry": "2026-04-07",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-04-02",
+          "expiry": "2026-04-07",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-04-06",
+          "expiry": "2026-04-07",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-04-06",
+          "expiry": "2026-04-07",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-04-06",
+          "expiry": "2026-04-07",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-04-07",
+          "expiry": "2026-04-07",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-04-07",
+          "expiry": "2026-04-07",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-04-07",
+          "expiry": "2026-04-07",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-04-08",
+          "expiry": "2026-04-13",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-04-09",
+          "expiry": "2026-04-13",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-04-09",
+          "expiry": "2026-04-13",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-04-09",
+          "expiry": "2026-04-13",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-04-10",
+          "expiry": "2026-04-13",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-04-10",
+          "expiry": "2026-04-13",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-04-13",
+          "expiry": "2026-04-13",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-04-13",
+          "expiry": "2026-04-13",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-06-25",
+          "expiry": "2026-06-30",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-06-29",
+          "expiry": "2026-06-30",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-01",
+          "expiry": "2026-07-07",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-01",
+          "expiry": "2026-07-07",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-01",
+          "expiry": "2026-07-07",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-01",
+          "expiry": "2026-07-07",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-02",
+          "expiry": "2026-07-07",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-02",
+          "expiry": "2026-07-07",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-02",
+          "expiry": "2026-07-07",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-02",
+          "expiry": "2026-07-07",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-03",
+          "expiry": "2026-07-07",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-03",
+          "expiry": "2026-07-07",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-03",
+          "expiry": "2026-07-07",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-03",
+          "expiry": "2026-07-07",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-06",
+          "expiry": "2026-07-07",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-06",
+          "expiry": "2026-07-07",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-06",
+          "expiry": "2026-07-07",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-06",
+          "expiry": "2026-07-07",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-07",
+          "expiry": "2026-07-07",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-07",
+          "expiry": "2026-07-07",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-07",
+          "expiry": "2026-07-07",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-07",
+          "expiry": "2026-07-07",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-15",
+          "expiry": "2026-07-21",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-15",
+          "expiry": "2026-07-21",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-15",
+          "expiry": "2026-07-21",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-15",
+          "expiry": "2026-07-21",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-16",
+          "expiry": "2026-07-21",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-16",
+          "expiry": "2026-07-21",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-16",
+          "expiry": "2026-07-21",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-16",
+          "expiry": "2026-07-21",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-17",
+          "expiry": "2026-07-21",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-17",
+          "expiry": "2026-07-21",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-17",
+          "expiry": "2026-07-21",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-17",
+          "expiry": "2026-07-21",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-20",
+          "expiry": "2026-07-21",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-20",
+          "expiry": "2026-07-21",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-20",
+          "expiry": "2026-07-21",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-20",
+          "expiry": "2026-07-21",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-21",
+          "expiry": "2026-07-21",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-21",
+          "expiry": "2026-07-21",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-21",
+          "expiry": "2026-07-21",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-21",
+          "expiry": "2026-07-21",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-29",
+          "expiry": "2026-08-04",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-29",
+          "expiry": "2026-08-04",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-07-30",
+          "expiry": "2026-08-04",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-08-03",
+          "expiry": "2026-08-04",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-08-04",
+          "expiry": "2026-08-04",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-08-04",
+          "expiry": "2026-08-04",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-08-05",
+          "expiry": "2026-08-11",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-08-05",
+          "expiry": "2026-08-11",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-08-06",
+          "expiry": "2026-08-11",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-08-06",
+          "expiry": "2026-08-11",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-08-07",
+          "expiry": "2026-08-11",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-08-07",
+          "expiry": "2026-08-11",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-08-10",
+          "expiry": "2026-08-11",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-08-10",
+          "expiry": "2026-08-11",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-08-11",
+          "expiry": "2026-08-11",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-08-11",
+          "expiry": "2026-08-11",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-08-12",
+          "expiry": "2026-08-18",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-08-13",
+          "expiry": "2026-08-18",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-08-14",
+          "expiry": "2026-08-18",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-08-17",
+          "expiry": "2026-08-18",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-08-18",
+          "expiry": "2026-08-18",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-08-18",
+          "expiry": "2026-08-18",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-08-27",
+          "expiry": "2026-09-01",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-08-28",
+          "expiry": "2026-09-01",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-08-31",
+          "expiry": "2026-09-01",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-01",
+          "expiry": "2026-09-01",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-01",
+          "expiry": "2026-09-01",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-03",
+          "expiry": "2026-09-08",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-08",
+          "expiry": "2026-09-08",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-08",
+          "expiry": "2026-09-08",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-09",
+          "expiry": "2026-09-15",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-09",
+          "expiry": "2026-09-15",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-09",
+          "expiry": "2026-09-15",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-10",
+          "expiry": "2026-09-15",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-11",
+          "expiry": "2026-09-15",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-11",
+          "expiry": "2026-09-15",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-11",
+          "expiry": "2026-09-15",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-11",
+          "expiry": "2026-09-15",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-15",
+          "expiry": "2026-09-15",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-15",
+          "expiry": "2026-09-15",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-16",
+          "expiry": "2026-09-22",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-16",
+          "expiry": "2026-09-22",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-16",
+          "expiry": "2026-09-22",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-16",
+          "expiry": "2026-09-22",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-17",
+          "expiry": "2026-09-22",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-17",
+          "expiry": "2026-09-22",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-17",
+          "expiry": "2026-09-22",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-18",
+          "expiry": "2026-09-22",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-18",
+          "expiry": "2026-09-22",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-21",
+          "expiry": "2026-09-22",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-21",
+          "expiry": "2026-09-22",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-22",
+          "expiry": "2026-09-22",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-22",
+          "expiry": "2026-09-22",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-23",
+          "expiry": "2026-09-29",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-23",
+          "expiry": "2026-09-29",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-23",
+          "expiry": "2026-09-29",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-24",
+          "expiry": "2026-09-29",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-24",
+          "expiry": "2026-09-29",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-24",
+          "expiry": "2026-09-29",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-24",
+          "expiry": "2026-09-29",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-25",
+          "expiry": "2026-09-29",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-25",
+          "expiry": "2026-09-29",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-25",
+          "expiry": "2026-09-29",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-25",
+          "expiry": "2026-09-29",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-28",
+          "expiry": "2026-09-29",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-28",
+          "expiry": "2026-09-29",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-28",
+          "expiry": "2026-09-29",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-28",
+          "expiry": "2026-09-29",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-29",
+          "expiry": "2026-09-29",
+          "itm_rank": 2,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-29",
+          "expiry": "2026-09-29",
+          "itm_rank": 3,
+          "option_type": "CE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-29",
+          "expiry": "2026-09-29",
+          "itm_rank": 2,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        },
+        {
+          "contract": null,
+          "dataset": "options",
+          "date": "2026-09-29",
+          "expiry": "2026-09-29",
+          "itm_rank": 3,
+          "option_type": "PE",
+          "reason": "selected contract has no candle data for this date"
+        }
+      ],
+      "monthly_coverage": [
+        {
+          "complete": 80,
+          "expected_option_contract_days": 80,
+          "expected_sessions": 20,
+          "missing": 0,
+          "month": "2026-01",
+          "partial": 0,
+          "underlying_sessions_available": 20
+        },
+        {
+          "complete": 83,
+          "expected_option_contract_days": 84,
+          "expected_sessions": 21,
+          "missing": 0,
+          "month": "2026-02",
+          "partial": 1,
+          "underlying_sessions_available": 21
+        },
+        {
+          "complete": 37,
+          "expected_option_contract_days": 76,
+          "expected_sessions": 19,
+          "missing": 39,
+          "month": "2026-03",
+          "partial": 0,
+          "underlying_sessions_available": 19
+        },
+        {
+          "complete": 59,
+          "expected_option_contract_days": 80,
+          "expected_sessions": 20,
+          "missing": 21,
+          "month": "2026-04",
+          "partial": 0,
+          "underlying_sessions_available": 20
+        },
+        {
+          "complete": 76,
+          "expected_option_contract_days": 76,
+          "expected_sessions": 19,
+          "missing": 0,
+          "month": "2026-05",
+          "partial": 0,
+          "underlying_sessions_available": 19
+        },
+        {
+          "complete": 82,
+          "expected_option_contract_days": 84,
+          "expected_sessions": 21,
+          "missing": 2,
+          "month": "2026-06",
+          "partial": 0,
+          "underlying_sessions_available": 21
+        },
+        {
+          "complete": 49,
+          "expected_option_contract_days": 92,
+          "expected_sessions": 23,
+          "missing": 43,
+          "month": "2026-07",
+          "partial": 0,
+          "underlying_sessions_available": 23
+        },
+        {
+          "complete": 62,
+          "expected_option_contract_days": 84,
+          "expected_sessions": 21,
+          "missing": 22,
+          "month": "2026-08",
+          "partial": 0,
+          "underlying_sessions_available": 21
+        },
+        {
+          "complete": 33,
+          "expected_option_contract_days": 84,
+          "expected_sessions": 21,
+          "missing": 51,
+          "month": "2026-09",
+          "partial": 0,
+          "underlying_sessions_available": 20
+        }
+      ],
+      "observed_option_bars": 42149,
+      "option_coverage_fraction": 0.7594,
+      "partial_contract_days": 1,
+      "partially_usable_days": 55,
+      "underlying_bars": 13783,
+      "underlying_expected_bars": 13875,
+      "underlying_sessions_available": 184,
+      "unusable_days": 18
+    }
+  }
+}
