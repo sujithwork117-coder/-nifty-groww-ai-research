@@ -61,8 +61,8 @@ L2L gross points exclude position sizing, fees, spread, slippage, and capital. E
 
 ## Readiness
 
-- **L2L: NOT READY for live paper observation.** The stateful engine is present, but the full Groww observer coordinator, exchange holiday/special-session calendar, stream orchestration, and real reconnect integration remain incomplete.
-- **Ekalayava: READY FOR OBSERVATION ONLY.** Canonical default has no approved executable stop buffer; structural stop results remain hypotheses.
-- Both remain paper-only: `EXECUTION_ALLOWED=false`, `PAPER_ONLY=true`; no live order path was activated.
+- **Status rechecked 2026-10-12; this replaces the readiness snapshot previously recorded here.** L2L is **NOT READY for live paper observation** until supervised market-hours validation confirms Groww 5-minute candle delivery, timing, exact-contract completeness, and recovery. The coordinator, exchange calendar, exact daily selection, stateful paper engines, journal, and reconnect handling are implemented and mock/replay tested; no live candle endpoint has yet been tested.
+- **Ekalayava is NOT READY for a live observer session** pending the same candle-feed validation. Its strategy remains **observation-only** because the canonical definition has no executable stop/exit lifecycle; no Ekalayava P&L result is defined.
+- Both remain paper-only: `EXECUTION_ALLOWED=false`, `PAPER_ONLY=true`; no live order path was activated. See [`paper_trading_readiness.md`](paper_trading_readiness.md) for the detailed evidence, supervised startup procedure, and test results.
 
 Evidence: [`l2l_final_validation.md`](l2l_final_validation.md), [`EKALAYAVA_FINAL_RESEARCH.md`](EKALAYAVA_FINAL_RESEARCH.md), and [`paper_trading_readiness.md`](paper_trading_readiness.md).

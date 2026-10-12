@@ -1,6 +1,6 @@
 # Paper-Trading Readiness — Independent Verification
 
-**Updated:** 2026-10-12. Repository and source audit, local tests, and one read-only Groww profile check were performed. At verification time it was about 23:22 IST, after NSE market hours. No candle-data endpoint was called, no observer session was started, and no historical data was downloaded.
+**Updated:** 2026-10-12. Repository and source audit, local tests, and one read-only Groww profile check were performed. At verification time it was about 23:56 IST, after NSE market hours. Authentication and `get_user_profile()` succeeded in this run. No candle-data endpoint was called, no observer session was started, and no historical data was downloaded.
 
 ## Decision
 
@@ -13,7 +13,7 @@ Both remain paper-only: `EXECUTION_ALLOWED=false`, `PAPER_ONLY=true`. Neither is
 
 ## What was verified
 
-- **Actual Groww connectivity:** credentials were configured without printing their values; read-only authentication and `get_user_profile()` both succeeded. No candle, quote, LTP, or order API was called. This verifies authentication/profile access only, not market-data delivery.
+- **Actual Groww connectivity:** read-only authentication and `get_user_profile()` both succeeded at about 23:56 IST on 2026-10-12. Credential values were not printed. No candle, quote, LTP, or order API was called. This verifies authentication/profile access only, not market-data delivery.
 - **Unit-tested:** canonical L2L red-break → first subsequent green entry, target-already-reached skip, stop/target/ambiguity, completed bar enforcement, duplicate/restart state, exact contract selection, calendar, and paper-only safety.
 - **Mock integration tested:** NIFTY opening bar → exact daily catalog-first expiry and ITM2/ITM3 CE/PE symbols → same-session completed 5-minute bars → per-contract engines → durable state/journal; per-symbol failures, reconnect, stale option feed, invalid timestamps, and restart/replayed candles.
 - **Not verified with Groww candles:** live 5-minute endpoint response shape/timing, actual four-contract completeness, rate-limit behavior against service, and recovery in a live market session.
@@ -59,7 +59,12 @@ Focused verification command:
 .\.venv\Scripts\python.exe -m pytest -q tests/test_live_listener.py tests/test_paper_observer.py tests/test_nse_calendar.py tests/test_journal.py tests/test_config_secrets.py tests/test_contract_selection.py tests/test_groww_data.py tests/test_safety_audit.py tests/test_safety.py tests/test_paper_replay.py
 ```
 
-Final verification on 2026-10-12: focused readiness/journal tests **26 passed**; full repository suite **93 passed**.
+Final verification on 2026-10-12: focused readiness/observer/selector/journal/safety tests **44 passed**; full repository suite **99 passed**. Commands:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest -q tests/test_live_listener.py tests/test_paper_observer.py tests/test_nse_calendar.py tests/test_journal.py tests/test_config_secrets.py tests/test_contract_selection.py tests/test_groww_data.py tests/test_safety_audit.py tests/test_safety.py tests/test_paper_replay.py
+.\.venv\Scripts\python.exe -m pytest -q
+```
 
 ## Safety
 
