@@ -23,6 +23,7 @@ import pandas as pd
 from .config import CFG
 from .contract_selection import select_daily_itm_contracts
 from .groww_data import get_session_candles
+from .journal import append_paper_record
 from .nse_calendar import DEFAULT_NSE_CALENDAR, NSECalendar
 from .paper_engine import PaperContractEngine
 from .safety import ExecutionLock
@@ -39,6 +40,12 @@ def _local(value):
 
 def _symbol_key(symbol):
     return hashlib.sha256(str(symbol).encode("utf-8")).hexdigest()[:20]
+
+
+def _latest_expected_bar_start(now, session_open, session_close):
+    current = min(now, session_close)
+    elapsed = int((current - session_open).total_seconds() // BAR.total_seconds())
+    return None if elapsed < 1 else session_open + BAR * (elapsed - 1)
 
 
 def _completed_session_bars(frame, trading_date, now):
@@ -95,6 +102,7 @@ class GrowwPaperObserver:
         self._session_selection = None
         self._selection_date = None
         self._lock = threading.RLock()
+        self._reconnect_attempt = 0
 
     @staticmethod
     def _validate_configuration(config):
@@ -136,6 +144,30 @@ class GrowwPaperObserver:
             engines[symbol] = engine
         return engines
 
+    def _record_observer_event(self, event_type, current, *, stream, symbol=None,
+                               reason=None, error_type=None, last_completed_candle=None,
+                               retry_after_seconds=None, suppressed_candle_count=None,
+                               missing_intervals=None):
+        identity = "|".join(str(value or "") for value in (
+            event_type, current.date().isoformat(), stream, symbol,
+            last_completed_candle, reason, self._reconnect_attempt if event_type.startswith("RECONNECT") else "",
+        ))
+        event_id = hashlib.sha256(identity.encode("utf-8")).hexdigest()
+        record_id = hashlib.sha256(f"{event_id}|{event_type}".encode("utf-8")).hexdigest()
+        return append_paper_record({
+            "record_id": record_id, "event_id": event_id, "setup_id": None,
+            "event_type": event_type, "strategy": "OBSERVER",
+            "strategy_version": getattr(self.config, "strategy_version", self.config.model_version),
+            "simulation_mode": "READ_ONLY_OBSERVATION", "date": current.date().isoformat(),
+            "timestamp": current.isoformat(), "symbol": symbol, "stream": stream,
+            "reason": reason, "error_type": error_type,
+            "last_completed_candle": last_completed_candle,
+            "retry_after_seconds": retry_after_seconds,
+            "suppressed_candle_count": suppressed_candle_count,
+            "missing_intervals": missing_intervals,
+            "execution": "DISABLED", "paper_only": True,
+        }, self._journal_path(current.date()), self.config.model_version)
+
     def run_once(self, now=None):
         """Fetch and process one safe snapshot; provider errors are sanitized."""
         current = now or datetime.now(IST)
@@ -175,17 +207,32 @@ class GrowwPaperObserver:
             except Exception as exc:
                 self.status["health"] = "DEGRADED_UNDERLYING_DATA"
                 self.status["errors"].append({"stream": "NIFTY", "error_type": type(exc).__name__})
+                self._record_observer_event(
+                    "UNDERLYING_STREAM_UNAVAILABLE", current, stream="NIFTY",
+                    error_type=type(exc).__name__)
                 LOG.warning("NIFTY candle request failed (%s)", type(exc).__name__)
                 return self._finish_status(current)
 
             underlying_bars = _completed_session_bars(underlying_frame, trading_date, current)
+            expected_start = _latest_expected_bar_start(current, session_open, session_close)
             opening = next((bar for bar in underlying_bars
                             if bar["timestamp"].time().replace(tzinfo=None) == time(9, 15)), None)
             if opening is None:
                 self.status["health"] = "MISSING_OR_UNFINISHED_NIFTY_OPEN"
                 self.status["skipped"] = [{"stream": "NIFTY", "reason": "completed 09:15 opening candle unavailable"}]
+                self._record_observer_event(
+                    "MISSING_OPENING_CANDLE", current, stream="NIFTY",
+                    reason="completed 09:15 opening candle unavailable")
                 return self._finish_status(current)
             self.status["last_underlying_candle"] = underlying_bars[-1]["timestamp"].isoformat()
+            if expected_start is not None and underlying_bars[-1]["timestamp"] < expected_start:
+                self.status["health"] = "DEGRADED_UNDERLYING_DATA"
+                self.status["skipped"] = [{"stream": "NIFTY", "reason": "latest completed candle is stale"}]
+                self._record_observer_event(
+                    "STALE_CANDLE_FEED", current, stream="NIFTY",
+                    reason="latest completed candle is stale",
+                    last_completed_candle=self.status["last_underlying_candle"])
+                return self._finish_status(current)
 
             if self._selection_date != trading_date:
                 try:
@@ -198,6 +245,9 @@ class GrowwPaperObserver:
                 except Exception as exc:
                     self.status["health"] = "DEGRADED_CONTRACT_SELECTION"
                     self.status["errors"].append({"stream": "CONTRACT_CATALOG", "error_type": type(exc).__name__})
+                    self._record_observer_event(
+                        "CONTRACT_SELECTION_FAILED", current, stream="CONTRACT_CATALOG",
+                        error_type=type(exc).__name__)
                     LOG.warning("Exact daily contract selection failed (%s)", type(exc).__name__)
                     return self._finish_status(current)
                 self._session_selection = selection
@@ -207,6 +257,10 @@ class GrowwPaperObserver:
                 self.status["missing_contracts"] = [
                     {"option_type": kind, "itm_rank": rank} for kind, rank in selection["missing"]
                 ]
+                for kind, rank in selection["missing"]:
+                    self._record_observer_event(
+                        "EXACT_CONTRACT_UNAVAILABLE", current, stream="CONTRACT_CATALOG",
+                        reason=f"no exact {kind} ITM{rank} catalog symbol")
 
             selection = self._session_selection
             if not selection or not selection["contracts"]:
@@ -226,7 +280,11 @@ class GrowwPaperObserver:
                     option_bars = _completed_session_bars(option_frame, trading_date, current)
                 except Exception as exc:
                     reason = type(exc).__name__
+                    engine.mark_data_quality_issue("OPTION_STREAM_UNAVAILABLE")
                     option_failures.append({"symbol": symbol, "reason": reason})
+                    self._record_observer_event(
+                        "OPTION_STREAM_UNAVAILABLE", current, stream="OPTIONS", symbol=symbol,
+                        error_type=reason, last_completed_candle=engine.state.get("last_timestamp"))
                     self.status["paper_positions"][symbol] = {
                         "l2l": self._position_summary(engine.state.get("l2l", {}).get("trade")),
                         "ekalayava": self._position_summary(engine.state.get("ekalayava", {}).get("trade")),
@@ -238,7 +296,29 @@ class GrowwPaperObserver:
                     LOG.warning("Exact option contract skipped (%s, %s)", symbol, reason)
                     continue
                 if not option_bars:
+                    engine.mark_data_quality_issue("NO_COMPLETED_OPTION_CANDLES")
                     option_failures.append({"symbol": symbol, "reason": "NO_COMPLETED_CANDLES"})
+                    self._record_observer_event(
+                        "OPTION_STREAM_EMPTY", current, stream="OPTIONS", symbol=symbol,
+                        reason="no completed option candles returned",
+                        last_completed_candle=engine.state.get("last_timestamp"))
+                    self.status["paper_positions"][symbol] = {
+                        "l2l": self._position_summary(engine.state.get("l2l", {}).get("trade")),
+                        "ekalayava": self._position_summary(engine.state.get("ekalayava", {}).get("trade")),
+                        "last_completed_candle": engine.state.get("last_timestamp"),
+                        "stale": True,
+                        "data_quality_status": engine.state.get("data_quality_status"),
+                        "missing_intervals": engine.state.get("missing_intervals", 0),
+                    }
+                    continue
+                response_last = option_bars[-1]["timestamp"]
+                if expected_start is not None and response_last < pd.Timestamp(expected_start):
+                    engine.mark_data_quality_issue("STALE_OPTION_CANDLES")
+                    option_failures.append({"symbol": symbol, "reason": "STALE_COMPLETED_CANDLES"})
+                    self._record_observer_event(
+                        "STALE_CANDLE_FEED", current, stream="OPTIONS", symbol=symbol,
+                        reason="latest completed option candle is stale",
+                        last_completed_candle=response_last.isoformat())
                     self.status["paper_positions"][symbol] = {
                         "l2l": self._position_summary(engine.state.get("l2l", {}).get("trade")),
                         "ekalayava": self._position_summary(engine.state.get("ekalayava", {}).get("trade")),
@@ -249,13 +329,29 @@ class GrowwPaperObserver:
                     }
                     continue
                 last_seen = engine.state.get("last_timestamp")
+                total_response_bars = len(option_bars)
                 if last_seen:
                     last_seen = _local(last_seen)
                     option_bars = [bar for bar in option_bars if bar["timestamp"] > last_seen]
+                    suppressed = total_response_bars - len(option_bars)
+                    if suppressed:
+                        self._record_observer_event(
+                            "DUPLICATE_CANDLES_SUPPRESSED", current, stream="OPTIONS",
+                            symbol=symbol, last_completed_candle=last_seen.isoformat(),
+                            suppressed_candle_count=suppressed)
                 try:
                     for bar in option_bars:
                         nifty_price = nifty_by_time.get(bar["timestamp"].isoformat())
+                        previous_missing = int(engine.state.get("missing_intervals", 0))
+                        previous_candle = engine.state.get("last_timestamp")
                         events = engine.process_candle(bar, nifty_price=nifty_price)
+                        missing_now = int(engine.state.get("missing_intervals", 0))
+                        if missing_now > previous_missing:
+                            self._record_observer_event(
+                                "CANDLE_GAP_DETECTED", current, stream="OPTIONS", symbol=symbol,
+                                reason="missing intervals between completed candles",
+                                last_completed_candle=previous_candle,
+                                missing_intervals=missing_now - previous_missing)
                         self.status["signals"].extend(
                             event for event in events if event.get("event_type") == "SIGNAL")
                         self.status["signals"] = self.status["signals"][-50:]
@@ -327,6 +423,11 @@ class GrowwPaperObserver:
         while not (stop_requested and stop_requested()):
             current = now_fn()
             current = current.replace(tzinfo=IST) if current.tzinfo is None else current.astimezone(IST)
+            if self.config.kill_switch:
+                self.status["health"] = "STOPPED_KILL_SWITCH"
+                self.status["updated_at"] = current.isoformat()
+                self._persist_health()
+                return self.health_status()
             session = self.calendar.session_for(current.date())
             if session is None:
                 self.status["health"] = "CLOSED_OR_CALENDAR_UNSUPPORTED"
@@ -346,10 +447,20 @@ class GrowwPaperObserver:
             if snapshot["health"].startswith("DEGRADED"):
                 wait = min(backoff, max_backoff_seconds)
                 LOG.warning("Observer degraded; retrying with bounded backoff (%ss)", wait)
+                self._reconnect_attempt += 1
+                self._record_observer_event(
+                    "RECONNECT_ATTEMPT", current, stream="GROWW_CLIENT",
+                    reason="observer health degraded", retry_after_seconds=wait)
                 if self.groww_factory is not None:
                     try:
                         self.groww = self.groww_factory()
+                        self._record_observer_event(
+                            "READ_ONLY_CLIENT_RECREATED", current, stream="GROWW_CLIENT",
+                            reason="client factory returned a replacement client")
                     except Exception as exc:
+                        self._record_observer_event(
+                            "RECONNECT_FAILED", current, stream="GROWW_CLIENT",
+                            error_type=type(exc).__name__)
                         LOG.warning("Read-only client reconnect failed (%s)", type(exc).__name__)
                 backoff = min(max_backoff_seconds, max(backoff * 2, 1))
                 sleeper(wait)
@@ -371,4 +482,32 @@ def authenticated_groww_factory(config=CFG):
     return lambda: authenticate(config)
 
 
+def main():
+    """Start an explicitly requested, supervised read-only observer session."""
+    factory = authenticated_groww_factory(CFG)
+    try:
+        observer = GrowwPaperObserver(factory(), CFG, groww_factory=factory)
+    except Exception as exc:
+        print(f"Paper observer startup failed ({type(exc).__name__}); credentials and provider details were not logged.")
+        return 1
+    try:
+        result = observer.run_forever()
+    except KeyboardInterrupt:
+        observer.status["health"] = "STOPPED_BY_OPERATOR"
+        observer.status["updated_at"] = datetime.now(IST).isoformat()
+        observer._persist_health()
+        print("Paper observer stopped by operator; no orders were sent.")
+        return 0
+    print(json.dumps({key: result.get(key) for key in (
+        "health", "trading_date", "selected_expiry", "selected_contracts",
+        "last_underlying_candle", "last_option_candles", "signals", "skipped",
+        "execution_allowed", "paper_only",
+    )}, sort_keys=True, default=str))
+    return 0
+
+
 __all__ = ["GrowwPaperObserver", "authenticated_groww_factory"]
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

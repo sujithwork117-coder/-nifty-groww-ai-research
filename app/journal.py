@@ -1,6 +1,10 @@
 from pathlib import Path
 import csv
 import json
+import os
+import threading
+
+_PAPER_JOURNAL_LOCK = threading.RLock()
 FIELDS=["recorded_at","model_version","strategy","date","timestamp","entry","sl","target","opening_high","opening_low","swing_high","candle_type","mfe","mae","outcome","paper_only"]
 def append_event(event,path,model_version):
     from datetime import datetime,timezone
@@ -13,11 +17,12 @@ def append_event(event,path,model_version):
 
 
 PAPER_RECORD_FIELDS = (
-    "record_id", "event_id", "event_type", "model_version", "strategy_version",
+    "record_id", "event_id", "setup_id", "event_type", "model_version", "strategy_version",
     "simulation_mode", "exit_model_version", "recorded_at", "entry_reason", "candle_type",
     "date", "timestamp", "close_time", "strategy", "symbol", "expiry", "strike",
     "option_type", "itm_rank", "nifty_price", "entry", "entry_timestamp", "sl",
     "candidate_sl", "candidate_sl_status", "structural_sl_anchor", "structural_low_price",
+    "structural_low_distance_points",
     "sl_buffer_points", "target", "opening_high", "opening_low",
     "red_break_timestamp", "first_green_timestamp", "breakdown_timestamp",
     "reversal_structure", "structural_low_candidate", "structural_low_timestamp",
@@ -28,6 +33,8 @@ PAPER_RECORD_FIELDS = (
     "exit_reason", "exit_price", "points_gained_lost", "structural_low_revisited",
     "breakout_candle_low_revisited", "opening_low_revisited", "target_and_candidate_low_same_candle",
     "realized_pnl", "data_quality_status", "missing_intervals", "execution", "paper_only",
+    "stream", "reason", "error_type", "last_completed_candle", "retry_after_seconds",
+    "suppressed_candle_count",
 )
 
 
@@ -40,18 +47,38 @@ def append_paper_record(event, path, model_version):
     record_id = event.get("record_id")
     if not record_id:
         raise ValueError("Paper journal records require a stable record_id")
-    if destination.exists():
-        with destination.open("r", encoding="utf-8") as stream:
-            for line in stream:
-                try:
-                    if json.loads(line).get("record_id") == record_id:
-                        return False
-                except (json.JSONDecodeError, AttributeError):
-                    continue
     row = {key: event.get(key) for key in PAPER_RECORD_FIELDS}
     row["recorded_at"] = datetime.now(timezone.utc).isoformat()
     row["model_version"] = model_version
     row["paper_only"] = True
-    with destination.open("a", encoding="utf-8", newline="\n") as stream:
-        stream.write(json.dumps(row, sort_keys=True, default=str) + "\n")
+    payload = (json.dumps(row, sort_keys=True, default=str) + "\n").encode("utf-8")
+    # Serialize same-process writers, append one complete encoded record, and
+    # flush it to disk before returning so a restart can rely on the journal.
+    with _PAPER_JOURNAL_LOCK:
+        separator = b""
+        if destination.exists():
+            with destination.open("r", encoding="utf-8") as stream:
+                for line in stream:
+                    try:
+                        if json.loads(line).get("record_id") == record_id:
+                            return False
+                    except (json.JSONDecodeError, AttributeError):
+                        continue
+            if destination.stat().st_size:
+                with destination.open("rb") as stream:
+                    stream.seek(-1, os.SEEK_END)
+                    if stream.read(1) not in (b"\n", b"\r"):
+                        separator = b"\n"
+        payload = separator + payload
+        descriptor = os.open(destination, os.O_CREAT | os.O_APPEND | os.O_WRONLY, 0o600)
+        try:
+            remaining = memoryview(payload)
+            while remaining:
+                written = os.write(descriptor, remaining)
+                if written <= 0:
+                    raise OSError("Paper journal append made no progress")
+                remaining = remaining[written:]
+            os.fsync(descriptor)
+        finally:
+            os.close(descriptor)
     return True

@@ -189,6 +189,8 @@ def test_ekalayava_entry_is_causal_and_keeps_structural_candidate_observational(
     assert signal["target"] == 110
     assert signal["candidate_sl"] is None
     assert signal["structural_low_price"] == 99  # breakout candle low 98 is excluded
+    assert signal["structural_low_distance_points"] == 6.5
+    assert signal["setup_id"] == signal["event_id"]
     assert signal["structural_sl_anchor"] == "reversal_sequence_trough_before_breakout_candle"
     assert signal["candidate_sl_status"] == "OBSERVATION_ONLY_BUFFER_UNSET"
     assert signal["realized_pnl"] is None
@@ -247,6 +249,27 @@ def test_ekalayava_configured_structural_stop_lifecycle(high, low, expected, tmp
     assert any(record["event_type"] == "TRADE_UPDATE" and record["strategy"] == "EKALAYAVA"
                and record["outcome"] == expected
                for record in records)
+
+
+def test_ekalayava_stop_prevents_later_opening_high_touch_from_becoming_target():
+    configured = SimpleNamespace(**{**CONFIG.__dict__, "ekalayava_sl_buffer_points": 2,
+                                    "ekalayava_experimental_exit_simulation": True,
+                                    "strategy_version": "ek-test-v1"})
+    engine = PaperContractEngine(CONTRACT, configured)
+    engine.process_candle(candle("09:15", 103, 110, 100, 102))
+    engine.process_candle(candle("09:20", 102, 103, 99, 100))
+    engine.process_candle(candle("09:25", 100, 104, 99, 103))
+    engine.process_candle(candle("09:30", 103, 105, 102, 104))
+    engine.process_candle(candle("09:35", 104, 106, 98, 105.5))
+
+    first_exit = engine.process_candle(candle("09:40", 105, 109, 96, 100))
+    assert engine.state["ekalayava"]["trade"]["status"] == "SL"
+    assert any(event.get("outcome") == "SL" for event in first_exit)
+    later_target = engine.process_candle(candle("09:45", 100, 111, 99, 108))
+    trade = engine.state["ekalayava"]["trade"]
+    assert trade["status"] == "SL"
+    assert trade["exit_reason"] == "STRUCTURAL_STOP"
+    assert not any(event.get("outcome") == "TARGET" for event in later_target)
 
 
 def test_engine_restart_persists_state_and_journal_is_idempotent(tmp_path):

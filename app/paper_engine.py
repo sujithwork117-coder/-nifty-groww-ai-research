@@ -106,6 +106,19 @@ class PaperContractEngine:
         temp.write_text(json.dumps(self.state, sort_keys=True, default=str) + "\n", encoding="utf-8")
         temp.replace(self.state_path)
 
+    def mark_data_quality_issue(self, status):
+        """Fail closed for new entries and preserve open trades as unresolved."""
+        self.state["entries_disabled"] = True
+        self.state["data_quality_status"] = str(status)
+        for key in ("l2l", "ekalayava"):
+            setup = self.state[key]
+            trade = setup.get("trade")
+            if setup.get("signal") is None:
+                setup["phase"] = "INVALIDATED_BY_DATA_QUALITY"
+            if trade and trade.get("status") == "OPEN":
+                trade["status"] = "DATA_GAP_UNRESOLVED"
+        self._persist()
+
     def _emit(self, strategy, kind, candle, **values):
         state_key = "l2l" if strategy == "LEVEL_TO_LEVEL" else "ekalayava"
         record = {
@@ -131,10 +144,12 @@ class PaperContractEngine:
             namespace = L2L_ID if strategy == "LEVEL_TO_LEVEL" else EKA_ID
             raw = f"{record['symbol']}|{record['date']}|{strategy}|{record['timestamp']}"
             record["event_id"] = str(uuid.uuid5(namespace, raw))
+            record["setup_id"] = record["event_id"]
             self.state[state_key]["signal"] = record
             event = record
         elif event:
             record["event_id"] = event["event_id"]
+            record["setup_id"] = event.get("setup_id", event["event_id"])
             merged = {**event, **values}
             self.state[state_key]["signal"] = merged
         record_id = hashlib.sha256(
@@ -338,6 +353,7 @@ class PaperContractEngine:
                                 entry=candle["close"], sl=configured_sl, candidate_sl=configured_sl,
                                 structural_sl_anchor="reversal_sequence_trough_before_breakout_candle",
                                 structural_low_price=candidate_low, sl_buffer_points=buffer_points,
+                                structural_low_distance_points=candle["close"] - candidate_low,
                                 entry_reason="completed causal swing-high breakout before opening-high target",
                                 candle_type="GREEN" if candle["close"] > candle["open"] else "RED_OR_DOJI",
                                 candidate_sl_status=candidate_sl_status,
@@ -368,7 +384,9 @@ class PaperContractEngine:
                               "target": self.state["opening_high"], "sl": configured_sl,
                               "candidate_sl": configured_sl, "candidate_low": candidate_low,
                               "structural_sl_anchor": "reversal_sequence_trough_before_breakout_candle",
-                              "structural_low_price": candidate_low, "sl_buffer_points": buffer_points,
+                              "structural_low_price": candidate_low,
+                              "structural_low_distance_points": candle["close"] - candidate_low,
+                              "sl_buffer_points": buffer_points,
                               "candidate_sl_status": candidate_sl_status,
                               "breakout_candle_low": candle["low"],
                               "status": "UNRESOLVED" if configured_sl is None else "OPEN", "mfe": None, "mae": None,

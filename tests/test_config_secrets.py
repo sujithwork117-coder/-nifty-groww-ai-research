@@ -22,15 +22,17 @@ def test_optional_float_leaves_ekalayava_buffer_unset_by_default(monkeypatch):
 
 
 def test_ekalayava_candidate_simulation_requires_explicit_opt_in_and_valid_buffer():
-    assert CFG.ekalayava_sl_buffer_points is None
-    assert CFG.ekalayava_experimental_exit_simulation is False
+    observation = replace(CFG, ekalayava_sl_buffer_points=None,
+                          ekalayava_experimental_exit_simulation=False)
+    assert observation.ekalayava_sl_buffer_points is None
+    assert observation.ekalayava_experimental_exit_simulation is False
     with pytest.raises(ValueError, match="explicit buffer"):
-        replace(CFG, ekalayava_experimental_exit_simulation=True)
+        replace(observation, ekalayava_experimental_exit_simulation=True)
     with pytest.raises(ValueError, match="EXPERIMENTAL_EXIT_SIMULATION=true"):
-        replace(CFG, ekalayava_sl_buffer_points=2.0)
+        replace(observation, ekalayava_sl_buffer_points=2.0)
     with pytest.raises(ValueError, match="finite and nonnegative"):
-        replace(CFG, ekalayava_sl_buffer_points=-1.0,
+        replace(observation, ekalayava_sl_buffer_points=-1.0,
                 ekalayava_experimental_exit_simulation=True)
-    candidate = replace(CFG, ekalayava_sl_buffer_points=2.0,
+    candidate = replace(observation, ekalayava_sl_buffer_points=2.0,
                         ekalayava_experimental_exit_simulation=True)
     assert candidate.ekalayava_sl_buffer_points == 2.0

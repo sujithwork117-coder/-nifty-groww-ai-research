@@ -63,6 +63,7 @@ def test_observer_selects_exact_daily_contracts_processes_closed_bars_and_recove
     assert len(status["selected_contracts"]) == 4
     assert len(status["signals"]) == 4
     assert all(event["strategy_version"] == "observer-test-v1" for event in status["signals"])
+    assert all(event["setup_id"] == event["event_id"] for event in status["signals"])
     assert all(event["close_time"].endswith("09:30:00+05:30") for event in status["signals"])
     assert all(value.endswith("09:25:00+05:30") for value in status["last_option_candles"].values())
     assert observer.run_once(now)["signals"] == status["signals"]
@@ -71,7 +72,9 @@ def test_observer_selects_exact_daily_contracts_processes_closed_bars_and_recove
     resumed = restarted.run_once(now)
     assert resumed["signals"] == []
     journal = list(tmp_path.rglob("paper_journal.jsonl"))[0]
-    assert len(journal.read_text(encoding="utf-8").splitlines()) == 4
+    records = [__import__("json").loads(line) for line in journal.read_text(encoding="utf-8").splitlines()]
+    assert sum(record["event_type"] == "SIGNAL" for record in records) == 4
+    assert sum(record["event_type"] == "DUPLICATE_CANDLES_SUPPRESSED" for record in records) == 4
 
 
 def test_observer_skips_failed_exact_contract_and_keeps_other_streams_running(tmp_path):
@@ -104,6 +107,31 @@ def test_observer_quarantines_invalid_candle_sequence_and_continues(tmp_path):
     assert any(item["reason"].startswith("INVALID_CANDLE_SEQUENCE_") for item in status["skipped"])
 
 
+def test_observer_marks_stale_option_stream_and_disables_its_entries(tmp_path):
+    class StaleOptionGroww(FakeGroww):
+        def get_historical_candles(self, **kwargs):
+            payload = super().get_historical_candles(**kwargs)
+            if kwargs["groww_symbol"] == "NSE-NIFTY-15Oct26-9950-CE":
+                payload["candles"] = payload["candles"][:2]
+            return payload
+
+    observer = GrowwPaperObserver(StaleOptionGroww(), make_config(), tmp_path)
+    status = observer.run_once(datetime.fromisoformat("2026-10-12T09:32:00+05:30"))
+
+    assert status["health"] == "DEGRADED_OPTION_DATA"
+    stale_symbol = "NSE-NIFTY-15Oct26-9950-CE"
+    assert status["paper_positions"][stale_symbol]["stale"] is True
+    state_file = list(tmp_path.rglob("*.json"))
+    engine_state = next(__import__("json").loads(path.read_text()) for path in state_file
+                        if __import__("json").loads(path.read_text()).get("symbol") == stale_symbol)
+    assert engine_state["entries_disabled"] is True
+    assert engine_state["data_quality_status"] == "STALE_OPTION_CANDLES"
+    records = [__import__("json").loads(line) for line in
+               list(tmp_path.rglob("paper_journal.jsonl"))[0].read_text().splitlines()]
+    assert any(record["event_type"] == "STALE_CANDLE_FEED" and record["symbol"] == stale_symbol
+               for record in records)
+
+
 def test_observer_run_forever_reauthenticates_after_transient_failure(tmp_path):
     class FailOnceGroww(FakeGroww):
         def __init__(self):
@@ -123,18 +151,25 @@ def test_observer_run_forever_reauthenticates_after_transient_failure(tmp_path):
     sleeps = []
     times = iter([
         datetime.fromisoformat("2026-10-12T09:32:00+05:30"),
-        datetime.fromisoformat("2026-10-12T15:30:00+05:30"),
+        datetime.fromisoformat("2026-10-12T09:32:00+05:30"),
     ])
+    clock_calls = []
     observer = GrowwPaperObserver(
         first, make_config(), tmp_path,
         groww_factory=lambda: (created.append(True) or replacement),
     )
     status = observer.run_forever(
-        poll_seconds=2, max_backoff_seconds=8, now_fn=lambda: next(times),
+        poll_seconds=2, max_backoff_seconds=8,
+        now_fn=lambda: (clock_calls.append(True) or next(times)),
+        stop_requested=lambda: len(clock_calls) >= 2,
         sleeper=sleeps.append,
     )
 
     assert created == [True]
-    assert sleeps == [2]
-    assert status["health"] == "SESSION_COMPLETE"
+    assert sleeps == [2, 2]
+    assert status["health"] == "STOPPED_BY_OPERATOR"
     assert len(status["signals"]) == 4
+    journal = list(tmp_path.rglob("paper_journal.jsonl"))[0]
+    events = [__import__("json").loads(line)["event_type"] for line in journal.read_text().splitlines()]
+    assert "RECONNECT_ATTEMPT" in events
+    assert "READ_ONLY_CLIENT_RECREATED" in events

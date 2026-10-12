@@ -2,19 +2,22 @@
 
 **Updated:** 2026-10-12. This is the single handoff summary. Research and paper observation only; no live trading. `EXECUTION_ALLOWED=false`; `PAPER_ONLY=true`. The latest authoritative cumulative run is the corrected Jan–Sep 2026 validation below. Earlier reports are preserved but some used the old selector and must not be merged with the corrected results.
 
-## Paper observer finalization — 2026-10-12
+## Paper observer finalization and independent verification — 2026-10-12
 
 - Implemented a read-only `GrowwPaperObserver`: completed NIFTY 09:15 opening bar → existing exact daily expiry/ITM2/ITM3 CE/PE selector → same-session 5-minute option candles → per-contract-day paper engines → durable state and append-only journal. No adjacent contract substitution or fabricated bars.
 - Closed-bar gating excludes an in-progress bucket, including the 09:30 bar at 09:32; a one-bar grace through 15:35 permits retrieval of the completed 15:25–15:30 candle. No new polling is done after the grace window.
 - Restart/reconnect resumes strictly after each saved last candle; duplicate records are journal-deduplicated. Stream errors are sanitized, rate limits use bounded retries/backoff, exact-contract failures are isolated, and candle gaps invalidate new entries through the existing engine.
 - Added fail-closed 2026 NSE session calendar: normal weekdays and published holidays, Feb 1 published Budget session, and closure for unsupported years / Nov 8 special session pending timings. Recheck calendar against future NSE notices.
-- `reports/paper_trading_readiness.md` updated. **L2L: READY FOR LIVE PAPER OBSERVATION**, for paper-only observation with a supervised first session; no real-money readiness. **Ekalayava: READY FOR OBSERVATION ONLY**. Its exit lifecycle remains unresolved; default buffer is unset. Candidate simulation requires explicit buffer plus experimental opt-in and remains noncanonical.
-- Focused observer/calendar/config/engine/data tests passed **29/29**; full repository suite passed **89/89**. No Groww call, market polling, data download, continuous observer, or order call was made during this task; Groww service behavior remains for the first supervised session to confirm.
+- Independent review found the previous L2L readiness statement exceeded its evidence: mock observer integration had passed, but no live candle endpoint test had been done. L2L is **NOT READY** for live paper observation until the supervised market-hours integration gate below. Ekalayava is also **NOT READY** for an actual observer session until the same candle feed gate; its strategy lifecycle remains **observation-only**, with no canonical SL/P&L.
+- This verification checked only credential presence as a boolean, then Groww read-only authentication and `get_user_profile()` succeeded. It was about 23:22 IST, after market hours. No candle/quote/LTP endpoint, historical download, continuous observer, or order call was made. Live 5-minute feed and four-stream completeness remain unverified.
+- Fixed stale-feed handling: stale option/underlying timestamps now degrade health; stale option data disables new entries and leaves open positions unresolved. Added durable observer journal events for stream errors, gaps, contract omissions, reconnects, and duplicate/replayed candle suppression. Signal records now include setup ID and Ekalayava anchor distance. Journal append is deduplicated, serialized in-process, fsynced, and handles a partial trailing line. Do not run multiple observers on one state directory.
+- Added explicit CLI `\.venv\Scripts\python.exe -m app.paper_observer`; it runs only when manually invoked, can be stopped with Ctrl+C, and persists a stopped status. Manual supervised market-hours validation remains required.
+- Verification tests: focused readiness/journal set **26 passed**; full repository suite **93 passed** on 2026-10-12. No historical research was rerun.
 - Runtime observer files under `data/paper_observer/` are ignored by Git. Paper journal and health output contain no credential fields.
 
 ## Project objective and current status
 
-Validate canonical NIFTY 5-minute Level-to-Level and Ekalayava behavior using exact daily Groww contracts, maintain data-quality evidence, and only then assess controlled paper observation. No broker orders are allowed. Current readiness: **L2L READY FOR LIVE PAPER OBSERVATION; Ekalayava READY FOR OBSERVATION ONLY**.
+Validate canonical NIFTY 5-minute Level-to-Level and Ekalayava behavior using exact daily Groww contracts, maintain data-quality evidence, and only then assess controlled paper observation. No broker orders are allowed. Current readiness: **L2L NOT READY for an actual observer session pending supervised live candle-feed validation; Ekalayava is observation-only and is also blocked on that feed validation**.
 
 ## Latest finalization results — 2026-10-08
 
@@ -99,7 +102,7 @@ Groww returned 39 expiry catalogs for Jan–Sep 2026 and the Oct 6 next-expiry c
 
 - `app.config` hard-fails if execution is enabled or paper-only is false; current values are false/true. No order API calls exist in application code; no orders were placed.
 - `app.candle_builder` and `app.paper_engine` now provide close-aware candles, exact daily selection, stateful L2L and observational Ekalayava, duplicate/restart protection, and append-only journal events. Representative selected-day replays match stored historical baseline signals/outcomes.
-- Read-only observer wiring, calendar, persistent engines/journal, exact-session contract selection, completed-candle gating, and deterministic reconnect/restart checks are implemented. L2L is **READY FOR LIVE PAPER OBSERVATION** under `EXECUTION_ALLOWED=false` and `PAPER_ONLY=true`; its first supervised live session must confirm real Groww endpoint behavior and data quality. Ekalayava is **READY FOR OBSERVATION ONLY**; no canonical structural SL or full exit lifecycle exists. Target touch is not an exit or win.
+- Read-only observer wiring, calendar, persistent engines/journal, exact-session contract selection, completed-candle gating, and deterministic reconnect/restart checks are implemented. L2L and Ekalayava are **NOT READY for an actual live observer session** until Groww candle endpoint behavior and current-session completeness are checked in a supervised market-hours run. Ekalayava strategy output remains **observation-only**; no canonical structural SL or full exit lifecycle exists. Target touch is not an exit or win. Authentication and read-only profile access succeeded on 2026-10-12; candle connectivity was not tested because the market was closed.
 - Market code is deterministic; LLM use is limited to research-agent tasks, not every candle.
 - `.env`, `secrets.txt`, tokens, and keys are ignored/untracked and never included in reports.
 
