@@ -94,8 +94,11 @@ class CandleCache:
             return []
         frame = frame[(frame["local_date"] == date) &
                       (frame["local_time"] >= time(9, 15)) & (frame["local_time"] <= time(15, 25))]
-        return [{"timestamp": stamp.to_pydatetime(), "high": float(high), "low": float(low)}
-                for stamp, high, low in zip(frame["timestamp"], frame["high"], frame["low"])]
+        return [{"timestamp": stamp.to_pydatetime(), "open": float(open_),
+                 "high": float(high), "low": float(low), "close": float(close)}
+                for stamp, open_, high, low, close in zip(
+                    frame["timestamp"], frame["open"], frame["high"],
+                    frame["low"], frame["close"])]
 
 
 def _policy_rows(events, cache):

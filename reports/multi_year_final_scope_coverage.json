@@ -1,0 +1,41 @@
+{
+  "requested_periods": [
+    "2025-07-01/2025-12-31",
+    "2026-01-01/2026-09-29"
+  ],
+  "timezone": "Asia/Kolkata",
+  "bar_interval_minutes": 5,
+  "data_downloaded_this_run": false,
+  "periods": [
+    {
+      "period": "2025-07-01/2025-12-31",
+      "status": "unavailable_not_tested",
+      "local_data_available": false,
+      "reason": "No local 2025 five-minute underlying/option data. Groww documented historical 5-minute endpoint window is recent-only; requested 2025 dates are outside supported window. No alternate source or substitute contracts used."
+    },
+    {
+      "period": "2026-01-01/2026-09-29",
+      "status": "tested_existing_data",
+      "expected_trading_sessions": 184,
+      "underlying_sessions_with_data": 184,
+      "underlying_bars": 13783,
+      "expected_underlying_bars": 13800,
+      "underlying_missing_intervals": 17,
+      "expected_option_contract_days": 736,
+      "complete_contract_days": 561,
+      "partial_contract_days": 1,
+      "missing_or_unselectable_contract_days": 174,
+      "observed_option_bars": 42149,
+      "expected_option_bars": 55200,
+      "missing_option_intervals": 13276,
+      "fully_usable_days": 112,
+      "partially_usable_days": 55,
+      "unusable_days": 17,
+      "partial_contract_day_detail": "2026-02-03 PE ITM3: 74/75 bars",
+      "2026-09-29_underlying_missing": "14:05\u201315:25 IST (17 bars)",
+      "coverage_source": "reports/multi_year_data_coverage.json; Sep 30 outside requested scope"
+    }
+  ],
+  "methodology": "Existing validated exact daily catalog-first contract selection; no fabricated, interpolated, forward-filled, adjacent-strike or alternate-expiry data.",
+  "coverage_caveat": "Absent exact contracts can hide setups and affect outcomes; counts apply only to data actually present."
+}
