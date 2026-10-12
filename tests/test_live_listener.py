@@ -123,6 +123,19 @@ def test_l2l_marks_sl_ambiguous_and_entry_already_breached_without_fake_exit():
     assert skipped.state["l2l"]["trade"] is None
 
 
+def test_l2l_paper_engine_skips_entry_already_at_or_above_opening_high():
+    engine = PaperContractEngine(CONTRACT, CONFIG)
+    engine.process_candle(candle("09:15", 105, 110, 100, 105))
+    engine.process_candle(candle("09:20", 102, 103, 99, 101))
+    events = engine.process_candle(candle("09:25", 109, 115, 108, 112))
+    signal = next(event for event in events if event["strategy"] == "LEVEL_TO_LEVEL"
+                  and event["event_type"] == "SIGNAL")
+    assert signal["status"] == "SKIPPED_TARGET_ALREADY_REACHED"
+    assert signal["outcome"] == "SKIPPED_TARGET_ALREADY_REACHED"
+    assert signal["exit_price"] is None
+    assert engine.state["l2l"]["trade"] is None
+
+
 def test_missing_candle_invalidates_unentered_setup_and_out_of_order_fails_closed():
     engine = PaperContractEngine(CONTRACT, CONFIG)
     engine.process_candle(candle("09:15", 105, 110, 100, 104))
@@ -173,8 +186,10 @@ def test_ekalayava_entry_is_causal_and_keeps_structural_candidate_observational(
     signal = next(event for event in events if event["strategy"] == "EKALAYAVA" and event["event_type"] == "SIGNAL")
     assert signal["entry"] == 105.5
     assert signal["target"] == 110
-    assert signal["candidate_sl"] == 98
-    assert signal["candidate_sl_status"] == "OBSERVATION_ONLY_UNAPPROVED"
+    assert signal["candidate_sl"] is None
+    assert signal["structural_low_price"] == 99  # breakout candle low 98 is excluded
+    assert signal["structural_sl_anchor"] == "reversal_sequence_trough_before_breakout_candle"
+    assert signal["candidate_sl_status"] == "OBSERVATION_ONLY_BUFFER_UNSET"
     assert signal["realized_pnl"] is None
 
     updates = engine.process_candle(candle("09:40", 105, 111, 97, 108))
@@ -185,6 +200,47 @@ def test_ekalayava_entry_is_causal_and_keeps_structural_candidate_observational(
     assert trade["structural_low_revisited"] is True
     assert trade["breakout_candle_low_revisited"] is True
     assert trade["target_and_candidate_low_same_candle"] is True
+
+
+@pytest.mark.parametrize(("high", "low", "expected"), [
+    (109, 97, "SL"),       # stop only
+    (111, 98, "TARGET"),   # target only
+    (111, 96, "AMBIGUOUS"),
+])
+def test_ekalayava_configured_structural_stop_lifecycle(high, low, expected, tmp_path):
+    configured = SimpleNamespace(**{**CONFIG.__dict__, "ekalayava_sl_buffer_points": 2})
+    journal = tmp_path / "paper.jsonl"
+    engine = PaperContractEngine(CONTRACT, configured, journal_path=journal)
+    engine.process_candle(candle("09:15", 103, 110, 100, 102))
+    engine.process_candle(candle("09:20", 102, 103, 99, 100))
+    engine.process_candle(candle("09:25", 100, 104, 99, 103))
+    engine.process_candle(candle("09:30", 103, 105, 102, 104))
+    entries = engine.process_candle(candle("09:35", 104, 106, 98, 105.5))
+    signal = next(event for event in entries if event["strategy"] == "EKALAYAVA"
+                  and event["event_type"] == "SIGNAL")
+    assert signal["entry"] == 105.5
+    assert signal["structural_low_price"] == 99
+    assert signal["sl"] == 97
+    assert signal["sl_buffer_points"] == 2
+    assert signal["status"] == "OPEN"
+
+    updates = engine.process_candle(candle("09:40", 105, high, low, 108))
+    trade = engine.state["ekalayava"]["trade"]
+    assert trade["status"] == expected
+    assert any(event["event_type"] == "TRADE_UPDATE" and event["outcome"] == expected
+               for event in updates)
+    assert trade["exit_reason"] == ({"SL": "STRUCTURAL_STOP", "TARGET": "OPENING_HIGH_TARGET",
+                                     "AMBIGUOUS": "SL_AND_TARGET_TOUCHED_SAME_CANDLE"}[expected])
+    assert (trade["realized_pnl"] is None) == (expected == "AMBIGUOUS")
+    records = [__import__("json").loads(line) for line in journal.read_text().splitlines()]
+    entry_record = next(record for record in records if record["event_type"] == "SIGNAL"
+                        and record["strategy"] == "EKALAYAVA")
+    assert entry_record["structural_sl_anchor"] == "reversal_sequence_trough_before_breakout_candle"
+    assert entry_record["structural_low_price"] == 99
+    assert entry_record["sl_buffer_points"] == 2
+    assert any(record["event_type"] == "TRADE_UPDATE" and record["strategy"] == "EKALAYAVA"
+               and record["outcome"] == expected
+               for record in records)
 
 
 def test_engine_restart_persists_state_and_journal_is_idempotent(tmp_path):

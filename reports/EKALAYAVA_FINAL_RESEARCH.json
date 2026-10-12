@@ -1,0 +1,4837 @@
+{
+  "period": "2026-01-01 through 2026-09-30 requested; source through 2026-09-29",
+  "source": "existing corrected final_baseline.json and assembled/options exact contract files",
+  "canonical_changes": false,
+  "market_data_downloaded": false,
+  "data_quality": {
+    "entries": 253,
+    "exact_contract_days_with_complete_75_bars": 253,
+    "incomplete_contract_paths": 0,
+    "overall_expected_option_candles": 42149,
+    "overall_option_candle_denominator": 55500,
+    "overall_option_coverage": 0.7594,
+    "missing_or_unselectable_contract_days": 178,
+    "source_end": "2026-09-29; 2026-09-30 underlying unavailable"
+  },
+  "entry_observations": {
+    "entries": 253,
+    "target_touches": 109,
+    "target_touch_fraction": 0.43083,
+    "unresolved_no_touch": 144,
+    "mean_mfe": {
+      "count": 253,
+      "mean": 57.345,
+      "median": 31.05,
+      "p25": 10.9,
+      "p75": 77.25
+    },
+    "median_mfe": {
+      "count": 253,
+      "mean": 57.345,
+      "median": 31.05,
+      "p25": 10.9,
+      "p75": 77.25
+    },
+    "mean_mae": {
+      "count": 253,
+      "mean": -53.275,
+      "median": -45.6,
+      "p25": -72.35,
+      "p75": -21.8
+    },
+    "median_mae": {
+      "count": 253,
+      "mean": -53.275,
+      "median": -45.6,
+      "p25": -72.35,
+      "p75": -21.8
+    },
+    "target_distance": {
+      "count": 253,
+      "mean": 61.098,
+      "median": 54.8,
+      "p25": 27.75,
+      "p75": 80.05
+    },
+    "target_time_elapsed_window_mean_lower": {
+      "count": 109,
+      "mean": 88.716,
+      "median": 60.0,
+      "p25": 20.0,
+      "p75": 155.0
+    },
+    "target_time_elapsed_window_mean_upper": {
+      "count": 109,
+      "mean": 93.716,
+      "median": 65.0,
+      "p25": 25.0,
+      "p75": 160.0
+    },
+    "target_time_elapsed_window_median_lower": {
+      "count": 109,
+      "mean": 88.716,
+      "median": 60.0,
+      "p25": 20.0,
+      "p75": 155.0
+    },
+    "target_time_elapsed_window_median_upper": {
+      "count": 109,
+      "mean": 93.716,
+      "median": 65.0,
+      "p25": 25.0,
+      "p75": 160.0
+    },
+    "target_time_bucket_by_first_touch_bar_lower_bound": {
+      "0-5": 13,
+      "5-10": 6,
+      "10-15": 2,
+      "15-30": 16,
+      "30-60": 17,
+      "60-90": 11,
+      ">90": 44
+    },
+    "subgroups": {
+      "CE": {
+        "entries": 126,
+        "target_touches": 55,
+        "touch_rate": 0.436508,
+        "mean_mfe": {
+          "count": 126,
+          "mean": 52.63,
+          "median": 25.4,
+          "p25": 10.788,
+          "p75": 73.337
+        },
+        "mean_mae": {
+          "count": 126,
+          "mean": -52.883,
+          "median": -43.175,
+          "p25": -71.9,
+          "p75": -19.825
+        },
+        "target_distance": {
+          "count": 126,
+          "mean": 63.052,
+          "median": 51.175,
+          "p25": 24.575,
+          "p75": 81.588
+        },
+        "target_time_lower": {
+          "count": 55,
+          "mean": 89.273,
+          "median": 60.0,
+          "p25": 17.5,
+          "p75": 170.0
+        },
+        "target_time_upper": {
+          "count": 55,
+          "mean": 94.273,
+          "median": 65.0,
+          "p25": 22.5,
+          "p75": 175.0
+        }
+      },
+      "PE": {
+        "entries": 127,
+        "target_touches": 54,
+        "touch_rate": 0.425197,
+        "mean_mfe": {
+          "count": 127,
+          "mean": 62.024,
+          "median": 36.35,
+          "p25": 13.55,
+          "p75": 79.875
+        },
+        "mean_mae": {
+          "count": 127,
+          "mean": -53.663,
+          "median": -45.6,
+          "p25": -73.775,
+          "p75": -25.2
+        },
+        "target_distance": {
+          "count": 127,
+          "mean": 59.159,
+          "median": 56.2,
+          "p25": 29.25,
+          "p75": 78.65
+        },
+        "target_time_lower": {
+          "count": 54,
+          "mean": 88.148,
+          "median": 60.0,
+          "p25": 25.0,
+          "p75": 130.0
+        },
+        "target_time_upper": {
+          "count": 54,
+          "mean": 93.148,
+          "median": 65.0,
+          "p25": 30.0,
+          "p75": 135.0
+        }
+      },
+      "ITM2": {
+        "entries": 128,
+        "target_touches": 53,
+        "touch_rate": 0.414062,
+        "mean_mfe": {
+          "count": 128,
+          "mean": 54.817,
+          "median": 29.4,
+          "p25": 10.863,
+          "p75": 73.112
+        },
+        "mean_mae": {
+          "count": 128,
+          "mean": -48.909,
+          "median": -39.5,
+          "p25": -65.887,
+          "p75": -17.55
+        },
+        "target_distance": {
+          "count": 128,
+          "mean": 58.329,
+          "median": 53.8,
+          "p25": 27.237,
+          "p75": 75.263
+        },
+        "target_time_lower": {
+          "count": 53,
+          "mean": 86.792,
+          "median": 60.0,
+          "p25": 15.0,
+          "p75": 155.0
+        },
+        "target_time_upper": {
+          "count": 53,
+          "mean": 91.792,
+          "median": 65.0,
+          "p25": 20.0,
+          "p75": 160.0
+        }
+      },
+      "ITM3": {
+        "entries": 125,
+        "target_touches": 56,
+        "touch_rate": 0.448,
+        "mean_mfe": {
+          "count": 125,
+          "mean": 59.934,
+          "median": 32.15,
+          "p25": 10.95,
+          "p75": 83.05
+        },
+        "mean_mae": {
+          "count": 125,
+          "mean": -57.745,
+          "median": -48.3,
+          "p25": -75.2,
+          "p75": -25.9
+        },
+        "target_distance": {
+          "count": 125,
+          "mean": 63.934,
+          "median": 56.2,
+          "p25": 29.2,
+          "p75": 82.1
+        },
+        "target_time_lower": {
+          "count": 56,
+          "mean": 90.536,
+          "median": 60.0,
+          "p25": 20.0,
+          "p75": 146.25
+        },
+        "target_time_upper": {
+          "count": 56,
+          "mean": 95.536,
+          "median": 65.0,
+          "p25": 25.0,
+          "p75": 151.25
+        }
+      },
+      "09:15-09:59": {
+        "entries": 62,
+        "target_touches": 38,
+        "touch_rate": 0.612903,
+        "mean_mfe": {
+          "count": 62,
+          "mean": 45.781,
+          "median": 25.85,
+          "p25": 8.7,
+          "p75": 62.65
+        },
+        "mean_mae": {
+          "count": 62,
+          "mean": -75.169,
+          "median": -64.025,
+          "p25": -102.838,
+          "p75": -46.15
+        },
+        "target_distance": {
+          "count": 62,
+          "mean": 24.166,
+          "median": 23.575,
+          "p25": 15.412,
+          "p75": 29.363
+        },
+        "target_time_lower": {
+          "count": 38,
+          "mean": 81.842,
+          "median": 25.0,
+          "p25": 1.25,
+          "p75": 166.25
+        },
+        "target_time_upper": {
+          "count": 38,
+          "mean": 86.842,
+          "median": 30.0,
+          "p25": 6.25,
+          "p75": 171.25
+        }
+      },
+      "10:00-10:59": {
+        "entries": 114,
+        "target_touches": 42,
+        "touch_rate": 0.368421,
+        "mean_mfe": {
+          "count": 114,
+          "mean": 48.522,
+          "median": 26.825,
+          "p25": 11.075,
+          "p75": 65.525
+        },
+        "mean_mae": {
+          "count": 114,
+          "mean": -58.5,
+          "median": -49.45,
+          "p25": -79.65,
+          "p75": -25.638
+        },
+        "target_distance": {
+          "count": 114,
+          "mean": 57.921,
+          "median": 49.925,
+          "p25": 29.95,
+          "p75": 73.5
+        },
+        "target_time_lower": {
+          "count": 42,
+          "mean": 91.786,
+          "median": 65.0,
+          "p25": 20.0,
+          "p75": 148.75
+        },
+        "target_time_upper": {
+          "count": 42,
+          "mean": 96.786,
+          "median": 70.0,
+          "p25": 25.0,
+          "p75": 153.75
+        }
+      },
+      "11:00+": {
+        "entries": 77,
+        "target_touches": 29,
+        "touch_rate": 0.376623,
+        "mean_mfe": {
+          "count": 77,
+          "mean": 79.719,
+          "median": 46.1,
+          "p25": 12.1,
+          "p75": 109.2
+        },
+        "mean_mae": {
+          "count": 77,
+          "mean": -27.908,
+          "median": -26.8,
+          "p25": -41.7,
+          "p75": -11.5
+        },
+        "target_distance": {
+          "count": 77,
+          "mean": 95.54,
+          "median": 83.3,
+          "p25": 65.6,
+          "p75": 111.95
+        },
+        "target_time_lower": {
+          "count": 29,
+          "mean": 93.276,
+          "median": 80.0,
+          "p25": 35.0,
+          "p75": 130.0
+        },
+        "target_time_upper": {
+          "count": 29,
+          "mean": 98.276,
+          "median": 85.0,
+          "p25": 40.0,
+          "p75": 135.0
+        }
+      }
+    },
+    "monthly": {
+      "2026-01": {
+        "entries": 35,
+        "target_touches": 20,
+        "touch_rate": 0.571429,
+        "mean_mfe": {
+          "count": 35,
+          "mean": 65.644,
+          "median": 43.0,
+          "p25": 11.5,
+          "p75": 117.4
+        },
+        "mean_mae": {
+          "count": 35,
+          "mean": -59.691,
+          "median": -48.3,
+          "p25": -82.95,
+          "p75": -20.775
+        },
+        "target_time_lower": {
+          "count": 20,
+          "mean": 84.75,
+          "median": 27.5,
+          "p25": 5.0,
+          "p75": 151.25
+        },
+        "target_distance": {
+          "count": 35,
+          "mean": 52.813,
+          "median": 39.8,
+          "p25": 16.55,
+          "p75": 71.525
+        }
+      },
+      "2026-02": {
+        "entries": 38,
+        "target_touches": 14,
+        "touch_rate": 0.368421,
+        "mean_mfe": {
+          "count": 38,
+          "mean": 69.054,
+          "median": 23.475,
+          "p25": 13.075,
+          "p75": 69.1
+        },
+        "mean_mae": {
+          "count": 38,
+          "mean": -43.228,
+          "median": -37.5,
+          "p25": -53.888,
+          "p75": -13.337
+        },
+        "target_time_lower": {
+          "count": 14,
+          "mean": 68.214,
+          "median": 52.5,
+          "p25": 17.5,
+          "p75": 102.5
+        },
+        "target_distance": {
+          "count": 38,
+          "mean": 68.129,
+          "median": 65.45,
+          "p25": 35.125,
+          "p75": 87.65
+        }
+      },
+      "2026-03": {
+        "entries": 21,
+        "target_touches": 8,
+        "touch_rate": 0.380952,
+        "mean_mfe": {
+          "count": 21,
+          "mean": 84.502,
+          "median": 36.35,
+          "p25": 15.35,
+          "p75": 163.3
+        },
+        "mean_mae": {
+          "count": 21,
+          "mean": -86.012,
+          "median": -78.4,
+          "p25": -141.15,
+          "p75": -28.0
+        },
+        "target_time_lower": {
+          "count": 8,
+          "mean": 43.125,
+          "median": 42.5,
+          "p25": 26.25,
+          "p75": 58.75
+        },
+        "target_distance": {
+          "count": 21,
+          "mean": 90.252,
+          "median": 67.8,
+          "p25": 29.15,
+          "p75": 122.05
+        }
+      },
+      "2026-04": {
+        "entries": 27,
+        "target_touches": 5,
+        "touch_rate": 0.185185,
+        "mean_mfe": {
+          "count": 27,
+          "mean": 43.063,
+          "median": 26.15,
+          "p25": 9.3,
+          "p75": 71.225
+        },
+        "mean_mae": {
+          "count": 27,
+          "mean": -43.261,
+          "median": -41.6,
+          "p25": -53.325,
+          "p75": -30.5
+        },
+        "target_time_lower": {
+          "count": 5,
+          "mean": 161.0,
+          "median": 130.0,
+          "p25": 130.0,
+          "p75": 230.0
+        },
+        "target_distance": {
+          "count": 27,
+          "mean": 97.376,
+          "median": 97.1,
+          "p25": 64.975,
+          "p75": 118.475
+        }
+      },
+      "2026-05": {
+        "entries": 34,
+        "target_touches": 19,
+        "touch_rate": 0.558824,
+        "mean_mfe": {
+          "count": 34,
+          "mean": 77.96,
+          "median": 63.9,
+          "p25": 13.788,
+          "p75": 117.213
+        },
+        "mean_mae": {
+          "count": 34,
+          "mean": -62.187,
+          "median": -52.625,
+          "p25": -91.062,
+          "p75": -28.275
+        },
+        "target_time_lower": {
+          "count": 19,
+          "mean": 103.421,
+          "median": 130.0,
+          "p25": 25.0,
+          "p75": 170.0
+        },
+        "target_distance": {
+          "count": 34,
+          "mean": 56.729,
+          "median": 54.45,
+          "p25": 30.712,
+          "p75": 76.688
+        }
+      },
+      "2026-06": {
+        "entries": 36,
+        "target_touches": 17,
+        "touch_rate": 0.472222,
+        "mean_mfe": {
+          "count": 36,
+          "mean": 59.061,
+          "median": 37.675,
+          "p25": 16.213,
+          "p75": 64.275
+        },
+        "mean_mae": {
+          "count": 36,
+          "mean": -63.104,
+          "median": -60.875,
+          "p25": -89.375,
+          "p75": -45.062
+        },
+        "target_time_lower": {
+          "count": 17,
+          "mean": 78.235,
+          "median": 55.0,
+          "p25": 15.0,
+          "p75": 80.0
+        },
+        "target_distance": {
+          "count": 36,
+          "mean": 49.399,
+          "median": 41.325,
+          "p25": 26.675,
+          "p75": 66.287
+        }
+      },
+      "2026-07": {
+        "entries": 21,
+        "target_touches": 11,
+        "touch_rate": 0.52381,
+        "mean_mfe": {
+          "count": 21,
+          "mean": 37.726,
+          "median": 22.45,
+          "p25": 13.45,
+          "p75": 71.35
+        },
+        "mean_mae": {
+          "count": 21,
+          "mean": -37.626,
+          "median": -34.3,
+          "p25": -58.15,
+          "p75": -15.25
+        },
+        "target_time_lower": {
+          "count": 11,
+          "mean": 114.545,
+          "median": 80.0,
+          "p25": 32.5,
+          "p75": 175.0
+        },
+        "target_distance": {
+          "count": 21,
+          "mean": 45.764,
+          "median": 44.05,
+          "p25": 16.75,
+          "p75": 69.15
+        }
+      },
+      "2026-08": {
+        "entries": 26,
+        "target_touches": 11,
+        "touch_rate": 0.423077,
+        "mean_mfe": {
+          "count": 26,
+          "mean": 29.506,
+          "median": 18.35,
+          "p25": 8.312,
+          "p75": 54.6
+        },
+        "mean_mae": {
+          "count": 26,
+          "mean": -32.346,
+          "median": -26.85,
+          "p25": -39.4,
+          "p75": -13.6
+        },
+        "target_time_lower": {
+          "count": 11,
+          "mean": 65.909,
+          "median": 50.0,
+          "p25": 15.0,
+          "p75": 100.0
+        },
+        "target_distance": {
+          "count": 26,
+          "mean": 46.904,
+          "median": 33.775,
+          "p25": 26.162,
+          "p75": 68.638
+        }
+      },
+      "2026-09": {
+        "entries": 15,
+        "target_touches": 4,
+        "touch_rate": 0.266667,
+        "mean_mfe": {
+          "count": 15,
+          "mean": 20.883,
+          "median": 10.55,
+          "p25": 7.35,
+          "p75": 31.3
+        },
+        "mean_mae": {
+          "count": 15,
+          "mean": -50.337,
+          "median": -31.3,
+          "p25": -68.3,
+          "p75": -25.85
+        },
+        "target_time_lower": {
+          "count": 4,
+          "mean": 147.5,
+          "median": 170.0,
+          "p25": 127.5,
+          "p75": 190.0
+        },
+        "target_distance": {
+          "count": 15,
+          "mean": 40.557,
+          "median": 27.75,
+          "p25": 20.525,
+          "p75": 52.5
+        }
+      }
+    }
+  },
+  "structural_candidate_definitions": {
+    "reversal_sequence_trough": "Minimum option premium low from the first opening-low-break candle through the candle immediately before the completed breakout entry candle; causal and available by entry.",
+    "last_causal_swing_low": "Most recent low after breakdown and before entry that is strictly below the lows of the preceding two completed bars; causal left=2/right=0 analogue; absent in 30 entries.",
+    "breakdown_candle_low": "Low of first opening-low-break candle; rejected as universal long stop anchor where it lies at/above entry.",
+    "breakout_candle_low": "Low of completed entry/breakout candle; measured as a comparison, not assumed structural anchor."
+  },
+  "structural_candidate_metrics": {
+    "reversal_sequence_trough": {
+      "available": 253,
+      "below_entry": 253,
+      "entry_minus_anchor_points": {
+        "count": 253,
+        "mean": 28.226,
+        "median": 22.95,
+        "p25": 14.75,
+        "p75": 34.95
+      },
+      "revisited_after_entry": 187,
+      "revisit_rate": 0.73913
+    },
+    "last_causal_swing_low": {
+      "available": 223,
+      "below_entry": 223,
+      "entry_minus_anchor_points": {
+        "count": 223,
+        "mean": 25.26,
+        "median": 20.75,
+        "p25": 13.475,
+        "p75": 31.8
+      },
+      "revisited_after_entry": 168,
+      "revisit_rate": 0.753363
+    },
+    "breakdown_candle_low": {
+      "available": 253,
+      "below_entry": 124,
+      "entry_minus_anchor_points": {
+        "count": 124,
+        "mean": 25.614,
+        "median": 20.275,
+        "p25": 12.05,
+        "p75": 32.775
+      },
+      "revisited_after_entry": 118,
+      "revisit_rate": 0.951613
+    },
+    "breakout_candle_low": {
+      "available": 253,
+      "below_entry": 253,
+      "entry_minus_anchor_points": {
+        "count": 253,
+        "mean": 13.533,
+        "median": 10.7,
+        "p25": 6.35,
+        "p75": 17.7
+      },
+      "revisited_after_entry": 223,
+      "revisit_rate": 0.881423
+    }
+  },
+  "hypothetical_candidate_exit_models": {
+    "reversal_sequence_trough|buffer=0": {
+      "anchor": "reversal_sequence_trough",
+      "buffer_points": 0,
+      "entries_simulated": 253,
+      "invalid_anchor": 0,
+      "outcomes": {
+        "TARGET": 87,
+        "SL": 151,
+        "AMBIGUOUS": 0,
+        "UNRESOLVED": 15
+      },
+      "resolved": 238,
+      "target_rate_resolved": 0.365546,
+      "sl_rate_resolved": 0.634454,
+      "targets_over_all_eligible": 0.343874,
+      "average_winner_points": {
+        "count": 87,
+        "mean": 48.257,
+        "median": 39.2
+      },
+      "median_winner_points": {
+        "count": 87,
+        "mean": 48.257,
+        "median": 39.2
+      },
+      "average_loser_points": {
+        "count": 151,
+        "mean": -23.653,
+        "median": -20.45
+      },
+      "median_loser_points": {
+        "count": 151,
+        "mean": -23.653,
+        "median": -20.45
+      },
+      "conditional_resolved_mean_points": 2.634,
+      "expectancy_status": "resolved-only premium-point mean; excludes unresolved/ambiguous and costs, not full-strategy expectancy",
+      "max_drawdown_equal_unit_resolved_sequence_points": 449.2,
+      "max_consecutive_SL_resolved_sequence": 21,
+      "future_target_after_SL_count": 22,
+      "MFE_through_exit_or_EOD": {
+        "count": 253,
+        "mean": 29.762
+      },
+      "MAE_through_exit_or_EOD": {
+        "count": 253,
+        "mean": -21.43
+      },
+      "holding_median_minutes_from_entry_bar_start": 37.5,
+      "target_time_median_minutes_from_entry_bar_start": 50.0,
+      "stop_time_median_minutes_from_entry_bar_start": 35.0,
+      "touch_convention": "inclusive: later bar low <= stop; later bar high >= target; entry bar excluded"
+    },
+    "reversal_sequence_trough|buffer=2": {
+      "anchor": "reversal_sequence_trough",
+      "buffer_points": 2,
+      "entries_simulated": 253,
+      "invalid_anchor": 0,
+      "outcomes": {
+        "TARGET": 89,
+        "SL": 146,
+        "AMBIGUOUS": 0,
+        "UNRESOLVED": 18
+      },
+      "resolved": 235,
+      "target_rate_resolved": 0.378723,
+      "sl_rate_resolved": 0.621277,
+      "targets_over_all_eligible": 0.351779,
+      "average_winner_points": {
+        "count": 89,
+        "mean": 47.815,
+        "median": 38.25
+      },
+      "median_winner_points": {
+        "count": 89,
+        "mean": 47.815,
+        "median": 38.25
+      },
+      "average_loser_points": {
+        "count": 146,
+        "mean": -25.714,
+        "median": -22.5
+      },
+      "median_loser_points": {
+        "count": 146,
+        "mean": -25.714,
+        "median": -22.5
+      },
+      "conditional_resolved_mean_points": 2.133,
+      "expectancy_status": "resolved-only premium-point mean; excludes unresolved/ambiguous and costs, not full-strategy expectancy",
+      "max_drawdown_equal_unit_resolved_sequence_points": 522.3,
+      "max_consecutive_SL_resolved_sequence": 20,
+      "future_target_after_SL_count": 20,
+      "MFE_through_exit_or_EOD": {
+        "count": 253,
+        "mean": 30.211
+      },
+      "MAE_through_exit_or_EOD": {
+        "count": 253,
+        "mean": -22.616
+      },
+      "holding_median_minutes_from_entry_bar_start": 40.0,
+      "target_time_median_minutes_from_entry_bar_start": 55.0,
+      "stop_time_median_minutes_from_entry_bar_start": 40.0,
+      "touch_convention": "inclusive: later bar low <= stop; later bar high >= target; entry bar excluded"
+    },
+    "reversal_sequence_trough|buffer=4": {
+      "anchor": "reversal_sequence_trough",
+      "buffer_points": 4,
+      "entries_simulated": 253,
+      "invalid_anchor": 0,
+      "outcomes": {
+        "TARGET": 91,
+        "SL": 142,
+        "AMBIGUOUS": 0,
+        "UNRESOLVED": 20
+      },
+      "resolved": 233,
+      "target_rate_resolved": 0.390558,
+      "sl_rate_resolved": 0.609442,
+      "targets_over_all_eligible": 0.359684,
+      "average_winner_points": {
+        "count": 91,
+        "mean": 47.414,
+        "median": 38.25
+      },
+      "median_winner_points": {
+        "count": 91,
+        "mean": 47.414,
+        "median": 38.25
+      },
+      "average_loser_points": {
+        "count": 142,
+        "mean": -27.788,
+        "median": -24.5
+      },
+      "median_loser_points": {
+        "count": 142,
+        "mean": -27.788,
+        "median": -24.5
+      },
+      "conditional_resolved_mean_points": 1.582,
+      "expectancy_status": "resolved-only premium-point mean; excludes unresolved/ambiguous and costs, not full-strategy expectancy",
+      "max_drawdown_equal_unit_resolved_sequence_points": 537.45,
+      "max_consecutive_SL_resolved_sequence": 19,
+      "future_target_after_SL_count": 18,
+      "MFE_through_exit_or_EOD": {
+        "count": 253,
+        "mean": 30.644
+      },
+      "MAE_through_exit_or_EOD": {
+        "count": 253,
+        "mean": -23.867
+      },
+      "holding_median_minutes_from_entry_bar_start": 45.0,
+      "target_time_median_minutes_from_entry_bar_start": 50.0,
+      "stop_time_median_minutes_from_entry_bar_start": 45.0,
+      "touch_convention": "inclusive: later bar low <= stop; later bar high >= target; entry bar excluded"
+    },
+    "last_causal_swing_low|buffer=0": {
+      "anchor": "last_causal_swing_low",
+      "buffer_points": 0,
+      "entries_simulated": 223,
+      "invalid_anchor": 30,
+      "outcomes": {
+        "SL": 137,
+        "TARGET": 75,
+        "UNRESOLVED": 11
+      },
+      "resolved": 212,
+      "target_rate_resolved": 0.353774,
+      "sl_rate_resolved": 0.646226,
+      "targets_over_all_eligible": 0.336323,
+      "average_winner_points": {
+        "count": 75,
+        "mean": 53.317,
+        "median": 48.4,
+        "p25": 27.325,
+        "p75": 70.125
+      },
+      "median_winner_points": {
+        "count": 75,
+        "mean": 53.317,
+        "median": 48.4,
+        "p25": 27.325,
+        "p75": 70.125
+      },
+      "average_loser_points": {
+        "count": 137,
+        "mean": -21.244,
+        "median": -18.35,
+        "p25": -27.2,
+        "p75": -12.1
+      },
+      "median_loser_points": {
+        "count": 137,
+        "mean": -21.244,
+        "median": -18.35,
+        "p25": -27.2,
+        "p75": -12.1
+      },
+      "conditional_resolved_mean_points": 5.134,
+      "expectancy_status": "resolved-only premium-point mean; excludes unresolved/ambiguous and costs, not full-strategy expectancy",
+      "max_drawdown_equal_unit_resolved_sequence_points": 417.15,
+      "max_consecutive_SL_resolved_sequence": 21,
+      "future_target_after_SL_count": 17,
+      "MFE_through_exit_or_EOD": {
+        "count": 223,
+        "mean": 31.203,
+        "median": 14.65,
+        "p25": 4.75,
+        "p75": 46.35
+      },
+      "MAE_through_exit_or_EOD": {
+        "count": 223,
+        "mean": -20.52,
+        "median": -17.95,
+        "p25": -27.7,
+        "p75": -9.75
+      },
+      "holding_elapsed_lower_bound_min": {
+        "count": 212,
+        "mean": 52.382,
+        "median": 35.0,
+        "p25": 10.0,
+        "p75": 80.0
+      },
+      "holding_elapsed_upper_bound_min": {
+        "count": 212,
+        "mean": 57.382,
+        "median": 40.0,
+        "p25": 15.0,
+        "p75": 85.0
+      },
+      "target_hit_time_lower_bound_min": {
+        "count": 75,
+        "mean": 69.6,
+        "median": 50.0,
+        "p25": 20.0,
+        "p75": 115.0
+      },
+      "stop_hit_time_lower_bound_min": {
+        "count": 137,
+        "mean": 42.956,
+        "median": 25.0,
+        "p25": 10.0,
+        "p75": 55.0
+      }
+    },
+    "last_causal_swing_low|buffer=2": {
+      "anchor": "last_causal_swing_low",
+      "buffer_points": 2,
+      "entries_simulated": 223,
+      "invalid_anchor": 30,
+      "outcomes": {
+        "SL": 131,
+        "TARGET": 77,
+        "UNRESOLVED": 15
+      },
+      "resolved": 208,
+      "target_rate_resolved": 0.370192,
+      "sl_rate_resolved": 0.629808,
+      "targets_over_all_eligible": 0.345291,
+      "average_winner_points": {
+        "count": 77,
+        "mean": 52.674,
+        "median": 44.4,
+        "p25": 27.3,
+        "p75": 69.15
+      },
+      "median_winner_points": {
+        "count": 77,
+        "mean": 52.674,
+        "median": 44.4,
+        "p25": 27.3,
+        "p75": 69.15
+      },
+      "average_loser_points": {
+        "count": 131,
+        "mean": -23.288,
+        "median": -20.35,
+        "p25": -29.625,
+        "p75": -14.175
+      },
+      "median_loser_points": {
+        "count": 131,
+        "mean": -23.288,
+        "median": -20.35,
+        "p25": -29.625,
+        "p75": -14.175
+      },
+      "conditional_resolved_mean_points": 4.832,
+      "expectancy_status": "resolved-only premium-point mean; excludes unresolved/ambiguous and costs, not full-strategy expectancy",
+      "max_drawdown_equal_unit_resolved_sequence_points": 433.1,
+      "max_consecutive_SL_resolved_sequence": 20,
+      "future_target_after_SL_count": 15,
+      "MFE_through_exit_or_EOD": {
+        "count": 223,
+        "mean": 31.749,
+        "median": 15.45,
+        "p25": 5.55,
+        "p75": 48.75
+      },
+      "MAE_through_exit_or_EOD": {
+        "count": 223,
+        "mean": -21.534,
+        "median": -18.65,
+        "p25": -28.825,
+        "p75": -10.675
+      },
+      "holding_elapsed_lower_bound_min": {
+        "count": 208,
+        "mean": 57.668,
+        "median": 40.0,
+        "p25": 15.0,
+        "p75": 81.25
+      },
+      "holding_elapsed_upper_bound_min": {
+        "count": 208,
+        "mean": 62.668,
+        "median": 45.0,
+        "p25": 20.0,
+        "p75": 86.25
+      },
+      "target_hit_time_lower_bound_min": {
+        "count": 77,
+        "mean": 73.117,
+        "median": 55.0,
+        "p25": 20.0,
+        "p75": 120.0
+      },
+      "stop_hit_time_lower_bound_min": {
+        "count": 131,
+        "mean": 48.588,
+        "median": 30.0,
+        "p25": 10.0,
+        "p75": 65.0
+      }
+    },
+    "last_causal_swing_low|buffer=4": {
+      "anchor": "last_causal_swing_low",
+      "buffer_points": 4,
+      "entries_simulated": 223,
+      "invalid_anchor": 30,
+      "outcomes": {
+        "SL": 124,
+        "TARGET": 78,
+        "UNRESOLVED": 21
+      },
+      "resolved": 202,
+      "target_rate_resolved": 0.386139,
+      "sl_rate_resolved": 0.613861,
+      "targets_over_all_eligible": 0.349776,
+      "average_winner_points": {
+        "count": 78,
+        "mean": 52.08,
+        "median": 44.325,
+        "p25": 27.112,
+        "p75": 69.1
+      },
+      "median_winner_points": {
+        "count": 78,
+        "mean": 52.08,
+        "median": 44.325,
+        "p25": 27.112,
+        "p75": 69.1
+      },
+      "average_loser_points": {
+        "count": 124,
+        "mean": -25.541,
+        "median": -23.575,
+        "p25": -32.2,
+        "p75": -16.475
+      },
+      "median_loser_points": {
+        "count": 124,
+        "mean": -25.541,
+        "median": -23.575,
+        "p25": -32.2,
+        "p75": -16.475
+      },
+      "conditional_resolved_mean_points": 4.431,
+      "expectancy_status": "resolved-only premium-point mean; excludes unresolved/ambiguous and costs, not full-strategy expectancy",
+      "max_drawdown_equal_unit_resolved_sequence_points": 460.65,
+      "max_consecutive_SL_resolved_sequence": 19,
+      "future_target_after_SL_count": 14,
+      "MFE_through_exit_or_EOD": {
+        "count": 223,
+        "mean": 32.744,
+        "median": 16.55,
+        "p25": 6.175,
+        "p75": 49.425
+      },
+      "MAE_through_exit_or_EOD": {
+        "count": 223,
+        "mean": -22.362,
+        "median": -19.55,
+        "p25": -30.675,
+        "p75": -11.075
+      },
+      "holding_elapsed_lower_bound_min": {
+        "count": 202,
+        "mean": 60.965,
+        "median": 40.0,
+        "p25": 15.0,
+        "p75": 90.0
+      },
+      "holding_elapsed_upper_bound_min": {
+        "count": 202,
+        "mean": 65.965,
+        "median": 45.0,
+        "p25": 20.0,
+        "p75": 95.0
+      },
+      "target_hit_time_lower_bound_min": {
+        "count": 78,
+        "mean": 72.5,
+        "median": 52.5,
+        "p25": 21.25,
+        "p75": 118.75
+      },
+      "stop_hit_time_lower_bound_min": {
+        "count": 124,
+        "mean": 53.71,
+        "median": 40.0,
+        "p25": 15.0,
+        "p75": 65.0
+      }
+    },
+    "breakdown_candle_low|buffer=0": {
+      "anchor": "breakdown_candle_low",
+      "buffer_points": 0,
+      "entries_simulated": 124,
+      "invalid_anchor": 129,
+      "outcomes": {
+        "SL": 81,
+        "TARGET": 43
+      },
+      "resolved": 124,
+      "target_rate_resolved": 0.346774,
+      "sl_rate_resolved": 0.653226,
+      "targets_over_all_eligible": 0.346774,
+      "average_winner_points": {
+        "count": 43,
+        "mean": 24.897,
+        "median": 21.4,
+        "p25": 11.45,
+        "p75": 35.75
+      },
+      "median_winner_points": {
+        "count": 43,
+        "mean": 24.897,
+        "median": 21.4,
+        "p25": 11.45,
+        "p75": 35.75
+      },
+      "average_loser_points": {
+        "count": 81,
+        "mean": -19.71,
+        "median": -17.2,
+        "p25": -27.05,
+        "p75": -8.75
+      },
+      "median_loser_points": {
+        "count": 81,
+        "mean": -19.71,
+        "median": -17.2,
+        "p25": -27.05,
+        "p75": -8.75
+      },
+      "conditional_resolved_mean_points": -4.242,
+      "expectancy_status": "resolved-only premium-point mean; excludes unresolved/ambiguous and costs, not full-strategy expectancy",
+      "max_drawdown_equal_unit_resolved_sequence_points": 526.0,
+      "max_consecutive_SL_resolved_sequence": 10,
+      "future_target_after_SL_count": 29,
+      "MFE_through_exit_or_EOD": {
+        "count": 124,
+        "mean": 15.623,
+        "median": 9.075,
+        "p25": 3.637,
+        "p75": 21.138
+      },
+      "MAE_through_exit_or_EOD": {
+        "count": 124,
+        "mean": -20.734,
+        "median": -17.5,
+        "p25": -29.725,
+        "p75": -8.587
+      },
+      "holding_elapsed_lower_bound_min": {
+        "count": 124,
+        "mean": 23.79,
+        "median": 10.0,
+        "p25": 0.0,
+        "p75": 35.0
+      },
+      "holding_elapsed_upper_bound_min": {
+        "count": 124,
+        "mean": 28.79,
+        "median": 15.0,
+        "p25": 5.0,
+        "p75": 40.0
+      },
+      "target_hit_time_lower_bound_min": {
+        "count": 43,
+        "mean": 20.93,
+        "median": 15.0,
+        "p25": 0.0,
+        "p75": 27.5
+      },
+      "stop_hit_time_lower_bound_min": {
+        "count": 81,
+        "mean": 25.309,
+        "median": 10.0,
+        "p25": 0.0,
+        "p75": 35.0
+      }
+    },
+    "breakdown_candle_low|buffer=2": {
+      "anchor": "breakdown_candle_low",
+      "buffer_points": 2,
+      "entries_simulated": 124,
+      "invalid_anchor": 129,
+      "outcomes": {
+        "SL": 77,
+        "TARGET": 45,
+        "UNRESOLVED": 2
+      },
+      "resolved": 122,
+      "target_rate_resolved": 0.368852,
+      "sl_rate_resolved": 0.631148,
+      "targets_over_all_eligible": 0.362903,
+      "average_winner_points": {
+        "count": 45,
+        "mean": 26.694,
+        "median": 23.25,
+        "p25": 11.6,
+        "p75": 37.9
+      },
+      "median_winner_points": {
+        "count": 45,
+        "mean": 26.694,
+        "median": 23.25,
+        "p25": 11.6,
+        "p75": 37.9
+      },
+      "average_loser_points": {
+        "count": 77,
+        "mean": -21.681,
+        "median": -19.75,
+        "p25": -29.05,
+        "p75": -10.75
+      },
+      "median_loser_points": {
+        "count": 77,
+        "mean": -21.681,
+        "median": -19.75,
+        "p25": -29.05,
+        "p75": -10.75
+      },
+      "conditional_resolved_mean_points": -3.838,
+      "expectancy_status": "resolved-only premium-point mean; excludes unresolved/ambiguous and costs, not full-strategy expectancy",
+      "max_drawdown_equal_unit_resolved_sequence_points": 468.2,
+      "max_consecutive_SL_resolved_sequence": 9,
+      "future_target_after_SL_count": 27,
+      "MFE_through_exit_or_EOD": {
+        "count": 124,
+        "mean": 16.498,
+        "median": 9.25,
+        "p25": 4.0,
+        "p75": 23.263
+      },
+      "MAE_through_exit_or_EOD": {
+        "count": 124,
+        "mean": -21.301,
+        "median": -18.475,
+        "p25": -31.013,
+        "p75": -9.363
+      },
+      "holding_elapsed_lower_bound_min": {
+        "count": 122,
+        "mean": 22.91,
+        "median": 10.0,
+        "p25": 0.0,
+        "p75": 33.75
+      },
+      "holding_elapsed_upper_bound_min": {
+        "count": 122,
+        "mean": 27.91,
+        "median": 15.0,
+        "p25": 5.0,
+        "p75": 38.75
+      },
+      "target_hit_time_lower_bound_min": {
+        "count": 45,
+        "mean": 24.111,
+        "median": 15.0,
+        "p25": 0.0,
+        "p75": 35.0
+      },
+      "stop_hit_time_lower_bound_min": {
+        "count": 77,
+        "mean": 22.208,
+        "median": 10.0,
+        "p25": 0.0,
+        "p75": 30.0
+      }
+    },
+    "breakdown_candle_low|buffer=4": {
+      "anchor": "breakdown_candle_low",
+      "buffer_points": 4,
+      "entries_simulated": 124,
+      "invalid_anchor": 129,
+      "outcomes": {
+        "SL": 76,
+        "TARGET": 46,
+        "UNRESOLVED": 2
+      },
+      "resolved": 122,
+      "target_rate_resolved": 0.377049,
+      "sl_rate_resolved": 0.622951,
+      "targets_over_all_eligible": 0.370968,
+      "average_winner_points": {
+        "count": 46,
+        "mean": 26.896,
+        "median": 23.45,
+        "p25": 11.675,
+        "p75": 37.675
+      },
+      "median_winner_points": {
+        "count": 46,
+        "mean": 26.896,
+        "median": 23.45,
+        "p25": 11.675,
+        "p75": 37.675
+      },
+      "average_loser_points": {
+        "count": 76,
+        "mean": -23.849,
+        "median": -21.875,
+        "p25": -31.087,
+        "p75": -12.938
+      },
+      "median_loser_points": {
+        "count": 76,
+        "mean": -23.849,
+        "median": -21.875,
+        "p25": -31.087,
+        "p75": -12.938
+      },
+      "conditional_resolved_mean_points": -4.716,
+      "expectancy_status": "resolved-only premium-point mean; excludes unresolved/ambiguous and costs, not full-strategy expectancy",
+      "max_drawdown_equal_unit_resolved_sequence_points": 575.3,
+      "max_consecutive_SL_resolved_sequence": 9,
+      "future_target_after_SL_count": 26,
+      "MFE_through_exit_or_EOD": {
+        "count": 124,
+        "mean": 17.129,
+        "median": 9.625,
+        "p25": 5.537,
+        "p75": 24.063
+      },
+      "MAE_through_exit_or_EOD": {
+        "count": 124,
+        "mean": -21.886,
+        "median": -18.825,
+        "p25": -31.512,
+        "p75": -9.513
+      },
+      "holding_elapsed_lower_bound_min": {
+        "count": 122,
+        "mean": 26.393,
+        "median": 15.0,
+        "p25": 0.0,
+        "p75": 35.0
+      },
+      "holding_elapsed_upper_bound_min": {
+        "count": 122,
+        "mean": 31.393,
+        "median": 20.0,
+        "p25": 5.0,
+        "p75": 40.0
+      },
+      "target_hit_time_lower_bound_min": {
+        "count": 46,
+        "mean": 27.826,
+        "median": 15.0,
+        "p25": 0.0,
+        "p75": 35.0
+      },
+      "stop_hit_time_lower_bound_min": {
+        "count": 76,
+        "mean": 25.526,
+        "median": 10.0,
+        "p25": 0.0,
+        "p75": 35.0
+      }
+    },
+    "breakout_candle_low|buffer=0": {
+      "anchor": "breakout_candle_low",
+      "buffer_points": 0,
+      "entries_simulated": 253,
+      "invalid_anchor": 0,
+      "outcomes": {
+        "SL": 189,
+        "TARGET": 58,
+        "UNRESOLVED": 6
+      },
+      "resolved": 247,
+      "target_rate_resolved": 0.234818,
+      "sl_rate_resolved": 0.765182,
+      "targets_over_all_eligible": 0.229249,
+      "average_winner_points": {
+        "count": 58,
+        "mean": 47.442,
+        "median": 38.075,
+        "p25": 13.05,
+        "p75": 65.425
+      },
+      "median_winner_points": {
+        "count": 58,
+        "mean": 47.442,
+        "median": 38.075,
+        "p25": 13.05,
+        "p75": 65.425
+      },
+      "average_loser_points": {
+        "count": 189,
+        "mean": -11.477,
+        "median": -9.35,
+        "p25": -14.25,
+        "p75": -5.85
+      },
+      "median_loser_points": {
+        "count": 189,
+        "mean": -11.477,
+        "median": -9.35,
+        "p25": -14.25,
+        "p75": -5.85
+      },
+      "conditional_resolved_mean_points": 2.358,
+      "expectancy_status": "resolved-only premium-point mean; excludes unresolved/ambiguous and costs, not full-strategy expectancy",
+      "max_drawdown_equal_unit_resolved_sequence_points": 354.85,
+      "max_consecutive_SL_resolved_sequence": 25,
+      "future_target_after_SL_count": 51,
+      "MFE_through_exit_or_EOD": {
+        "count": 253,
+        "mean": 21.865,
+        "median": 7.8,
+        "p25": 2.85,
+        "p75": 21.45
+      },
+      "MAE_through_exit_or_EOD": {
+        "count": 253,
+        "mean": -14.937,
+        "median": -11.8,
+        "p25": -21.35,
+        "p75": -6.8
+      },
+      "holding_elapsed_lower_bound_min": {
+        "count": 247,
+        "mean": 24.13,
+        "median": 10.0,
+        "p25": 0.0,
+        "p75": 25.0
+      },
+      "holding_elapsed_upper_bound_min": {
+        "count": 247,
+        "mean": 29.13,
+        "median": 15.0,
+        "p25": 5.0,
+        "p75": 30.0
+      },
+      "target_hit_time_lower_bound_min": {
+        "count": 58,
+        "mean": 39.224,
+        "median": 25.0,
+        "p25": 5.0,
+        "p75": 62.5
+      },
+      "stop_hit_time_lower_bound_min": {
+        "count": 189,
+        "mean": 19.497,
+        "median": 5.0,
+        "p25": 0.0,
+        "p75": 15.0
+      }
+    },
+    "breakout_candle_low|buffer=2": {
+      "anchor": "breakout_candle_low",
+      "buffer_points": 2,
+      "entries_simulated": 253,
+      "invalid_anchor": 0,
+      "outcomes": {
+        "SL": 182,
+        "TARGET": 65,
+        "UNRESOLVED": 6
+      },
+      "resolved": 247,
+      "target_rate_resolved": 0.263158,
+      "sl_rate_resolved": 0.736842,
+      "targets_over_all_eligible": 0.256917,
+      "average_winner_points": {
+        "count": 65,
+        "mean": 49.102,
+        "median": 39.2,
+        "p25": 13.65,
+        "p75": 69.15
+      },
+      "median_winner_points": {
+        "count": 65,
+        "mean": 49.102,
+        "median": 39.2,
+        "p25": 13.65,
+        "p75": 69.15
+      },
+      "average_loser_points": {
+        "count": 182,
+        "mean": -13.572,
+        "median": -11.575,
+        "p25": -16.25,
+        "p75": -7.862
+      },
+      "median_loser_points": {
+        "count": 182,
+        "mean": -13.572,
+        "median": -11.575,
+        "p25": -16.25,
+        "p75": -7.862
+      },
+      "conditional_resolved_mean_points": 2.921,
+      "expectancy_status": "resolved-only premium-point mean; excludes unresolved/ambiguous and costs, not full-strategy expectancy",
+      "max_drawdown_equal_unit_resolved_sequence_points": 472.5,
+      "max_consecutive_SL_resolved_sequence": 25,
+      "future_target_after_SL_count": 44,
+      "MFE_through_exit_or_EOD": {
+        "count": 253,
+        "mean": 24.208,
+        "median": 9.45,
+        "p25": 3.7,
+        "p75": 26.65
+      },
+      "MAE_through_exit_or_EOD": {
+        "count": 253,
+        "mean": -15.801,
+        "median": -13.2,
+        "p25": -21.5,
+        "p75": -7.9
+      },
+      "holding_elapsed_lower_bound_min": {
+        "count": 247,
+        "mean": 30.344,
+        "median": 15.0,
+        "p25": 2.5,
+        "p75": 35.0
+      },
+      "holding_elapsed_upper_bound_min": {
+        "count": 247,
+        "mean": 35.344,
+        "median": 20.0,
+        "p25": 7.5,
+        "p75": 40.0
+      },
+      "target_hit_time_lower_bound_min": {
+        "count": 65,
+        "mean": 46.538,
+        "median": 25.0,
+        "p25": 5.0,
+        "p75": 80.0
+      },
+      "stop_hit_time_lower_bound_min": {
+        "count": 182,
+        "mean": 24.56,
+        "median": 10.0,
+        "p25": 0.0,
+        "p75": 25.0
+      }
+    },
+    "breakout_candle_low|buffer=4": {
+      "anchor": "breakout_candle_low",
+      "buffer_points": 4,
+      "entries_simulated": 253,
+      "invalid_anchor": 0,
+      "outcomes": {
+        "SL": 173,
+        "TARGET": 71,
+        "UNRESOLVED": 9
+      },
+      "resolved": 244,
+      "target_rate_resolved": 0.290984,
+      "sl_rate_resolved": 0.709016,
+      "targets_over_all_eligible": 0.280632,
+      "average_winner_points": {
+        "count": 71,
+        "mean": 47.947,
+        "median": 39.2,
+        "p25": 15.95,
+        "p75": 66.625
+      },
+      "median_winner_points": {
+        "count": 71,
+        "mean": 47.947,
+        "median": 39.2,
+        "p25": 15.95,
+        "p75": 66.625
+      },
+      "average_loser_points": {
+        "count": 173,
+        "mean": -15.725,
+        "median": -13.95,
+        "p25": -18.45,
+        "p75": -9.7
+      },
+      "median_loser_points": {
+        "count": 173,
+        "mean": -15.725,
+        "median": -13.95,
+        "p25": -18.45,
+        "p75": -9.7
+      },
+      "conditional_resolved_mean_points": 2.802,
+      "expectancy_status": "resolved-only premium-point mean; excludes unresolved/ambiguous and costs, not full-strategy expectancy",
+      "max_drawdown_equal_unit_resolved_sequence_points": 515.2,
+      "max_consecutive_SL_resolved_sequence": 23,
+      "future_target_after_SL_count": 38,
+      "MFE_through_exit_or_EOD": {
+        "count": 253,
+        "mean": 25.511,
+        "median": 10.75,
+        "p25": 4.45,
+        "p75": 31.05
+      },
+      "MAE_through_exit_or_EOD": {
+        "count": 253,
+        "mean": -16.826,
+        "median": -15.15,
+        "p25": -21.8,
+        "p75": -8.75
+      },
+      "holding_elapsed_lower_bound_min": {
+        "count": 244,
+        "mean": 35.143,
+        "median": 15.0,
+        "p25": 5.0,
+        "p75": 41.25
+      },
+      "holding_elapsed_upper_bound_min": {
+        "count": 244,
+        "mean": 40.143,
+        "median": 20.0,
+        "p25": 10.0,
+        "p75": 46.25
+      },
+      "target_hit_time_lower_bound_min": {
+        "count": 71,
+        "mean": 52.324,
+        "median": 30.0,
+        "p25": 5.0,
+        "p75": 80.0
+      },
+      "stop_hit_time_lower_bound_min": {
+        "count": 173,
+        "mean": 28.092,
+        "median": 15.0,
+        "p25": 5.0,
+        "p75": 30.0
+      }
+    }
+  },
+  "chronological_robustness": {
+    "reversal_sequence_trough|buffer=0": {
+      "Apr-Jun": {
+        "entries": 97,
+        "outcomes": {
+          "TARGET": 29,
+          "SL": 61,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 7
+        },
+        "target_rate_resolved": 0.322222,
+        "future_target_after_SL": 12
+      },
+      "Jan-Mar": {
+        "entries": 94,
+        "outcomes": {
+          "TARGET": 38,
+          "SL": 53,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 3
+        },
+        "target_rate_resolved": 0.417582,
+        "future_target_after_SL": 4
+      },
+      "Jul-Sep": {
+        "entries": 62,
+        "outcomes": {
+          "TARGET": 20,
+          "SL": 37,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 5
+        },
+        "target_rate_resolved": 0.350877,
+        "future_target_after_SL": 6
+      }
+    },
+    "reversal_sequence_trough|buffer=2": {
+      "Apr-Jun": {
+        "entries": 97,
+        "outcomes": {
+          "TARGET": 29,
+          "SL": 60,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 8
+        },
+        "target_rate_resolved": 0.325843,
+        "future_target_after_SL": 12
+      },
+      "Jan-Mar": {
+        "entries": 94,
+        "outcomes": {
+          "TARGET": 39,
+          "SL": 51,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 4
+        },
+        "target_rate_resolved": 0.433333,
+        "future_target_after_SL": 3
+      },
+      "Jul-Sep": {
+        "entries": 62,
+        "outcomes": {
+          "TARGET": 21,
+          "SL": 35,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 6
+        },
+        "target_rate_resolved": 0.375,
+        "future_target_after_SL": 5
+      }
+    },
+    "reversal_sequence_trough|buffer=4": {
+      "Apr-Jun": {
+        "entries": 97,
+        "outcomes": {
+          "TARGET": 30,
+          "SL": 58,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 9
+        },
+        "target_rate_resolved": 0.340909,
+        "future_target_after_SL": 11
+      },
+      "Jan-Mar": {
+        "entries": 94,
+        "outcomes": {
+          "TARGET": 40,
+          "SL": 50,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 4
+        },
+        "target_rate_resolved": 0.444444,
+        "future_target_after_SL": 2
+      },
+      "Jul-Sep": {
+        "entries": 62,
+        "outcomes": {
+          "TARGET": 21,
+          "SL": 34,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 7
+        },
+        "target_rate_resolved": 0.381818,
+        "future_target_after_SL": 5
+      }
+    },
+    "last_causal_swing_low|buffer=0": {
+      "Jan-Mar": {
+        "entries": 81,
+        "outcomes": {
+          "SL": 46,
+          "TARGET": 32,
+          "UNRESOLVED": 3
+        },
+        "target_rate_resolved": 0.410256,
+        "future_target_after_SL": 4
+      },
+      "Apr-Jun": {
+        "entries": 87,
+        "outcomes": {
+          "SL": 56,
+          "UNRESOLVED": 7,
+          "TARGET": 24
+        },
+        "target_rate_resolved": 0.3,
+        "future_target_after_SL": 9
+      },
+      "Jul-Sep": {
+        "entries": 55,
+        "outcomes": {
+          "SL": 35,
+          "TARGET": 19,
+          "UNRESOLVED": 1
+        },
+        "target_rate_resolved": 0.351852,
+        "future_target_after_SL": 4
+      }
+    },
+    "last_causal_swing_low|buffer=2": {
+      "Jan-Mar": {
+        "entries": 81,
+        "outcomes": {
+          "SL": 44,
+          "TARGET": 33,
+          "UNRESOLVED": 4
+        },
+        "target_rate_resolved": 0.428571,
+        "future_target_after_SL": 3
+      },
+      "Apr-Jun": {
+        "entries": 87,
+        "outcomes": {
+          "SL": 55,
+          "UNRESOLVED": 8,
+          "TARGET": 24
+        },
+        "target_rate_resolved": 0.303797,
+        "future_target_after_SL": 9
+      },
+      "Jul-Sep": {
+        "entries": 55,
+        "outcomes": {
+          "SL": 32,
+          "TARGET": 20,
+          "UNRESOLVED": 3
+        },
+        "target_rate_resolved": 0.384615,
+        "future_target_after_SL": 3
+      }
+    },
+    "last_causal_swing_low|buffer=4": {
+      "Jan-Mar": {
+        "entries": 81,
+        "outcomes": {
+          "SL": 43,
+          "TARGET": 34,
+          "UNRESOLVED": 4
+        },
+        "target_rate_resolved": 0.441558,
+        "future_target_after_SL": 2
+      },
+      "Apr-Jun": {
+        "entries": 87,
+        "outcomes": {
+          "SL": 54,
+          "UNRESOLVED": 9,
+          "TARGET": 24
+        },
+        "target_rate_resolved": 0.307692,
+        "future_target_after_SL": 9
+      },
+      "Jul-Sep": {
+        "entries": 55,
+        "outcomes": {
+          "UNRESOLVED": 8,
+          "SL": 27,
+          "TARGET": 20
+        },
+        "target_rate_resolved": 0.425532,
+        "future_target_after_SL": 3
+      }
+    },
+    "breakdown_candle_low|buffer=0": {
+      "Jan-Mar": {
+        "entries": 44,
+        "outcomes": {
+          "SL": 26,
+          "TARGET": 18
+        },
+        "target_rate_resolved": 0.409091,
+        "future_target_after_SL": 8
+      },
+      "Apr-Jun": {
+        "entries": 48,
+        "outcomes": {
+          "SL": 33,
+          "TARGET": 15
+        },
+        "target_rate_resolved": 0.3125,
+        "future_target_after_SL": 11
+      },
+      "Jul-Sep": {
+        "entries": 32,
+        "outcomes": {
+          "SL": 22,
+          "TARGET": 10
+        },
+        "target_rate_resolved": 0.3125,
+        "future_target_after_SL": 10
+      }
+    },
+    "breakdown_candle_low|buffer=2": {
+      "Jan-Mar": {
+        "entries": 44,
+        "outcomes": {
+          "SL": 25,
+          "TARGET": 19
+        },
+        "target_rate_resolved": 0.431818,
+        "future_target_after_SL": 7
+      },
+      "Apr-Jun": {
+        "entries": 48,
+        "outcomes": {
+          "SL": 32,
+          "TARGET": 16
+        },
+        "target_rate_resolved": 0.333333,
+        "future_target_after_SL": 10
+      },
+      "Jul-Sep": {
+        "entries": 32,
+        "outcomes": {
+          "SL": 20,
+          "TARGET": 10,
+          "UNRESOLVED": 2
+        },
+        "target_rate_resolved": 0.333333,
+        "future_target_after_SL": 10
+      }
+    },
+    "breakdown_candle_low|buffer=4": {
+      "Jan-Mar": {
+        "entries": 44,
+        "outcomes": {
+          "SL": 25,
+          "TARGET": 19
+        },
+        "target_rate_resolved": 0.431818,
+        "future_target_after_SL": 7
+      },
+      "Apr-Jun": {
+        "entries": 48,
+        "outcomes": {
+          "SL": 32,
+          "TARGET": 16
+        },
+        "target_rate_resolved": 0.333333,
+        "future_target_after_SL": 10
+      },
+      "Jul-Sep": {
+        "entries": 32,
+        "outcomes": {
+          "SL": 19,
+          "TARGET": 11,
+          "UNRESOLVED": 2
+        },
+        "target_rate_resolved": 0.366667,
+        "future_target_after_SL": 9
+      }
+    },
+    "breakout_candle_low|buffer=0": {
+      "Jan-Mar": {
+        "entries": 94,
+        "outcomes": {
+          "SL": 67,
+          "TARGET": 25,
+          "UNRESOLVED": 2
+        },
+        "target_rate_resolved": 0.271739,
+        "future_target_after_SL": 17
+      },
+      "Apr-Jun": {
+        "entries": 97,
+        "outcomes": {
+          "SL": 75,
+          "TARGET": 19,
+          "UNRESOLVED": 3
+        },
+        "target_rate_resolved": 0.202128,
+        "future_target_after_SL": 22
+      },
+      "Jul-Sep": {
+        "entries": 62,
+        "outcomes": {
+          "SL": 47,
+          "TARGET": 14,
+          "UNRESOLVED": 1
+        },
+        "target_rate_resolved": 0.229508,
+        "future_target_after_SL": 12
+      }
+    },
+    "breakout_candle_low|buffer=2": {
+      "Jan-Mar": {
+        "entries": 94,
+        "outcomes": {
+          "SL": 62,
+          "TARGET": 30,
+          "UNRESOLVED": 2
+        },
+        "target_rate_resolved": 0.326087,
+        "future_target_after_SL": 12
+      },
+      "Apr-Jun": {
+        "entries": 97,
+        "outcomes": {
+          "SL": 73,
+          "TARGET": 21,
+          "UNRESOLVED": 3
+        },
+        "target_rate_resolved": 0.223404,
+        "future_target_after_SL": 20
+      },
+      "Jul-Sep": {
+        "entries": 62,
+        "outcomes": {
+          "SL": 47,
+          "TARGET": 14,
+          "UNRESOLVED": 1
+        },
+        "target_rate_resolved": 0.229508,
+        "future_target_after_SL": 12
+      }
+    },
+    "breakout_candle_low|buffer=4": {
+      "Jan-Mar": {
+        "entries": 94,
+        "outcomes": {
+          "SL": 61,
+          "TARGET": 31,
+          "UNRESOLVED": 2
+        },
+        "target_rate_resolved": 0.336957,
+        "future_target_after_SL": 11
+      },
+      "Apr-Jun": {
+        "entries": 97,
+        "outcomes": {
+          "SL": 70,
+          "TARGET": 22,
+          "UNRESOLVED": 5
+        },
+        "target_rate_resolved": 0.23913,
+        "future_target_after_SL": 19
+      },
+      "Jul-Sep": {
+        "entries": 62,
+        "outcomes": {
+          "SL": 42,
+          "TARGET": 18,
+          "UNRESOLVED": 2
+        },
+        "target_rate_resolved": 0.3,
+        "future_target_after_SL": 8
+      }
+    }
+  },
+  "monthly_hypothetical_models": {
+    "reversal_sequence_trough|buffer=0": {
+      "2026-01": {
+        "entries": 35,
+        "outcomes": {
+          "TARGET": 17,
+          "SL": 18,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 0
+        },
+        "target_rate_resolved": 0.485714
+      },
+      "2026-02": {
+        "entries": 38,
+        "outcomes": {
+          "TARGET": 13,
+          "SL": 24,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 1
+        },
+        "target_rate_resolved": 0.351351
+      },
+      "2026-03": {
+        "entries": 21,
+        "outcomes": {
+          "TARGET": 8,
+          "SL": 11,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 2
+        },
+        "target_rate_resolved": 0.421053
+      },
+      "2026-04": {
+        "entries": 27,
+        "outcomes": {
+          "TARGET": 3,
+          "SL": 20,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 4
+        },
+        "target_rate_resolved": 0.130435
+      },
+      "2026-05": {
+        "entries": 34,
+        "outcomes": {
+          "TARGET": 12,
+          "SL": 19,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 3
+        },
+        "target_rate_resolved": 0.387097
+      },
+      "2026-06": {
+        "entries": 36,
+        "outcomes": {
+          "TARGET": 14,
+          "SL": 22,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 0
+        },
+        "target_rate_resolved": 0.388889
+      },
+      "2026-07": {
+        "entries": 21,
+        "outcomes": {
+          "TARGET": 9,
+          "SL": 10,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 2
+        },
+        "target_rate_resolved": 0.473684
+      },
+      "2026-08": {
+        "entries": 26,
+        "outcomes": {
+          "TARGET": 9,
+          "SL": 14,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 3
+        },
+        "target_rate_resolved": 0.391304
+      },
+      "2026-09": {
+        "entries": 15,
+        "outcomes": {
+          "TARGET": 2,
+          "SL": 13,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 0
+        },
+        "target_rate_resolved": 0.133333
+      }
+    },
+    "reversal_sequence_trough|buffer=2": {
+      "2026-01": {
+        "entries": 35,
+        "outcomes": {
+          "TARGET": 18,
+          "SL": 17,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 0
+        },
+        "target_rate_resolved": 0.514286
+      },
+      "2026-02": {
+        "entries": 38,
+        "outcomes": {
+          "TARGET": 13,
+          "SL": 23,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 2
+        },
+        "target_rate_resolved": 0.361111
+      },
+      "2026-03": {
+        "entries": 21,
+        "outcomes": {
+          "TARGET": 8,
+          "SL": 11,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 2
+        },
+        "target_rate_resolved": 0.421053
+      },
+      "2026-04": {
+        "entries": 27,
+        "outcomes": {
+          "TARGET": 3,
+          "SL": 19,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 5
+        },
+        "target_rate_resolved": 0.136364
+      },
+      "2026-05": {
+        "entries": 34,
+        "outcomes": {
+          "TARGET": 12,
+          "SL": 19,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 3
+        },
+        "target_rate_resolved": 0.387097
+      },
+      "2026-06": {
+        "entries": 36,
+        "outcomes": {
+          "TARGET": 14,
+          "SL": 22,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 0
+        },
+        "target_rate_resolved": 0.388889
+      },
+      "2026-07": {
+        "entries": 21,
+        "outcomes": {
+          "TARGET": 9,
+          "SL": 10,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 2
+        },
+        "target_rate_resolved": 0.473684
+      },
+      "2026-08": {
+        "entries": 26,
+        "outcomes": {
+          "TARGET": 10,
+          "SL": 13,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 3
+        },
+        "target_rate_resolved": 0.434783
+      },
+      "2026-09": {
+        "entries": 15,
+        "outcomes": {
+          "TARGET": 2,
+          "SL": 12,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 1
+        },
+        "target_rate_resolved": 0.142857
+      }
+    },
+    "reversal_sequence_trough|buffer=4": {
+      "2026-01": {
+        "entries": 35,
+        "outcomes": {
+          "TARGET": 18,
+          "SL": 17,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 0
+        },
+        "target_rate_resolved": 0.514286
+      },
+      "2026-02": {
+        "entries": 38,
+        "outcomes": {
+          "TARGET": 14,
+          "SL": 22,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 2
+        },
+        "target_rate_resolved": 0.388889
+      },
+      "2026-03": {
+        "entries": 21,
+        "outcomes": {
+          "TARGET": 8,
+          "SL": 11,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 2
+        },
+        "target_rate_resolved": 0.421053
+      },
+      "2026-04": {
+        "entries": 27,
+        "outcomes": {
+          "TARGET": 3,
+          "SL": 18,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 6
+        },
+        "target_rate_resolved": 0.142857
+      },
+      "2026-05": {
+        "entries": 34,
+        "outcomes": {
+          "TARGET": 12,
+          "SL": 19,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 3
+        },
+        "target_rate_resolved": 0.387097
+      },
+      "2026-06": {
+        "entries": 36,
+        "outcomes": {
+          "TARGET": 15,
+          "SL": 21,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 0
+        },
+        "target_rate_resolved": 0.416667
+      },
+      "2026-07": {
+        "entries": 21,
+        "outcomes": {
+          "TARGET": 9,
+          "SL": 10,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 2
+        },
+        "target_rate_resolved": 0.473684
+      },
+      "2026-08": {
+        "entries": 26,
+        "outcomes": {
+          "TARGET": 10,
+          "SL": 12,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 4
+        },
+        "target_rate_resolved": 0.454545
+      },
+      "2026-09": {
+        "entries": 15,
+        "outcomes": {
+          "TARGET": 2,
+          "SL": 12,
+          "AMBIGUOUS": 0,
+          "UNRESOLVED": 1
+        },
+        "target_rate_resolved": 0.142857
+      }
+    },
+    "last_causal_swing_low|buffer=0": {
+      "2026-01": {
+        "entries": 28,
+        "outcomes": {
+          "SL": 13,
+          "TARGET": 15
+        },
+        "target_rate_resolved": 0.535714
+      },
+      "2026-02": {
+        "entries": 36,
+        "outcomes": {
+          "TARGET": 11,
+          "SL": 24,
+          "UNRESOLVED": 1
+        },
+        "target_rate_resolved": 0.314286
+      },
+      "2026-03": {
+        "entries": 17,
+        "outcomes": {
+          "UNRESOLVED": 2,
+          "TARGET": 6,
+          "SL": 9
+        },
+        "target_rate_resolved": 0.4
+      },
+      "2026-04": {
+        "entries": 27,
+        "outcomes": {
+          "SL": 20,
+          "UNRESOLVED": 4,
+          "TARGET": 3
+        },
+        "target_rate_resolved": 0.130435
+      },
+      "2026-05": {
+        "entries": 28,
+        "outcomes": {
+          "TARGET": 10,
+          "UNRESOLVED": 3,
+          "SL": 15
+        },
+        "target_rate_resolved": 0.4
+      },
+      "2026-06": {
+        "entries": 32,
+        "outcomes": {
+          "SL": 21,
+          "TARGET": 11
+        },
+        "target_rate_resolved": 0.34375
+      },
+      "2026-07": {
+        "entries": 20,
+        "outcomes": {
+          "SL": 11,
+          "TARGET": 9
+        },
+        "target_rate_resolved": 0.45
+      },
+      "2026-08": {
+        "entries": 24,
+        "outcomes": {
+          "SL": 15,
+          "TARGET": 8,
+          "UNRESOLVED": 1
+        },
+        "target_rate_resolved": 0.347826
+      },
+      "2026-09": {
+        "entries": 11,
+        "outcomes": {
+          "TARGET": 2,
+          "SL": 9
+        },
+        "target_rate_resolved": 0.181818
+      }
+    },
+    "last_causal_swing_low|buffer=2": {
+      "2026-01": {
+        "entries": 28,
+        "outcomes": {
+          "SL": 12,
+          "TARGET": 16
+        },
+        "target_rate_resolved": 0.571429
+      },
+      "2026-02": {
+        "entries": 36,
+        "outcomes": {
+          "TARGET": 11,
+          "SL": 23,
+          "UNRESOLVED": 2
+        },
+        "target_rate_resolved": 0.323529
+      },
+      "2026-03": {
+        "entries": 17,
+        "outcomes": {
+          "UNRESOLVED": 2,
+          "TARGET": 6,
+          "SL": 9
+        },
+        "target_rate_resolved": 0.4
+      },
+      "2026-04": {
+        "entries": 27,
+        "outcomes": {
+          "SL": 19,
+          "UNRESOLVED": 5,
+          "TARGET": 3
+        },
+        "target_rate_resolved": 0.136364
+      },
+      "2026-05": {
+        "entries": 28,
+        "outcomes": {
+          "TARGET": 10,
+          "UNRESOLVED": 3,
+          "SL": 15
+        },
+        "target_rate_resolved": 0.4
+      },
+      "2026-06": {
+        "entries": 32,
+        "outcomes": {
+          "SL": 21,
+          "TARGET": 11
+        },
+        "target_rate_resolved": 0.34375
+      },
+      "2026-07": {
+        "entries": 20,
+        "outcomes": {
+          "SL": 11,
+          "TARGET": 9
+        },
+        "target_rate_resolved": 0.45
+      },
+      "2026-08": {
+        "entries": 24,
+        "outcomes": {
+          "UNRESOLVED": 2,
+          "SL": 13,
+          "TARGET": 9
+        },
+        "target_rate_resolved": 0.409091
+      },
+      "2026-09": {
+        "entries": 11,
+        "outcomes": {
+          "TARGET": 2,
+          "SL": 8,
+          "UNRESOLVED": 1
+        },
+        "target_rate_resolved": 0.2
+      }
+    },
+    "last_causal_swing_low|buffer=4": {
+      "2026-01": {
+        "entries": 28,
+        "outcomes": {
+          "SL": 12,
+          "TARGET": 16
+        },
+        "target_rate_resolved": 0.571429
+      },
+      "2026-02": {
+        "entries": 36,
+        "outcomes": {
+          "TARGET": 12,
+          "SL": 22,
+          "UNRESOLVED": 2
+        },
+        "target_rate_resolved": 0.352941
+      },
+      "2026-03": {
+        "entries": 17,
+        "outcomes": {
+          "UNRESOLVED": 2,
+          "TARGET": 6,
+          "SL": 9
+        },
+        "target_rate_resolved": 0.4
+      },
+      "2026-04": {
+        "entries": 27,
+        "outcomes": {
+          "SL": 18,
+          "UNRESOLVED": 6,
+          "TARGET": 3
+        },
+        "target_rate_resolved": 0.142857
+      },
+      "2026-05": {
+        "entries": 28,
+        "outcomes": {
+          "TARGET": 10,
+          "UNRESOLVED": 3,
+          "SL": 15
+        },
+        "target_rate_resolved": 0.4
+      },
+      "2026-06": {
+        "entries": 32,
+        "outcomes": {
+          "SL": 21,
+          "TARGET": 11
+        },
+        "target_rate_resolved": 0.34375
+      },
+      "2026-07": {
+        "entries": 20,
+        "outcomes": {
+          "UNRESOLVED": 2,
+          "SL": 9,
+          "TARGET": 9
+        },
+        "target_rate_resolved": 0.5
+      },
+      "2026-08": {
+        "entries": 24,
+        "outcomes": {
+          "UNRESOLVED": 5,
+          "SL": 10,
+          "TARGET": 9
+        },
+        "target_rate_resolved": 0.473684
+      },
+      "2026-09": {
+        "entries": 11,
+        "outcomes": {
+          "TARGET": 2,
+          "SL": 8,
+          "UNRESOLVED": 1
+        },
+        "target_rate_resolved": 0.2
+      }
+    },
+    "breakdown_candle_low|buffer=0": {
+      "2026-01": {
+        "entries": 17,
+        "outcomes": {
+          "SL": 11,
+          "TARGET": 6
+        },
+        "target_rate_resolved": 0.352941
+      },
+      "2026-02": {
+        "entries": 13,
+        "outcomes": {
+          "TARGET": 7,
+          "SL": 6
+        },
+        "target_rate_resolved": 0.538462
+      },
+      "2026-03": {
+        "entries": 14,
+        "outcomes": {
+          "TARGET": 5,
+          "SL": 9
+        },
+        "target_rate_resolved": 0.357143
+      },
+      "2026-04": {
+        "entries": 8,
+        "outcomes": {
+          "SL": 8
+        },
+        "target_rate_resolved": 0.0
+      },
+      "2026-05": {
+        "entries": 20,
+        "outcomes": {
+          "SL": 14,
+          "TARGET": 6
+        },
+        "target_rate_resolved": 0.3
+      },
+      "2026-06": {
+        "entries": 20,
+        "outcomes": {
+          "TARGET": 9,
+          "SL": 11
+        },
+        "target_rate_resolved": 0.45
+      },
+      "2026-07": {
+        "entries": 11,
+        "outcomes": {
+          "SL": 7,
+          "TARGET": 4
+        },
+        "target_rate_resolved": 0.363636
+      },
+      "2026-08": {
+        "entries": 12,
+        "outcomes": {
+          "TARGET": 5,
+          "SL": 7
+        },
+        "target_rate_resolved": 0.416667
+      },
+      "2026-09": {
+        "entries": 9,
+        "outcomes": {
+          "TARGET": 1,
+          "SL": 8
+        },
+        "target_rate_resolved": 0.111111
+      }
+    },
+    "breakdown_candle_low|buffer=2": {
+      "2026-01": {
+        "entries": 17,
+        "outcomes": {
+          "SL": 11,
+          "TARGET": 6
+        },
+        "target_rate_resolved": 0.352941
+      },
+      "2026-02": {
+        "entries": 13,
+        "outcomes": {
+          "TARGET": 7,
+          "SL": 6
+        },
+        "target_rate_resolved": 0.538462
+      },
+      "2026-03": {
+        "entries": 14,
+        "outcomes": {
+          "TARGET": 6,
+          "SL": 8
+        },
+        "target_rate_resolved": 0.428571
+      },
+      "2026-04": {
+        "entries": 8,
+        "outcomes": {
+          "SL": 8
+        },
+        "target_rate_resolved": 0.0
+      },
+      "2026-05": {
+        "entries": 20,
+        "outcomes": {
+          "SL": 13,
+          "TARGET": 7
+        },
+        "target_rate_resolved": 0.35
+      },
+      "2026-06": {
+        "entries": 20,
+        "outcomes": {
+          "TARGET": 9,
+          "SL": 11
+        },
+        "target_rate_resolved": 0.45
+      },
+      "2026-07": {
+        "entries": 11,
+        "outcomes": {
+          "SL": 7,
+          "TARGET": 4
+        },
+        "target_rate_resolved": 0.363636
+      },
+      "2026-08": {
+        "entries": 12,
+        "outcomes": {
+          "TARGET": 5,
+          "SL": 5,
+          "UNRESOLVED": 2
+        },
+        "target_rate_resolved": 0.5
+      },
+      "2026-09": {
+        "entries": 9,
+        "outcomes": {
+          "TARGET": 1,
+          "SL": 8
+        },
+        "target_rate_resolved": 0.111111
+      }
+    },
+    "breakdown_candle_low|buffer=4": {
+      "2026-01": {
+        "entries": 17,
+        "outcomes": {
+          "SL": 11,
+          "TARGET": 6
+        },
+        "target_rate_resolved": 0.352941
+      },
+      "2026-02": {
+        "entries": 13,
+        "outcomes": {
+          "TARGET": 7,
+          "SL": 6
+        },
+        "target_rate_resolved": 0.538462
+      },
+      "2026-03": {
+        "entries": 14,
+        "outcomes": {
+          "TARGET": 6,
+          "SL": 8
+        },
+        "target_rate_resolved": 0.428571
+      },
+      "2026-04": {
+        "entries": 8,
+        "outcomes": {
+          "SL": 8
+        },
+        "target_rate_resolved": 0.0
+      },
+      "2026-05": {
+        "entries": 20,
+        "outcomes": {
+          "SL": 13,
+          "TARGET": 7
+        },
+        "target_rate_resolved": 0.35
+      },
+      "2026-06": {
+        "entries": 20,
+        "outcomes": {
+          "TARGET": 9,
+          "SL": 11
+        },
+        "target_rate_resolved": 0.45
+      },
+      "2026-07": {
+        "entries": 11,
+        "outcomes": {
+          "SL": 6,
+          "TARGET": 5
+        },
+        "target_rate_resolved": 0.454545
+      },
+      "2026-08": {
+        "entries": 12,
+        "outcomes": {
+          "TARGET": 5,
+          "SL": 5,
+          "UNRESOLVED": 2
+        },
+        "target_rate_resolved": 0.5
+      },
+      "2026-09": {
+        "entries": 9,
+        "outcomes": {
+          "TARGET": 1,
+          "SL": 8
+        },
+        "target_rate_resolved": 0.111111
+      }
+    },
+    "breakout_candle_low|buffer=0": {
+      "2026-01": {
+        "entries": 35,
+        "outcomes": {
+          "SL": 22,
+          "TARGET": 13
+        },
+        "target_rate_resolved": 0.371429
+      },
+      "2026-02": {
+        "entries": 38,
+        "outcomes": {
+          "TARGET": 8,
+          "SL": 30
+        },
+        "target_rate_resolved": 0.210526
+      },
+      "2026-03": {
+        "entries": 21,
+        "outcomes": {
+          "UNRESOLVED": 2,
+          "SL": 15,
+          "TARGET": 4
+        },
+        "target_rate_resolved": 0.210526
+      },
+      "2026-04": {
+        "entries": 27,
+        "outcomes": {
+          "SL": 23,
+          "TARGET": 2,
+          "UNRESOLVED": 2
+        },
+        "target_rate_resolved": 0.08
+      },
+      "2026-05": {
+        "entries": 34,
+        "outcomes": {
+          "SL": 27,
+          "UNRESOLVED": 1,
+          "TARGET": 6
+        },
+        "target_rate_resolved": 0.181818
+      },
+      "2026-06": {
+        "entries": 36,
+        "outcomes": {
+          "SL": 25,
+          "TARGET": 11
+        },
+        "target_rate_resolved": 0.305556
+      },
+      "2026-07": {
+        "entries": 21,
+        "outcomes": {
+          "SL": 15,
+          "TARGET": 6
+        },
+        "target_rate_resolved": 0.285714
+      },
+      "2026-08": {
+        "entries": 26,
+        "outcomes": {
+          "SL": 18,
+          "TARGET": 7,
+          "UNRESOLVED": 1
+        },
+        "target_rate_resolved": 0.28
+      },
+      "2026-09": {
+        "entries": 15,
+        "outcomes": {
+          "TARGET": 1,
+          "SL": 14
+        },
+        "target_rate_resolved": 0.066667
+      }
+    },
+    "breakout_candle_low|buffer=2": {
+      "2026-01": {
+        "entries": 35,
+        "outcomes": {
+          "SL": 20,
+          "TARGET": 15
+        },
+        "target_rate_resolved": 0.428571
+      },
+      "2026-02": {
+        "entries": 38,
+        "outcomes": {
+          "TARGET": 11,
+          "SL": 27
+        },
+        "target_rate_resolved": 0.289474
+      },
+      "2026-03": {
+        "entries": 21,
+        "outcomes": {
+          "UNRESOLVED": 2,
+          "SL": 15,
+          "TARGET": 4
+        },
+        "target_rate_resolved": 0.210526
+      },
+      "2026-04": {
+        "entries": 27,
+        "outcomes": {
+          "SL": 23,
+          "TARGET": 2,
+          "UNRESOLVED": 2
+        },
+        "target_rate_resolved": 0.08
+      },
+      "2026-05": {
+        "entries": 34,
+        "outcomes": {
+          "SL": 27,
+          "UNRESOLVED": 1,
+          "TARGET": 6
+        },
+        "target_rate_resolved": 0.181818
+      },
+      "2026-06": {
+        "entries": 36,
+        "outcomes": {
+          "SL": 23,
+          "TARGET": 13
+        },
+        "target_rate_resolved": 0.361111
+      },
+      "2026-07": {
+        "entries": 21,
+        "outcomes": {
+          "SL": 15,
+          "TARGET": 6
+        },
+        "target_rate_resolved": 0.285714
+      },
+      "2026-08": {
+        "entries": 26,
+        "outcomes": {
+          "SL": 18,
+          "TARGET": 7,
+          "UNRESOLVED": 1
+        },
+        "target_rate_resolved": 0.28
+      },
+      "2026-09": {
+        "entries": 15,
+        "outcomes": {
+          "TARGET": 1,
+          "SL": 14
+        },
+        "target_rate_resolved": 0.066667
+      }
+    },
+    "breakout_candle_low|buffer=4": {
+      "2026-01": {
+        "entries": 35,
+        "outcomes": {
+          "SL": 20,
+          "TARGET": 15
+        },
+        "target_rate_resolved": 0.428571
+      },
+      "2026-02": {
+        "entries": 38,
+        "outcomes": {
+          "TARGET": 12,
+          "SL": 26
+        },
+        "target_rate_resolved": 0.315789
+      },
+      "2026-03": {
+        "entries": 21,
+        "outcomes": {
+          "UNRESOLVED": 2,
+          "SL": 15,
+          "TARGET": 4
+        },
+        "target_rate_resolved": 0.210526
+      },
+      "2026-04": {
+        "entries": 27,
+        "outcomes": {
+          "SL": 22,
+          "TARGET": 3,
+          "UNRESOLVED": 2
+        },
+        "target_rate_resolved": 0.12
+      },
+      "2026-05": {
+        "entries": 34,
+        "outcomes": {
+          "SL": 25,
+          "UNRESOLVED": 3,
+          "TARGET": 6
+        },
+        "target_rate_resolved": 0.193548
+      },
+      "2026-06": {
+        "entries": 36,
+        "outcomes": {
+          "SL": 23,
+          "TARGET": 13
+        },
+        "target_rate_resolved": 0.361111
+      },
+      "2026-07": {
+        "entries": 21,
+        "outcomes": {
+          "SL": 13,
+          "TARGET": 8
+        },
+        "target_rate_resolved": 0.380952
+      },
+      "2026-08": {
+        "entries": 26,
+        "outcomes": {
+          "SL": 16,
+          "TARGET": 9,
+          "UNRESOLVED": 1
+        },
+        "target_rate_resolved": 0.36
+      },
+      "2026-09": {
+        "entries": 15,
+        "outcomes": {
+          "TARGET": 1,
+          "SL": 13,
+          "UNRESOLVED": 1
+        },
+        "target_rate_resolved": 0.071429
+      }
+    }
+  },
+  "target_timing_intervals": {
+    "count": 109,
+    "interval_definition": "from completed entry candle close to first target-touch candle start/end; exact intrabar touch time is unavailable",
+    "requested_time_buckets": {
+      "0-5": 13,
+      "5-10": 6,
+      "10-15": 2,
+      "15-30": 16,
+      "30-60": 17,
+      "60-90": 11,
+      ">90": 44
+    }
+  },
+  "limitations": [
+    "Candidate lows are research hypotheses, not part of the unchanged canonical specification.",
+    "OHLC cannot resolve intrabar ordering; same-candle stop and target are labeled AMBIGUOUS. Stop/target fills at exact level are hypothetical, with no slippage, fees, position size or capital model.",
+    "No candidate buffer is selected by these descriptive comparisons; the buffer remains a controlled parameter.",
+    "A complete exact option contract session was available for every existing Ekalayava event; overall expected option universe remains incomplete and can suppress missing-contract setups.",
+    "Positions unresolved at the end of the observed session remain OPEN/UNRESOLVED; no EOD exit is invented."
+  ],
+  "primary_reversal_trough_simulation_recomputed": {
+    "source": "exact option CSVs for each existing Ekalayava event; no downloaded data",
+    "stop_trigger": "5-minute low <= structural low minus buffer",
+    "target_trigger": "5-minute high >= Opening High",
+    "entry_candle_excluded_from_exit_path": true,
+    "same_bar_stop_and_target": "AMBIGUOUS",
+    "session_end": "UNRESOLVED; no forced close",
+    "buffers_tested_points": [
+      0,
+      2,
+      4
+    ],
+    "models": {
+      "0": {
+        "entries": 253,
+        "target": 87,
+        "SL": 151,
+        "ambiguous": 0,
+        "unresolved": 15,
+        "resolved": 238,
+        "target_rate_resolved": 0.365546,
+        "average_winner_points": {
+          "count": 87,
+          "mean": 48.257,
+          "median": 39.2
+        },
+        "average_loser_points": {
+          "count": 151,
+          "mean": -23.653,
+          "median": -20.45
+        },
+        "resolved_only_mean_points": 2.634,
+        "max_drawdown_equal_unit_points": 449.2,
+        "max_consecutive_SL": 21,
+        "future_target_after_SL": 22,
+        "MFE_mean_through_exit_or_EOD": 29.762,
+        "MAE_mean_through_exit_or_EOD": -21.43,
+        "holding_median_minutes_from_entry_bar_start": 37.5,
+        "target_time_median_minutes_from_entry_bar_start": 50.0,
+        "stop_time_median_minutes_from_entry_bar_start": 35.0
+      },
+      "2": {
+        "entries": 253,
+        "target": 89,
+        "SL": 146,
+        "ambiguous": 0,
+        "unresolved": 18,
+        "resolved": 235,
+        "target_rate_resolved": 0.378723,
+        "average_winner_points": {
+          "count": 89,
+          "mean": 47.815,
+          "median": 38.25
+        },
+        "average_loser_points": {
+          "count": 146,
+          "mean": -25.714,
+          "median": -22.5
+        },
+        "resolved_only_mean_points": 2.133,
+        "max_drawdown_equal_unit_points": 522.3,
+        "max_consecutive_SL": 20,
+        "future_target_after_SL": 20,
+        "MFE_mean_through_exit_or_EOD": 30.211,
+        "MAE_mean_through_exit_or_EOD": -22.616,
+        "holding_median_minutes_from_entry_bar_start": 40.0,
+        "target_time_median_minutes_from_entry_bar_start": 55.0,
+        "stop_time_median_minutes_from_entry_bar_start": 40.0
+      },
+      "4": {
+        "entries": 253,
+        "target": 91,
+        "SL": 142,
+        "ambiguous": 0,
+        "unresolved": 20,
+        "resolved": 233,
+        "target_rate_resolved": 0.390558,
+        "average_winner_points": {
+          "count": 91,
+          "mean": 47.414,
+          "median": 38.25
+        },
+        "average_loser_points": {
+          "count": 142,
+          "mean": -27.788,
+          "median": -24.5
+        },
+        "resolved_only_mean_points": 1.582,
+        "max_drawdown_equal_unit_points": 537.45,
+        "max_consecutive_SL": 19,
+        "future_target_after_SL": 18,
+        "MFE_mean_through_exit_or_EOD": 30.644,
+        "MAE_mean_through_exit_or_EOD": -23.867,
+        "holding_median_minutes_from_entry_bar_start": 45.0,
+        "target_time_median_minutes_from_entry_bar_start": 50.0,
+        "stop_time_median_minutes_from_entry_bar_start": 45.0
+      }
+    },
+    "subgroups": {
+      "CE/PE": {
+        "CE": {
+          "0": {
+            "entries": 126,
+            "target": 43,
+            "SL": 75,
+            "ambiguous": 0,
+            "unresolved": 8,
+            "resolved": 118,
+            "target_rate_resolved": 0.364407,
+            "average_winner_points": {
+              "count": 43,
+              "mean": 49.715,
+              "median": 35.95
+            },
+            "average_loser_points": {
+              "count": 75,
+              "mean": -22.611,
+              "median": -20.0
+            },
+            "resolved_only_mean_points": 3.745,
+            "max_drawdown_equal_unit_points": 514.6,
+            "max_consecutive_SL": 14,
+            "future_target_after_SL": 12,
+            "MFE_mean_through_exit_or_EOD": 29.44,
+            "MAE_mean_through_exit_or_EOD": -20.358,
+            "holding_median_minutes_from_entry_bar_start": 42.5,
+            "target_time_median_minutes_from_entry_bar_start": 35.0,
+            "stop_time_median_minutes_from_entry_bar_start": 45.0
+          },
+          "2": {
+            "entries": 126,
+            "target": 45,
+            "SL": 70,
+            "ambiguous": 0,
+            "unresolved": 11,
+            "resolved": 115,
+            "target_rate_resolved": 0.391304,
+            "average_winner_points": {
+              "count": 45,
+              "mean": 48.774,
+              "median": 32.4
+            },
+            "average_loser_points": {
+              "count": 70,
+              "mean": -24.664,
+              "median": -22.075
+            },
+            "resolved_only_mean_points": 4.073,
+            "max_drawdown_equal_unit_points": 546.55,
+            "max_consecutive_SL": 13,
+            "future_target_after_SL": 10,
+            "MFE_mean_through_exit_or_EOD": 30.226,
+            "MAE_mean_through_exit_or_EOD": -21.603,
+            "holding_median_minutes_from_entry_bar_start": 45.0,
+            "target_time_median_minutes_from_entry_bar_start": 35.0,
+            "stop_time_median_minutes_from_entry_bar_start": 47.5
+          },
+          "4": {
+            "entries": 126,
+            "target": 46,
+            "SL": 67,
+            "ambiguous": 0,
+            "unresolved": 13,
+            "resolved": 113,
+            "target_rate_resolved": 0.40708,
+            "average_winner_points": {
+              "count": 46,
+              "mean": 47.852,
+              "median": 31.1
+            },
+            "average_loser_points": {
+              "count": 67,
+              "mean": -26.689,
+              "median": -24.0
+            },
+            "resolved_only_mean_points": 3.655,
+            "max_drawdown_equal_unit_points": 531.2,
+            "max_consecutive_SL": 12,
+            "future_target_after_SL": 9,
+            "MFE_mean_through_exit_or_EOD": 30.494,
+            "MAE_mean_through_exit_or_EOD": -23.039,
+            "holding_median_minutes_from_entry_bar_start": 50.0,
+            "target_time_median_minutes_from_entry_bar_start": 35.0,
+            "stop_time_median_minutes_from_entry_bar_start": 50.0
+          }
+        },
+        "PE": {
+          "0": {
+            "entries": 127,
+            "target": 44,
+            "SL": 76,
+            "ambiguous": 0,
+            "unresolved": 7,
+            "resolved": 120,
+            "target_rate_resolved": 0.366667,
+            "average_winner_points": {
+              "count": 44,
+              "mean": 46.833,
+              "median": 39.275
+            },
+            "average_loser_points": {
+              "count": 76,
+              "mean": -24.681,
+              "median": -21.0
+            },
+            "resolved_only_mean_points": 1.541,
+            "max_drawdown_equal_unit_points": 495.65,
+            "max_consecutive_SL": 15,
+            "future_target_after_SL": 10,
+            "MFE_mean_through_exit_or_EOD": 30.081,
+            "MAE_mean_through_exit_or_EOD": -22.493,
+            "holding_median_minutes_from_entry_bar_start": 32.5,
+            "target_time_median_minutes_from_entry_bar_start": 55.0,
+            "stop_time_median_minutes_from_entry_bar_start": 27.5
+          },
+          "2": {
+            "entries": 127,
+            "target": 44,
+            "SL": 76,
+            "ambiguous": 0,
+            "unresolved": 7,
+            "resolved": 120,
+            "target_rate_resolved": 0.366667,
+            "average_winner_points": {
+              "count": 44,
+              "mean": 46.833,
+              "median": 39.275
+            },
+            "average_loser_points": {
+              "count": 76,
+              "mean": -26.681,
+              "median": -23.0
+            },
+            "resolved_only_mean_points": 0.274,
+            "max_drawdown_equal_unit_points": 557.65,
+            "max_consecutive_SL": 15,
+            "future_target_after_SL": 10,
+            "MFE_mean_through_exit_or_EOD": 30.196,
+            "MAE_mean_through_exit_or_EOD": -23.622,
+            "holding_median_minutes_from_entry_bar_start": 40.0,
+            "target_time_median_minutes_from_entry_bar_start": 55.0,
+            "stop_time_median_minutes_from_entry_bar_start": 30.0
+          },
+          "4": {
+            "entries": 127,
+            "target": 45,
+            "SL": 75,
+            "ambiguous": 0,
+            "unresolved": 7,
+            "resolved": 120,
+            "target_rate_resolved": 0.375,
+            "average_winner_points": {
+              "count": 45,
+              "mean": 46.966,
+              "median": 39.35
+            },
+            "average_loser_points": {
+              "count": 75,
+              "mean": -28.771,
+              "median": -25.05
+            },
+            "resolved_only_mean_points": -0.37,
+            "max_drawdown_equal_unit_points": 561.85,
+            "max_consecutive_SL": 15,
+            "future_target_after_SL": 9,
+            "MFE_mean_through_exit_or_EOD": 30.793,
+            "MAE_mean_through_exit_or_EOD": -24.689,
+            "holding_median_minutes_from_entry_bar_start": 40.0,
+            "target_time_median_minutes_from_entry_bar_start": 55.0,
+            "stop_time_median_minutes_from_entry_bar_start": 40.0
+          }
+        }
+      },
+      "ITM rank": {
+        "ITM2": {
+          "0": {
+            "entries": 128,
+            "target": 43,
+            "SL": 76,
+            "ambiguous": 0,
+            "unresolved": 9,
+            "resolved": 119,
+            "target_rate_resolved": 0.361345,
+            "average_winner_points": {
+              "count": 43,
+              "mean": 45.091,
+              "median": 37.9
+            },
+            "average_loser_points": {
+              "count": 76,
+              "mean": -22.182,
+              "median": -19.35
+            },
+            "resolved_only_mean_points": 2.126,
+            "max_drawdown_equal_unit_points": 274.8,
+            "max_consecutive_SL": 12,
+            "future_target_after_SL": 10,
+            "MFE_mean_through_exit_or_EOD": 28.569,
+            "MAE_mean_through_exit_or_EOD": -19.943,
+            "holding_median_minutes_from_entry_bar_start": 35.0,
+            "target_time_median_minutes_from_entry_bar_start": 55.0,
+            "stop_time_median_minutes_from_entry_bar_start": 30.0
+          },
+          "2": {
+            "entries": 128,
+            "target": 44,
+            "SL": 74,
+            "ambiguous": 0,
+            "unresolved": 10,
+            "resolved": 118,
+            "target_rate_resolved": 0.372881,
+            "average_winner_points": {
+              "count": 44,
+              "mean": 44.686,
+              "median": 36.925
+            },
+            "average_loser_points": {
+              "count": 74,
+              "mean": -24.441,
+              "median": -21.725
+            },
+            "resolved_only_mean_points": 1.336,
+            "max_drawdown_equal_unit_points": 350.85,
+            "max_consecutive_SL": 12,
+            "future_target_after_SL": 9,
+            "MFE_mean_through_exit_or_EOD": 29.123,
+            "MAE_mean_through_exit_or_EOD": -21.18,
+            "holding_median_minutes_from_entry_bar_start": 40.0,
+            "target_time_median_minutes_from_entry_bar_start": 55.0,
+            "stop_time_median_minutes_from_entry_bar_start": 37.5
+          },
+          "4": {
+            "entries": 128,
+            "target": 46,
+            "SL": 71,
+            "ambiguous": 0,
+            "unresolved": 11,
+            "resolved": 117,
+            "target_rate_resolved": 0.393162,
+            "average_winner_points": {
+              "count": 46,
+              "mean": 44.029,
+              "median": 36.925
+            },
+            "average_loser_points": {
+              "count": 71,
+              "mean": -26.333,
+              "median": -23.45
+            },
+            "resolved_only_mean_points": 1.331,
+            "max_drawdown_equal_unit_points": 321.4,
+            "max_consecutive_SL": 11,
+            "future_target_after_SL": 7,
+            "MFE_mean_through_exit_or_EOD": 29.752,
+            "MAE_mean_through_exit_or_EOD": -22.221,
+            "holding_median_minutes_from_entry_bar_start": 45.0,
+            "target_time_median_minutes_from_entry_bar_start": 55.0,
+            "stop_time_median_minutes_from_entry_bar_start": 45.0
+          }
+        },
+        "ITM3": {
+          "0": {
+            "entries": 125,
+            "target": 44,
+            "SL": 75,
+            "ambiguous": 0,
+            "unresolved": 6,
+            "resolved": 119,
+            "target_rate_resolved": 0.369748,
+            "average_winner_points": {
+              "count": 44,
+              "mean": 51.352,
+              "median": 46.325
+            },
+            "average_loser_points": {
+              "count": 75,
+              "mean": -25.143,
+              "median": -21.75
+            },
+            "resolved_only_mean_points": 3.141,
+            "max_drawdown_equal_unit_points": 216.25,
+            "max_consecutive_SL": 10,
+            "future_target_after_SL": 12,
+            "MFE_mean_through_exit_or_EOD": 30.984,
+            "MAE_mean_through_exit_or_EOD": -22.952,
+            "holding_median_minutes_from_entry_bar_start": 40.0,
+            "target_time_median_minutes_from_entry_bar_start": 40.0,
+            "stop_time_median_minutes_from_entry_bar_start": 40.0
+          },
+          "2": {
+            "entries": 125,
+            "target": 45,
+            "SL": 72,
+            "ambiguous": 0,
+            "unresolved": 8,
+            "resolved": 117,
+            "target_rate_resolved": 0.384615,
+            "average_winner_points": {
+              "count": 45,
+              "mean": 50.873,
+              "median": 44.25
+            },
+            "average_loser_points": {
+              "count": 72,
+              "mean": -27.022,
+              "median": -23.375
+            },
+            "resolved_only_mean_points": 2.938,
+            "max_drawdown_equal_unit_points": 241.8,
+            "max_consecutive_SL": 9,
+            "future_target_after_SL": 11,
+            "MFE_mean_through_exit_or_EOD": 31.325,
+            "MAE_mean_through_exit_or_EOD": -24.087,
+            "holding_median_minutes_from_entry_bar_start": 40.0,
+            "target_time_median_minutes_from_entry_bar_start": 40.0,
+            "stop_time_median_minutes_from_entry_bar_start": 40.0
+          },
+          "4": {
+            "entries": 125,
+            "target": 45,
+            "SL": 71,
+            "ambiguous": 0,
+            "unresolved": 9,
+            "resolved": 116,
+            "target_rate_resolved": 0.387931,
+            "average_winner_points": {
+              "count": 45,
+              "mean": 50.873,
+              "median": 44.25
+            },
+            "average_loser_points": {
+              "count": 71,
+              "mean": -29.244,
+              "median": -25.75
+            },
+            "resolved_only_mean_points": 1.836,
+            "max_drawdown_equal_unit_points": 288.5,
+            "max_consecutive_SL": 9,
+            "future_target_after_SL": 11,
+            "MFE_mean_through_exit_or_EOD": 31.557,
+            "MAE_mean_through_exit_or_EOD": -25.553,
+            "holding_median_minutes_from_entry_bar_start": 45.0,
+            "target_time_median_minutes_from_entry_bar_start": 40.0,
+            "stop_time_median_minutes_from_entry_bar_start": 45.0
+          }
+        }
+      },
+      "entry time": {
+        "09:15-09:59": {
+          "0": {
+            "entries": 62,
+            "target": 26,
+            "SL": 36,
+            "ambiguous": 0,
+            "unresolved": 0,
+            "resolved": 62,
+            "target_rate_resolved": 0.419355,
+            "average_winner_points": {
+              "count": 26,
+              "mean": 18.429,
+              "median": 15.95
+            },
+            "average_loser_points": {
+              "count": 36,
+              "mean": -29.21,
+              "median": -27.15
+            },
+            "resolved_only_mean_points": -9.232,
+            "max_drawdown_equal_unit_points": 599.2,
+            "max_consecutive_SL": 6,
+            "future_target_after_SL": 12,
+            "MFE_mean_through_exit_or_EOD": 14.144,
+            "MAE_mean_through_exit_or_EOD": -24.661,
+            "holding_median_minutes_from_entry_bar_start": 22.5,
+            "target_time_median_minutes_from_entry_bar_start": 15.0,
+            "stop_time_median_minutes_from_entry_bar_start": 30.0
+          },
+          "2": {
+            "entries": 62,
+            "target": 27,
+            "SL": 34,
+            "ambiguous": 0,
+            "unresolved": 1,
+            "resolved": 61,
+            "target_rate_resolved": 0.442623,
+            "average_winner_points": {
+              "count": 27,
+              "mean": 18.85,
+              "median": 16.75
+            },
+            "average_loser_points": {
+              "count": 34,
+              "mean": -30.941,
+              "median": -29.15
+            },
+            "resolved_only_mean_points": -8.902,
+            "max_drawdown_equal_unit_points": 562.55,
+            "max_consecutive_SL": 6,
+            "future_target_after_SL": 11,
+            "MFE_mean_through_exit_or_EOD": 14.94,
+            "MAE_mean_through_exit_or_EOD": -26.313,
+            "holding_median_minutes_from_entry_bar_start": 25.0,
+            "target_time_median_minutes_from_entry_bar_start": 20.0,
+            "stop_time_median_minutes_from_entry_bar_start": 30.0
+          },
+          "4": {
+            "entries": 62,
+            "target": 28,
+            "SL": 33,
+            "ambiguous": 0,
+            "unresolved": 1,
+            "resolved": 61,
+            "target_rate_resolved": 0.459016,
+            "average_winner_points": {
+              "count": 28,
+              "mean": 18.404,
+              "median": 15.95
+            },
+            "average_loser_points": {
+              "count": 33,
+              "mean": -32.742,
+              "median": -29.65
+            },
+            "resolved_only_mean_points": -9.266,
+            "max_drawdown_equal_unit_points": 579.05,
+            "max_consecutive_SL": 6,
+            "future_target_after_SL": 10,
+            "MFE_mean_through_exit_or_EOD": 15.052,
+            "MAE_mean_through_exit_or_EOD": -27.764,
+            "holding_median_minutes_from_entry_bar_start": 30.0,
+            "target_time_median_minutes_from_entry_bar_start": 20.0,
+            "stop_time_median_minutes_from_entry_bar_start": 40.0
+          }
+        },
+        "10:00-10:59": {
+          "0": {
+            "entries": 114,
+            "target": 37,
+            "SL": 73,
+            "ambiguous": 0,
+            "unresolved": 4,
+            "resolved": 110,
+            "target_rate_resolved": 0.336364,
+            "average_winner_points": {
+              "count": 37,
+              "mean": 47.139,
+              "median": 43.7
+            },
+            "average_loser_points": {
+              "count": 73,
+              "mean": -26.325,
+              "median": -23.1
+            },
+            "resolved_only_mean_points": -1.615,
+            "max_drawdown_equal_unit_points": 596.7,
+            "max_consecutive_SL": 17,
+            "future_target_after_SL": 5,
+            "MFE_mean_through_exit_or_EOD": 27.716,
+            "MAE_mean_through_exit_or_EOD": -24.796,
+            "holding_median_minutes_from_entry_bar_start": 45.0,
+            "target_time_median_minutes_from_entry_bar_start": 65.0,
+            "stop_time_median_minutes_from_entry_bar_start": 35.0
+          },
+          "2": {
+            "entries": 114,
+            "target": 38,
+            "SL": 71,
+            "ambiguous": 0,
+            "unresolved": 5,
+            "resolved": 109,
+            "target_rate_resolved": 0.348624,
+            "average_winner_points": {
+              "count": 38,
+              "mean": 46.617,
+              "median": 41.525
+            },
+            "average_loser_points": {
+              "count": 71,
+              "mean": -28.505,
+              "median": -25.1
+            },
+            "resolved_only_mean_points": -2.316,
+            "max_drawdown_equal_unit_points": 658.65,
+            "max_consecutive_SL": 16,
+            "future_target_after_SL": 4,
+            "MFE_mean_through_exit_or_EOD": 28.232,
+            "MAE_mean_through_exit_or_EOD": -25.933,
+            "holding_median_minutes_from_entry_bar_start": 50.0,
+            "target_time_median_minutes_from_entry_bar_start": 67.5,
+            "stop_time_median_minutes_from_entry_bar_start": 45.0
+          },
+          "4": {
+            "entries": 114,
+            "target": 39,
+            "SL": 69,
+            "ambiguous": 0,
+            "unresolved": 6,
+            "resolved": 108,
+            "target_rate_resolved": 0.361111,
+            "average_winner_points": {
+              "count": 39,
+              "mean": 46.776,
+              "median": 43.7
+            },
+            "average_loser_points": {
+              "count": 69,
+              "mean": -30.701,
+              "median": -28.2
+            },
+            "resolved_only_mean_points": -2.724,
+            "max_drawdown_equal_unit_points": 644.4,
+            "max_consecutive_SL": 15,
+            "future_target_after_SL": 3,
+            "MFE_mean_through_exit_or_EOD": 28.971,
+            "MAE_mean_through_exit_or_EOD": -27.108,
+            "holding_median_minutes_from_entry_bar_start": 55.0,
+            "target_time_median_minutes_from_entry_bar_start": 65.0,
+            "stop_time_median_minutes_from_entry_bar_start": 55.0
+          }
+        },
+        "11:00+": {
+          "0": {
+            "entries": 77,
+            "target": 24,
+            "SL": 42,
+            "ambiguous": 0,
+            "unresolved": 11,
+            "resolved": 66,
+            "target_rate_resolved": 0.363636,
+            "average_winner_points": {
+              "count": 24,
+              "mean": 82.296,
+              "median": 72.9
+            },
+            "average_loser_points": {
+              "count": 42,
+              "mean": -14.244,
+              "median": -14.15
+            },
+            "resolved_only_mean_points": 20.861,
+            "max_drawdown_equal_unit_points": 135.75,
+            "max_consecutive_SL": 9,
+            "future_target_after_SL": 5,
+            "MFE_mean_through_exit_or_EOD": 45.368,
+            "MAE_mean_through_exit_or_EOD": -13.844,
+            "holding_median_minutes_from_entry_bar_start": 40.0,
+            "target_time_median_minutes_from_entry_bar_start": 85.0,
+            "stop_time_median_minutes_from_entry_bar_start": 35.0
+          },
+          "2": {
+            "entries": 77,
+            "target": 24,
+            "SL": 41,
+            "ambiguous": 0,
+            "unresolved": 12,
+            "resolved": 65,
+            "target_rate_resolved": 0.369231,
+            "average_winner_points": {
+              "count": 24,
+              "mean": 82.296,
+              "median": 72.9
+            },
+            "average_loser_points": {
+              "count": 41,
+              "mean": -16.545,
+              "median": -16.2
+            },
+            "resolved_only_mean_points": 19.95,
+            "max_drawdown_equal_unit_points": 153.75,
+            "max_consecutive_SL": 9,
+            "future_target_after_SL": 5,
+            "MFE_mean_through_exit_or_EOD": 45.436,
+            "MAE_mean_through_exit_or_EOD": -14.729,
+            "holding_median_minutes_from_entry_bar_start": 45.0,
+            "target_time_median_minutes_from_entry_bar_start": 85.0,
+            "stop_time_median_minutes_from_entry_bar_start": 40.0
+          },
+          "4": {
+            "entries": 77,
+            "target": 24,
+            "SL": 40,
+            "ambiguous": 0,
+            "unresolved": 13,
+            "resolved": 64,
+            "target_rate_resolved": 0.375,
+            "average_winner_points": {
+              "count": 24,
+              "mean": 82.296,
+              "median": 72.9
+            },
+            "average_loser_points": {
+              "count": 40,
+              "mean": -18.676,
+              "median": -18.625
+            },
+            "resolved_only_mean_points": 19.188,
+            "max_drawdown_equal_unit_points": 178.0,
+            "max_consecutive_SL": 9,
+            "future_target_after_SL": 5,
+            "MFE_mean_through_exit_or_EOD": 45.675,
+            "MAE_mean_through_exit_or_EOD": -15.932,
+            "holding_median_minutes_from_entry_bar_start": 47.5,
+            "target_time_median_minutes_from_entry_bar_start": 85.0,
+            "stop_time_median_minutes_from_entry_bar_start": 42.5
+          }
+        }
+      },
+      "month": {
+        "2026-01": {
+          "0": {
+            "entries": 35,
+            "target": 17,
+            "SL": 18,
+            "ambiguous": 0,
+            "unresolved": 0,
+            "resolved": 35,
+            "target_rate_resolved": 0.485714,
+            "average_winner_points": {
+              "count": 17,
+              "mean": 64.318,
+              "median": 62.0
+            },
+            "average_loser_points": {
+              "count": 18,
+              "mean": -27.228,
+              "median": -25.625
+            },
+            "resolved_only_mean_points": 17.237,
+            "max_drawdown_equal_unit_points": 152.85,
+            "max_consecutive_SL": 4,
+            "future_target_after_SL": 3,
+            "MFE_mean_through_exit_or_EOD": 40.849,
+            "MAE_mean_through_exit_or_EOD": -20.693,
+            "holding_median_minutes_from_entry_bar_start": 25.0,
+            "target_time_median_minutes_from_entry_bar_start": 25.0,
+            "stop_time_median_minutes_from_entry_bar_start": 22.5
+          },
+          "2": {
+            "entries": 35,
+            "target": 18,
+            "SL": 17,
+            "ambiguous": 0,
+            "unresolved": 0,
+            "resolved": 35,
+            "target_rate_resolved": 0.514286,
+            "average_winner_points": {
+              "count": 18,
+              "mean": 62.4,
+              "median": 50.6
+            },
+            "average_loser_points": {
+              "count": 17,
+              "mean": -27.409,
+              "median": -27.6
+            },
+            "resolved_only_mean_points": 18.779,
+            "max_drawdown_equal_unit_points": 170.85,
+            "max_consecutive_SL": 4,
+            "future_target_after_SL": 2,
+            "MFE_mean_through_exit_or_EOD": 41.923,
+            "MAE_mean_through_exit_or_EOD": -22.157,
+            "holding_median_minutes_from_entry_bar_start": 30.0,
+            "target_time_median_minutes_from_entry_bar_start": 27.5,
+            "stop_time_median_minutes_from_entry_bar_start": 30.0
+          },
+          "4": {
+            "entries": 35,
+            "target": 18,
+            "SL": 17,
+            "ambiguous": 0,
+            "unresolved": 0,
+            "resolved": 35,
+            "target_rate_resolved": 0.514286,
+            "average_winner_points": {
+              "count": 18,
+              "mean": 62.4,
+              "median": 50.6
+            },
+            "average_loser_points": {
+              "count": 17,
+              "mean": -29.409,
+              "median": -29.6
+            },
+            "resolved_only_mean_points": 17.807,
+            "max_drawdown_equal_unit_points": 188.85,
+            "max_consecutive_SL": 4,
+            "future_target_after_SL": 2,
+            "MFE_mean_through_exit_or_EOD": 41.923,
+            "MAE_mean_through_exit_or_EOD": -23.804,
+            "holding_median_minutes_from_entry_bar_start": 30.0,
+            "target_time_median_minutes_from_entry_bar_start": 27.5,
+            "stop_time_median_minutes_from_entry_bar_start": 35.0
+          }
+        },
+        "2026-02": {
+          "0": {
+            "entries": 38,
+            "target": 13,
+            "SL": 24,
+            "ambiguous": 0,
+            "unresolved": 1,
+            "resolved": 37,
+            "target_rate_resolved": 0.351351,
+            "average_winner_points": {
+              "count": 13,
+              "mean": 45.45,
+              "median": 44.4
+            },
+            "average_loser_points": {
+              "count": 24,
+              "mean": -20.294,
+              "median": -16.425
+            },
+            "resolved_only_mean_points": 2.805,
+            "max_drawdown_equal_unit_points": 256.15,
+            "max_consecutive_SL": 10,
+            "future_target_after_SL": 1,
+            "MFE_mean_through_exit_or_EOD": 27.504,
+            "MAE_mean_through_exit_or_EOD": -17.946,
+            "holding_median_minutes_from_entry_bar_start": 45.0,
+            "target_time_median_minutes_from_entry_bar_start": 60.0,
+            "stop_time_median_minutes_from_entry_bar_start": 45.0
+          },
+          "2": {
+            "entries": 38,
+            "target": 13,
+            "SL": 23,
+            "ambiguous": 0,
+            "unresolved": 2,
+            "resolved": 36,
+            "target_rate_resolved": 0.361111,
+            "average_winner_points": {
+              "count": 13,
+              "mean": 45.45,
+              "median": 44.4
+            },
+            "average_loser_points": {
+              "count": 23,
+              "mean": -22.767,
+              "median": -18.95
+            },
+            "resolved_only_mean_points": 1.867,
+            "max_drawdown_equal_unit_points": 282.75,
+            "max_consecutive_SL": 10,
+            "future_target_after_SL": 1,
+            "MFE_mean_through_exit_or_EOD": 27.951,
+            "MAE_mean_through_exit_or_EOD": -18.637,
+            "holding_median_minutes_from_entry_bar_start": 55.0,
+            "target_time_median_minutes_from_entry_bar_start": 60.0,
+            "stop_time_median_minutes_from_entry_bar_start": 50.0
+          },
+          "4": {
+            "entries": 38,
+            "target": 14,
+            "SL": 22,
+            "ambiguous": 0,
+            "unresolved": 2,
+            "resolved": 36,
+            "target_rate_resolved": 0.388889,
+            "average_winner_points": {
+              "count": 14,
+              "mean": 42.657,
+              "median": 44.05
+            },
+            "average_loser_points": {
+              "count": 22,
+              "mean": -24.098,
+              "median": -20.425
+            },
+            "resolved_only_mean_points": 1.862,
+            "max_drawdown_equal_unit_points": 318.75,
+            "max_consecutive_SL": 10,
+            "future_target_after_SL": 0,
+            "MFE_mean_through_exit_or_EOD": 28.418,
+            "MAE_mean_through_exit_or_EOD": -21.171,
+            "holding_median_minutes_from_entry_bar_start": 65.0,
+            "target_time_median_minutes_from_entry_bar_start": 57.5,
+            "stop_time_median_minutes_from_entry_bar_start": 85.0
+          }
+        },
+        "2026-03": {
+          "0": {
+            "entries": 21,
+            "target": 8,
+            "SL": 11,
+            "ambiguous": 0,
+            "unresolved": 2,
+            "resolved": 19,
+            "target_rate_resolved": 0.421053,
+            "average_winner_points": {
+              "count": 8,
+              "mean": 38.644,
+              "median": 28.475
+            },
+            "average_loser_points": {
+              "count": 11,
+              "mean": -29.014,
+              "median": -29.15
+            },
+            "resolved_only_mean_points": -0.526,
+            "max_drawdown_equal_unit_points": 153.7,
+            "max_consecutive_SL": 4,
+            "future_target_after_SL": 0,
+            "MFE_mean_through_exit_or_EOD": 40.179,
+            "MAE_mean_through_exit_or_EOD": -26.976,
+            "holding_median_minutes_from_entry_bar_start": 40.0,
+            "target_time_median_minutes_from_entry_bar_start": 47.5,
+            "stop_time_median_minutes_from_entry_bar_start": 25.0
+          },
+          "2": {
+            "entries": 21,
+            "target": 8,
+            "SL": 11,
+            "ambiguous": 0,
+            "unresolved": 2,
+            "resolved": 19,
+            "target_rate_resolved": 0.421053,
+            "average_winner_points": {
+              "count": 8,
+              "mean": 38.644,
+              "median": 28.475
+            },
+            "average_loser_points": {
+              "count": 11,
+              "mean": -31.014,
+              "median": -31.15
+            },
+            "resolved_only_mean_points": -1.684,
+            "max_drawdown_equal_unit_points": 167.7,
+            "max_consecutive_SL": 4,
+            "future_target_after_SL": 0,
+            "MFE_mean_through_exit_or_EOD": 40.179,
+            "MAE_mean_through_exit_or_EOD": -28.321,
+            "holding_median_minutes_from_entry_bar_start": 40.0,
+            "target_time_median_minutes_from_entry_bar_start": 47.5,
+            "stop_time_median_minutes_from_entry_bar_start": 25.0
+          },
+          "4": {
+            "entries": 21,
+            "target": 8,
+            "SL": 11,
+            "ambiguous": 0,
+            "unresolved": 2,
+            "resolved": 19,
+            "target_rate_resolved": 0.421053,
+            "average_winner_points": {
+              "count": 8,
+              "mean": 38.644,
+              "median": 28.475
+            },
+            "average_loser_points": {
+              "count": 11,
+              "mean": -33.014,
+              "median": -33.15
+            },
+            "resolved_only_mean_points": -2.842,
+            "max_drawdown_equal_unit_points": 181.7,
+            "max_consecutive_SL": 4,
+            "future_target_after_SL": 0,
+            "MFE_mean_through_exit_or_EOD": 40.179,
+            "MAE_mean_through_exit_or_EOD": -28.745,
+            "holding_median_minutes_from_entry_bar_start": 40.0,
+            "target_time_median_minutes_from_entry_bar_start": 47.5,
+            "stop_time_median_minutes_from_entry_bar_start": 30.0
+          }
+        },
+        "2026-04": {
+          "0": {
+            "entries": 27,
+            "target": 3,
+            "SL": 20,
+            "ambiguous": 0,
+            "unresolved": 4,
+            "resolved": 23,
+            "target_rate_resolved": 0.130435,
+            "average_winner_points": {
+              "count": 3,
+              "mean": 83.317,
+              "median": 89.6
+            },
+            "average_loser_points": {
+              "count": 20,
+              "mean": -23.215,
+              "median": -21.225
+            },
+            "resolved_only_mean_points": -9.32,
+            "max_drawdown_equal_unit_points": 382.45,
+            "max_consecutive_SL": 17,
+            "future_target_after_SL": 2,
+            "MFE_mean_through_exit_or_EOD": 30.833,
+            "MAE_mean_through_exit_or_EOD": -24.95,
+            "holding_median_minutes_from_entry_bar_start": 35.0,
+            "target_time_median_minutes_from_entry_bar_start": 135.0,
+            "stop_time_median_minutes_from_entry_bar_start": 30.0
+          },
+          "2": {
+            "entries": 27,
+            "target": 3,
+            "SL": 19,
+            "ambiguous": 0,
+            "unresolved": 5,
+            "resolved": 22,
+            "target_rate_resolved": 0.136364,
+            "average_winner_points": {
+              "count": 3,
+              "mean": 83.317,
+              "median": 89.6
+            },
+            "average_loser_points": {
+              "count": 19,
+              "mean": -25.171,
+              "median": -22.95
+            },
+            "resolved_only_mean_points": -10.377,
+            "max_drawdown_equal_unit_points": 390.4,
+            "max_consecutive_SL": 16,
+            "future_target_after_SL": 2,
+            "MFE_mean_through_exit_or_EOD": 30.833,
+            "MAE_mean_through_exit_or_EOD": -25.883,
+            "holding_median_minutes_from_entry_bar_start": 37.5,
+            "target_time_median_minutes_from_entry_bar_start": 135.0,
+            "stop_time_median_minutes_from_entry_bar_start": 30.0
+          },
+          "4": {
+            "entries": 27,
+            "target": 3,
+            "SL": 18,
+            "ambiguous": 0,
+            "unresolved": 6,
+            "resolved": 21,
+            "target_rate_resolved": 0.142857,
+            "average_winner_points": {
+              "count": 3,
+              "mean": 83.317,
+              "median": 89.6
+            },
+            "average_loser_points": {
+              "count": 18,
+              "mean": -27.264,
+              "median": -24.75
+            },
+            "resolved_only_mean_points": -11.467,
+            "max_drawdown_equal_unit_points": 396.9,
+            "max_consecutive_SL": 15,
+            "future_target_after_SL": 2,
+            "MFE_mean_through_exit_or_EOD": 30.833,
+            "MAE_mean_through_exit_or_EOD": -26.224,
+            "holding_median_minutes_from_entry_bar_start": 35.0,
+            "target_time_median_minutes_from_entry_bar_start": 135.0,
+            "stop_time_median_minutes_from_entry_bar_start": 30.0
+          }
+        },
+        "2026-05": {
+          "0": {
+            "entries": 34,
+            "target": 12,
+            "SL": 19,
+            "ambiguous": 0,
+            "unresolved": 3,
+            "resolved": 31,
+            "target_rate_resolved": 0.387097,
+            "average_winner_points": {
+              "count": 12,
+              "mean": 53.513,
+              "median": 52.4
+            },
+            "average_loser_points": {
+              "count": 19,
+              "mean": -31.626,
+              "median": -31.5
+            },
+            "resolved_only_mean_points": 1.331,
+            "max_drawdown_equal_unit_points": 334.4,
+            "max_consecutive_SL": 11,
+            "future_target_after_SL": 7,
+            "MFE_mean_through_exit_or_EOD": 31.621,
+            "MAE_mean_through_exit_or_EOD": -29.546,
+            "holding_median_minutes_from_entry_bar_start": 30.0,
+            "target_time_median_minutes_from_entry_bar_start": 32.5,
+            "stop_time_median_minutes_from_entry_bar_start": 25.0
+          },
+          "2": {
+            "entries": 34,
+            "target": 12,
+            "SL": 19,
+            "ambiguous": 0,
+            "unresolved": 3,
+            "resolved": 31,
+            "target_rate_resolved": 0.387097,
+            "average_winner_points": {
+              "count": 12,
+              "mean": 53.513,
+              "median": 52.4
+            },
+            "average_loser_points": {
+              "count": 19,
+              "mean": -33.626,
+              "median": -33.5
+            },
+            "resolved_only_mean_points": 0.105,
+            "max_drawdown_equal_unit_points": 356.4,
+            "max_consecutive_SL": 11,
+            "future_target_after_SL": 7,
+            "MFE_mean_through_exit_or_EOD": 31.621,
+            "MAE_mean_through_exit_or_EOD": -30.084,
+            "holding_median_minutes_from_entry_bar_start": 30.0,
+            "target_time_median_minutes_from_entry_bar_start": 32.5,
+            "stop_time_median_minutes_from_entry_bar_start": 30.0
+          },
+          "4": {
+            "entries": 34,
+            "target": 12,
+            "SL": 19,
+            "ambiguous": 0,
+            "unresolved": 3,
+            "resolved": 31,
+            "target_rate_resolved": 0.387097,
+            "average_winner_points": {
+              "count": 12,
+              "mean": 53.513,
+              "median": 52.4
+            },
+            "average_loser_points": {
+              "count": 19,
+              "mean": -35.626,
+              "median": -35.5
+            },
+            "resolved_only_mean_points": -1.121,
+            "max_drawdown_equal_unit_points": 378.4,
+            "max_consecutive_SL": 11,
+            "future_target_after_SL": 7,
+            "MFE_mean_through_exit_or_EOD": 31.621,
+            "MAE_mean_through_exit_or_EOD": -30.797,
+            "holding_median_minutes_from_entry_bar_start": 30.0,
+            "target_time_median_minutes_from_entry_bar_start": 32.5,
+            "stop_time_median_minutes_from_entry_bar_start": 30.0
+          }
+        },
+        "2026-06": {
+          "0": {
+            "entries": 36,
+            "target": 14,
+            "SL": 22,
+            "ambiguous": 0,
+            "unresolved": 0,
+            "resolved": 36,
+            "target_rate_resolved": 0.388889,
+            "average_winner_points": {
+              "count": 14,
+              "mean": 46.479,
+              "median": 32.85
+            },
+            "average_loser_points": {
+              "count": 22,
+              "mean": -24.714,
+              "median": -23.625
+            },
+            "resolved_only_mean_points": 2.972,
+            "max_drawdown_equal_unit_points": 151.2,
+            "max_consecutive_SL": 4,
+            "future_target_after_SL": 3,
+            "MFE_mean_through_exit_or_EOD": 29.042,
+            "MAE_mean_through_exit_or_EOD": -21.761,
+            "holding_median_minutes_from_entry_bar_start": 20.0,
+            "target_time_median_minutes_from_entry_bar_start": 42.5,
+            "stop_time_median_minutes_from_entry_bar_start": 15.0
+          },
+          "2": {
+            "entries": 36,
+            "target": 14,
+            "SL": 22,
+            "ambiguous": 0,
+            "unresolved": 0,
+            "resolved": 36,
+            "target_rate_resolved": 0.388889,
+            "average_winner_points": {
+              "count": 14,
+              "mean": 46.479,
+              "median": 32.85
+            },
+            "average_loser_points": {
+              "count": 22,
+              "mean": -26.714,
+              "median": -25.625
+            },
+            "resolved_only_mean_points": 1.75,
+            "max_drawdown_equal_unit_points": 171.2,
+            "max_consecutive_SL": 4,
+            "future_target_after_SL": 3,
+            "MFE_mean_through_exit_or_EOD": 29.042,
+            "MAE_mean_through_exit_or_EOD": -22.642,
+            "holding_median_minutes_from_entry_bar_start": 20.0,
+            "target_time_median_minutes_from_entry_bar_start": 42.5,
+            "stop_time_median_minutes_from_entry_bar_start": 17.5
+          },
+          "4": {
+            "entries": 36,
+            "target": 15,
+            "SL": 21,
+            "ambiguous": 0,
+            "unresolved": 0,
+            "resolved": 36,
+            "target_rate_resolved": 0.416667,
+            "average_winner_points": {
+              "count": 15,
+              "mean": 46.9,
+              "median": 37.9
+            },
+            "average_loser_points": {
+              "count": 21,
+              "mean": -29.036,
+              "median": -28.2
+            },
+            "resolved_only_mean_points": 2.604,
+            "max_drawdown_equal_unit_points": 191.2,
+            "max_consecutive_SL": 4,
+            "future_target_after_SL": 2,
+            "MFE_mean_through_exit_or_EOD": 31.149,
+            "MAE_mean_through_exit_or_EOD": -24.122,
+            "holding_median_minutes_from_entry_bar_start": 42.5,
+            "target_time_median_minutes_from_entry_bar_start": 50.0,
+            "stop_time_median_minutes_from_entry_bar_start": 35.0
+          }
+        },
+        "2026-07": {
+          "0": {
+            "entries": 21,
+            "target": 9,
+            "SL": 10,
+            "ambiguous": 0,
+            "unresolved": 2,
+            "resolved": 19,
+            "target_rate_resolved": 0.473684,
+            "average_winner_points": {
+              "count": 9,
+              "mean": 31.044,
+              "median": 21.25
+            },
+            "average_loser_points": {
+              "count": 10,
+              "mean": -24.925,
+              "median": -13.975
+            },
+            "resolved_only_mean_points": 1.587,
+            "max_drawdown_equal_unit_points": 212.9,
+            "max_consecutive_SL": 8,
+            "future_target_after_SL": 2,
+            "MFE_mean_through_exit_or_EOD": 27.531,
+            "MAE_mean_through_exit_or_EOD": -18.748,
+            "holding_median_minutes_from_entry_bar_start": 70.0,
+            "target_time_median_minutes_from_entry_bar_start": 85.0,
+            "stop_time_median_minutes_from_entry_bar_start": 55.0
+          },
+          "2": {
+            "entries": 21,
+            "target": 9,
+            "SL": 10,
+            "ambiguous": 0,
+            "unresolved": 2,
+            "resolved": 19,
+            "target_rate_resolved": 0.473684,
+            "average_winner_points": {
+              "count": 9,
+              "mean": 31.044,
+              "median": 21.25
+            },
+            "average_loser_points": {
+              "count": 10,
+              "mean": -26.925,
+              "median": -15.975
+            },
+            "resolved_only_mean_points": 0.534,
+            "max_drawdown_equal_unit_points": 228.9,
+            "max_consecutive_SL": 8,
+            "future_target_after_SL": 2,
+            "MFE_mean_through_exit_or_EOD": 27.531,
+            "MAE_mean_through_exit_or_EOD": -22.374,
+            "holding_median_minutes_from_entry_bar_start": 85.0,
+            "target_time_median_minutes_from_entry_bar_start": 85.0,
+            "stop_time_median_minutes_from_entry_bar_start": 62.5
+          },
+          "4": {
+            "entries": 21,
+            "target": 9,
+            "SL": 10,
+            "ambiguous": 0,
+            "unresolved": 2,
+            "resolved": 19,
+            "target_rate_resolved": 0.473684,
+            "average_winner_points": {
+              "count": 9,
+              "mean": 31.044,
+              "median": 21.25
+            },
+            "average_loser_points": {
+              "count": 10,
+              "mean": -28.925,
+              "median": -17.975
+            },
+            "resolved_only_mean_points": -0.518,
+            "max_drawdown_equal_unit_points": 244.9,
+            "max_consecutive_SL": 8,
+            "future_target_after_SL": 2,
+            "MFE_mean_through_exit_or_EOD": 27.531,
+            "MAE_mean_through_exit_or_EOD": -23.057,
+            "holding_median_minutes_from_entry_bar_start": 85.0,
+            "target_time_median_minutes_from_entry_bar_start": 85.0,
+            "stop_time_median_minutes_from_entry_bar_start": 70.0
+          }
+        },
+        "2026-08": {
+          "0": {
+            "entries": 26,
+            "target": 9,
+            "SL": 14,
+            "ambiguous": 0,
+            "unresolved": 3,
+            "resolved": 23,
+            "target_rate_resolved": 0.391304,
+            "average_winner_points": {
+              "count": 9,
+              "mean": 34.128,
+              "median": 19.3
+            },
+            "average_loser_points": {
+              "count": 14,
+              "mean": -13.293,
+              "median": -12.625
+            },
+            "resolved_only_mean_points": 5.263,
+            "max_drawdown_equal_unit_points": 87.85,
+            "max_consecutive_SL": 6,
+            "future_target_after_SL": 2,
+            "MFE_mean_through_exit_or_EOD": 18.781,
+            "MAE_mean_through_exit_or_EOD": -11.125,
+            "holding_median_minutes_from_entry_bar_start": 30.0,
+            "target_time_median_minutes_from_entry_bar_start": 30.0,
+            "stop_time_median_minutes_from_entry_bar_start": 35.0
+          },
+          "2": {
+            "entries": 26,
+            "target": 10,
+            "SL": 13,
+            "ambiguous": 0,
+            "unresolved": 3,
+            "resolved": 23,
+            "target_rate_resolved": 0.434783,
+            "average_winner_points": {
+              "count": 10,
+              "mean": 33.445,
+              "median": 23.3
+            },
+            "average_loser_points": {
+              "count": 13,
+              "mean": -15.096,
+              "median": -14.35
+            },
+            "resolved_only_mean_points": 6.009,
+            "max_drawdown_equal_unit_points": 82.0,
+            "max_consecutive_SL": 5,
+            "future_target_after_SL": 1,
+            "MFE_mean_through_exit_or_EOD": 21.046,
+            "MAE_mean_through_exit_or_EOD": -12.123,
+            "holding_median_minutes_from_entry_bar_start": 55.0,
+            "target_time_median_minutes_from_entry_bar_start": 42.5,
+            "stop_time_median_minutes_from_entry_bar_start": 55.0
+          },
+          "4": {
+            "entries": 26,
+            "target": 10,
+            "SL": 12,
+            "ambiguous": 0,
+            "unresolved": 4,
+            "resolved": 22,
+            "target_rate_resolved": 0.454545,
+            "average_winner_points": {
+              "count": 10,
+              "mean": 33.445,
+              "median": 23.3
+            },
+            "average_loser_points": {
+              "count": 12,
+              "mean": -17.413,
+              "median": -16.625
+            },
+            "resolved_only_mean_points": 5.705,
+            "max_drawdown_equal_unit_points": 92.0,
+            "max_consecutive_SL": 5,
+            "future_target_after_SL": 1,
+            "MFE_mean_through_exit_or_EOD": 21.342,
+            "MAE_mean_through_exit_or_EOD": -12.915,
+            "holding_median_minutes_from_entry_bar_start": 55.0,
+            "target_time_median_minutes_from_entry_bar_start": 42.5,
+            "stop_time_median_minutes_from_entry_bar_start": 55.0
+          }
+        },
+        "2026-09": {
+          "0": {
+            "entries": 15,
+            "target": 2,
+            "SL": 13,
+            "ambiguous": 0,
+            "unresolved": 0,
+            "resolved": 15,
+            "target_rate_resolved": 0.133333,
+            "average_winner_points": {
+              "count": 2,
+              "mean": 37.825,
+              "median": 37.825
+            },
+            "average_loser_points": {
+              "count": 13,
+              "mean": -17.769,
+              "median": -15.95
+            },
+            "resolved_only_mean_points": -10.357,
+            "max_drawdown_equal_unit_points": 203.95,
+            "max_consecutive_SL": 11,
+            "future_target_after_SL": 2,
+            "MFE_mean_through_exit_or_EOD": 12.777,
+            "MAE_mean_through_exit_or_EOD": -20.297,
+            "holding_median_minutes_from_entry_bar_start": 50.0,
+            "target_time_median_minutes_from_entry_bar_start": 105.0,
+            "stop_time_median_minutes_from_entry_bar_start": 50.0
+          },
+          "2": {
+            "entries": 15,
+            "target": 2,
+            "SL": 12,
+            "ambiguous": 0,
+            "unresolved": 1,
+            "resolved": 14,
+            "target_rate_resolved": 0.142857,
+            "average_winner_points": {
+              "count": 2,
+              "mean": 37.825,
+              "median": 37.825
+            },
+            "average_loser_points": {
+              "count": 12,
+              "mean": -21.092,
+              "median": -18.475
+            },
+            "resolved_only_mean_points": -12.675,
+            "max_drawdown_equal_unit_points": 226.05,
+            "max_consecutive_SL": 10,
+            "future_target_after_SL": 2,
+            "MFE_mean_through_exit_or_EOD": 12.777,
+            "MAE_mean_through_exit_or_EOD": -21.443,
+            "holding_median_minutes_from_entry_bar_start": 50.0,
+            "target_time_median_minutes_from_entry_bar_start": 105.0,
+            "stop_time_median_minutes_from_entry_bar_start": 50.0
+          },
+          "4": {
+            "entries": 15,
+            "target": 2,
+            "SL": 12,
+            "ambiguous": 0,
+            "unresolved": 1,
+            "resolved": 14,
+            "target_rate_resolved": 0.142857,
+            "average_winner_points": {
+              "count": 2,
+              "mean": 37.825,
+              "median": 37.825
+            },
+            "average_loser_points": {
+              "count": 12,
+              "mean": -23.092,
+              "median": -20.475
+            },
+            "resolved_only_mean_points": -14.389,
+            "max_drawdown_equal_unit_points": 250.05,
+            "max_consecutive_SL": 10,
+            "future_target_after_SL": 2,
+            "MFE_mean_through_exit_or_EOD": 13.333,
+            "MAE_mean_through_exit_or_EOD": -23.573,
+            "holding_median_minutes_from_entry_bar_start": 70.0,
+            "target_time_median_minutes_from_entry_bar_start": 105.0,
+            "stop_time_median_minutes_from_entry_bar_start": 70.0
+          }
+        }
+      },
+      "chronological period": {
+        "Apr-Jun": {
+          "0": {
+            "entries": 97,
+            "target": 29,
+            "SL": 61,
+            "ambiguous": 0,
+            "unresolved": 7,
+            "resolved": 90,
+            "target_rate_resolved": 0.322222,
+            "average_winner_points": {
+              "count": 29,
+              "mean": 53.2,
+              "median": 52.1
+            },
+            "average_loser_points": {
+              "count": 61,
+              "mean": -26.375,
+              "median": -24.05
+            },
+            "resolved_only_mean_points": -0.734,
+            "max_drawdown_equal_unit_points": 440.9,
+            "max_consecutive_SL": 17,
+            "future_target_after_SL": 12,
+            "MFE_mean_through_exit_or_EOD": 30.444,
+            "MAE_mean_through_exit_or_EOD": -25.377,
+            "holding_median_minutes_from_entry_bar_start": 27.5,
+            "target_time_median_minutes_from_entry_bar_start": 60.0,
+            "stop_time_median_minutes_from_entry_bar_start": 20.0
+          },
+          "2": {
+            "entries": 97,
+            "target": 29,
+            "SL": 60,
+            "ambiguous": 0,
+            "unresolved": 8,
+            "resolved": 89,
+            "target_rate_resolved": 0.325843,
+            "average_winner_points": {
+              "count": 29,
+              "mean": 53.2,
+              "median": 52.1
+            },
+            "average_loser_points": {
+              "count": 60,
+              "mean": -28.414,
+              "median": -26.075
+            },
+            "resolved_only_mean_points": -1.821,
+            "max_drawdown_equal_unit_points": 470.9,
+            "max_consecutive_SL": 16,
+            "future_target_after_SL": 12,
+            "MFE_mean_through_exit_or_EOD": 30.444,
+            "MAE_mean_through_exit_or_EOD": -26.153,
+            "holding_median_minutes_from_entry_bar_start": 30.0,
+            "target_time_median_minutes_from_entry_bar_start": 60.0,
+            "stop_time_median_minutes_from_entry_bar_start": 20.0
+          },
+          "4": {
+            "entries": 97,
+            "target": 30,
+            "SL": 58,
+            "ambiguous": 0,
+            "unresolved": 9,
+            "resolved": 88,
+            "target_rate_resolved": 0.340909,
+            "average_winner_points": {
+              "count": 30,
+              "mean": 53.187,
+              "median": 52.4
+            },
+            "average_loser_points": {
+              "count": 58,
+              "mean": -30.645,
+              "median": -28.45
+            },
+            "resolved_only_mean_points": -2.066,
+            "max_drawdown_equal_unit_points": 500.9,
+            "max_consecutive_SL": 15,
+            "future_target_after_SL": 11,
+            "MFE_mean_through_exit_or_EOD": 31.226,
+            "MAE_mean_through_exit_or_EOD": -27.047,
+            "holding_median_minutes_from_entry_bar_start": 35.0,
+            "target_time_median_minutes_from_entry_bar_start": 55.0,
+            "stop_time_median_minutes_from_entry_bar_start": 30.0
+          }
+        },
+        "Jan-Mar": {
+          "0": {
+            "entries": 94,
+            "target": 38,
+            "SL": 53,
+            "ambiguous": 0,
+            "unresolved": 3,
+            "resolved": 91,
+            "target_rate_resolved": 0.417582,
+            "average_winner_points": {
+              "count": 38,
+              "mean": 52.458,
+              "median": 41.45
+            },
+            "average_loser_points": {
+              "count": 53,
+              "mean": -24.458,
+              "median": -20.45
+            },
+            "resolved_only_mean_points": 7.66,
+            "max_drawdown_equal_unit_points": 256.15,
+            "max_consecutive_SL": 10,
+            "future_target_after_SL": 4,
+            "MFE_mean_through_exit_or_EOD": 35.304,
+            "MAE_mean_through_exit_or_EOD": -20.986,
+            "holding_median_minutes_from_entry_bar_start": 40.0,
+            "target_time_median_minutes_from_entry_bar_start": 40.0,
+            "stop_time_median_minutes_from_entry_bar_start": 35.0
+          },
+          "2": {
+            "entries": 94,
+            "target": 39,
+            "SL": 51,
+            "ambiguous": 0,
+            "unresolved": 4,
+            "resolved": 90,
+            "target_rate_resolved": 0.433333,
+            "average_winner_points": {
+              "count": 39,
+              "mean": 51.877,
+              "median": 39.2
+            },
+            "average_loser_points": {
+              "count": 51,
+              "mean": -26.093,
+              "median": -22.45
+            },
+            "resolved_only_mean_points": 7.694,
+            "max_drawdown_equal_unit_points": 282.75,
+            "max_consecutive_SL": 10,
+            "future_target_after_SL": 3,
+            "MFE_mean_through_exit_or_EOD": 35.885,
+            "MAE_mean_through_exit_or_EOD": -22.111,
+            "holding_median_minutes_from_entry_bar_start": 45.0,
+            "target_time_median_minutes_from_entry_bar_start": 40.0,
+            "stop_time_median_minutes_from_entry_bar_start": 45.0
+          },
+          "4": {
+            "entries": 94,
+            "target": 40,
+            "SL": 50,
+            "ambiguous": 0,
+            "unresolved": 4,
+            "resolved": 90,
+            "target_rate_resolved": 0.444444,
+            "average_winner_points": {
+              "count": 40,
+              "mean": 50.739,
+              "median": 38.725
+            },
+            "average_loser_points": {
+              "count": 50,
+              "mean": -27.865,
+              "median": -24.3
+            },
+            "resolved_only_mean_points": 7.07,
+            "max_drawdown_equal_unit_points": 318.75,
+            "max_consecutive_SL": 10,
+            "future_target_after_SL": 2,
+            "MFE_mean_through_exit_or_EOD": 36.074,
+            "MAE_mean_through_exit_or_EOD": -23.844,
+            "holding_median_minutes_from_entry_bar_start": 45.0,
+            "target_time_median_minutes_from_entry_bar_start": 40.0,
+            "stop_time_median_minutes_from_entry_bar_start": 47.5
+          }
+        },
+        "Jul-Sep": {
+          "0": {
+            "entries": 62,
+            "target": 20,
+            "SL": 37,
+            "ambiguous": 0,
+            "unresolved": 5,
+            "resolved": 57,
+            "target_rate_resolved": 0.350877,
+            "average_winner_points": {
+              "count": 20,
+              "mean": 33.11,
+              "median": 24.15
+            },
+            "average_loser_points": {
+              "count": 37,
+              "mean": -18.009,
+              "median": -14.1
+            },
+            "resolved_only_mean_points": -0.073,
+            "max_drawdown_equal_unit_points": 212.9,
+            "max_consecutive_SL": 11,
+            "future_target_after_SL": 6,
+            "MFE_mean_through_exit_or_EOD": 20.292,
+            "MAE_mean_through_exit_or_EOD": -15.926,
+            "holding_median_minutes_from_entry_bar_start": 45.0,
+            "target_time_median_minutes_from_entry_bar_start": 52.5,
+            "stop_time_median_minutes_from_entry_bar_start": 40.0
+          },
+          "2": {
+            "entries": 62,
+            "target": 21,
+            "SL": 35,
+            "ambiguous": 0,
+            "unresolved": 6,
+            "resolved": 56,
+            "target_rate_resolved": 0.375,
+            "average_winner_points": {
+              "count": 21,
+              "mean": 32.833,
+              "median": 27.05
+            },
+            "average_loser_points": {
+              "count": 35,
+              "mean": -20.531,
+              "median": -16.1
+            },
+            "resolved_only_mean_points": -0.52,
+            "max_drawdown_equal_unit_points": 228.9,
+            "max_consecutive_SL": 10,
+            "future_target_after_SL": 5,
+            "MFE_mean_through_exit_or_EOD": 21.242,
+            "MAE_mean_through_exit_or_EOD": -17.85,
+            "holding_median_minutes_from_entry_bar_start": 50.0,
+            "target_time_median_minutes_from_entry_bar_start": 55.0,
+            "stop_time_median_minutes_from_entry_bar_start": 50.0
+          },
+          "4": {
+            "entries": 62,
+            "target": 21,
+            "SL": 34,
+            "ambiguous": 0,
+            "unresolved": 7,
+            "resolved": 55,
+            "target_rate_resolved": 0.381818,
+            "average_winner_points": {
+              "count": 21,
+              "mean": 32.833,
+              "median": 27.05
+            },
+            "average_loser_points": {
+              "count": 34,
+              "mean": -22.803,
+              "median": -18.2
+            },
+            "resolved_only_mean_points": -1.56,
+            "max_drawdown_equal_unit_points": 250.05,
+            "max_consecutive_SL": 10,
+            "future_target_after_SL": 5,
+            "MFE_mean_through_exit_or_EOD": 21.501,
+            "MAE_mean_through_exit_or_EOD": -18.929,
+            "holding_median_minutes_from_entry_bar_start": 55.0,
+            "target_time_median_minutes_from_entry_bar_start": 55.0,
+            "stop_time_median_minutes_from_entry_bar_start": 62.5
+          }
+        }
+      }
+    }
+  },
+  "methodology_reconciliation": [
+    "The primary reversal-trough lifecycle table was recomputed from the exact underlying option CSV rows and uses inclusive touch semantics (bar low <= stop).",
+    "All 253 event contract-day paths used for entry analysis contain a complete 75-candle session; these 253 rows are conditional on the contracts/events present in the corrected baseline.",
+    "Duplicate primary-anchor buffer 0/2/4 summary, monthly, and chronological tables were synchronized to the recomputed inclusive stop-touch replay; stale strict-touch counts were removed."
+  ]
+}

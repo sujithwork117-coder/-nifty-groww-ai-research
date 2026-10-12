@@ -64,7 +64,8 @@ class PaperContractEngine:
         return {"level_sl_points": float(self.config.level_sl_points),
                 "level_entry_start": str(self.config.level_entry_start),
                 "level_entry_end": str(self.config.level_entry_end),
-                "ek_start": str(self.config.ek_start), "ek_end": str(self.config.ek_end)}
+                "ek_start": str(self.config.ek_start), "ek_end": str(self.config.ek_end),
+                "ekalayava_sl_buffer_points": getattr(self.config, "ekalayava_sl_buffer_points", None)}
 
     def snapshot(self):
         return self.state.copy()
@@ -221,7 +222,12 @@ class PaperContractEngine:
             return
         sl = opening_low - float(self.config.level_sl_points)
         target = self.state["opening_high"]
-        status = "SKIPPED_SL_ALREADY_BREACHED" if candle["close"] <= sl else "OPEN"
+        if candle["close"] <= sl:
+            status = "SKIPPED_SL_ALREADY_BREACHED"
+        elif candle["close"] >= target:
+            status = "SKIPPED_TARGET_ALREADY_REACHED"
+        else:
+            status = "OPEN"
         setup["daily_entry_used"] = True
         setup["phase"] = "ENTRY_SKIPPED" if status.startswith("SKIPPED") else "TRACKING_PAPER_TRADE"
         signal = self._emit("LEVEL_TO_LEVEL", "SIGNAL", candle,
@@ -229,6 +235,7 @@ class PaperContractEngine:
                             entry_reason="first completed green candle after red opening-low breakdown",
                             candle_type="GREEN",
                             status=status, outcome=status, exit_timestamp=None, exit_reason=None,
+                            exit_price=None, points_gained_lost=None,
                             red_break_timestamp=setup["red_break_timestamp"],
                             first_green_timestamp=candle["timestamp"].isoformat(),
                             reversal_structure=None, structural_low_candidate=None,
@@ -293,20 +300,29 @@ class PaperContractEngine:
                 setup["candidate_low_timestamp"] = candle["timestamp"].isoformat()
                 setup["phase"] = "RECOVERY_AND_SWING_OBSERVATION"
             return
-        if candle["low"] < setup["candidate_low"]:
-            setup["candidate_low"] = candle["low"]
-            setup["candidate_low_timestamp"] = candle["timestamp"].isoformat()
         if setup["swing_high"] is not None and candle["high"] > setup["swing_high"] and candle["close"] > setup["swing_high"]:
+            # Freeze the reversal trough before the breakout candle; the entry bar cannot
+            # redefine the structural low after its breakout has been observed.
             candidate_low = setup["candidate_low"]
+            buffer_points = getattr(self.config, "ekalayava_sl_buffer_points", None)
+            if buffer_points is not None and float(buffer_points) < 0:
+                raise ValueError("Ekalayava stop buffer cannot be negative")
+            configured_sl = None if buffer_points is None else candidate_low - float(buffer_points)
+            candidate_sl_status = ("OBSERVATION_ONLY_BUFFER_UNSET" if configured_sl is None
+                                   else "PAPER_STOP_CONFIGURED")
             signal = self._emit("EKALAYAVA", "SIGNAL", candle,
-                                entry=candle["close"], sl=None, candidate_sl=candidate_low,
+                                entry=candle["close"], sl=configured_sl, candidate_sl=configured_sl,
+                                structural_sl_anchor="reversal_sequence_trough_before_breakout_candle",
+                                structural_low_price=candidate_low, sl_buffer_points=buffer_points,
                                 entry_reason="completed causal swing-high breakout before opening-high target",
                                 candle_type="GREEN" if candle["close"] > candle["open"] else "RED_OR_DOJI",
-                                candidate_sl_status="OBSERVATION_ONLY_UNAPPROVED",
-                                target=self.state["opening_high"], status="UNRESOLVED",
-                                outcome="UNRESOLVED", exit_timestamp=None, exit_reason=None,
+                                candidate_sl_status=candidate_sl_status,
+                                target=self.state["opening_high"],
+                                status="UNRESOLVED" if configured_sl is None else "OPEN",
+                                outcome="UNRESOLVED" if configured_sl is None else "OPEN",
+                                exit_timestamp=None, exit_reason=None,
                                 breakdown_timestamp=setup["breakdown_timestamp"],
-                                reversal_structure="causal recovery following opening-low breakdown; exact structural anchor undefined",
+                                reversal_structure="research candidate: minimum premium low from breakdown through bar before breakout; canonical adoption pending",
                                 structural_low_candidate=candidate_low,
                                 structural_low_timestamp=setup["candidate_low_timestamp"],
                                 swing_high=setup["swing_high"],
@@ -322,12 +338,16 @@ class PaperContractEngine:
                                 realized_pnl=None)
             events.append(signal)
             setup["daily_entry_used"] = True
-            setup["phase"] = "OBSERVING_UNRESOLVED_ENTRY"
+            setup["phase"] = "OBSERVING_UNRESOLVED_ENTRY" if configured_sl is None else "TRACKING_PAPER_TRADE"
             setup["signal"] = signal
             setup["trade"] = {"entry": candle["close"], "entry_timestamp": candle["timestamp"].isoformat(),
-                              "target": self.state["opening_high"], "candidate_sl": candidate_low,
-                              "candidate_low": candidate_low, "breakout_candle_low": candle["low"],
-                              "status": "UNRESOLVED", "mfe": None, "mae": None,
+                              "target": self.state["opening_high"], "sl": configured_sl,
+                              "candidate_sl": configured_sl, "candidate_low": candidate_low,
+                              "structural_sl_anchor": "reversal_sequence_trough_before_breakout_candle",
+                              "structural_low_price": candidate_low, "sl_buffer_points": buffer_points,
+                              "candidate_sl_status": candidate_sl_status,
+                              "breakout_candle_low": candle["low"],
+                              "status": "UNRESOLVED" if configured_sl is None else "OPEN", "mfe": None, "mae": None,
                               "time_to_mfe_minutes": None, "time_to_mae_minutes": None,
                               "target_touch_timestamp": None, "time_to_target_minutes": None,
                               "structural_low_revisited": False,
@@ -335,6 +355,9 @@ class PaperContractEngine:
                               "target_and_candidate_low_same_candle": False,
                               "realized_pnl": None}
             return
+        if candle["low"] < setup["candidate_low"]:
+            setup["candidate_low"] = candle["low"]
+            setup["candidate_low_timestamp"] = candle["timestamp"].isoformat()
         if causal_swing:
             setup["swing_high"] = candle["high"]
             setup["swing_high_timestamp"] = candle["timestamp"].isoformat()
@@ -343,6 +366,8 @@ class PaperContractEngine:
         setup = self.state["ekalayava"]
         trade = setup.get("trade")
         if not trade or candle["timestamp"].isoformat() <= trade["entry_timestamp"]:
+            return
+        if trade["status"] in ("SL", "TARGET", "AMBIGUOUS"):
             return
         high_delta, low_delta = candle["high"] - trade["entry"], candle["low"] - trade["entry"]
         elapsed = (candle["timestamp"] - _local_timestamp(trade["entry_timestamp"])).total_seconds() / 60
@@ -361,7 +386,32 @@ class PaperContractEngine:
         trade["target_and_candidate_low_same_candle"] = (
             trade["target_and_candidate_low_same_candle"] or
             (candle["high"] >= trade["target"] and candle["low"] <= trade["candidate_low"]))
-        events.append(self._emit("EKALAYAVA", "OBSERVATION_UPDATE", candle,
-                                 **trade, sl=None,
-                                 candidate_sl_status="OBSERVATION_ONLY_UNAPPROVED",
-                                 outcome="UNRESOLVED"))
+        if trade["status"] == "OPEN" and trade.get("sl") is not None:
+            hit_sl, hit_target = candle["low"] <= trade["sl"], candle["high"] >= trade["target"]
+            if hit_sl and hit_target:
+                trade.update(status="AMBIGUOUS", exit_timestamp=candle["timestamp"].isoformat(),
+                             exit_reason="SL_AND_TARGET_TOUCHED_SAME_CANDLE", exit_price=None)
+            elif hit_sl:
+                trade.update(status="SL", exit_timestamp=candle["timestamp"].isoformat(),
+                             exit_reason="STRUCTURAL_STOP", exit_price=trade["sl"])
+            elif hit_target:
+                trade.update(status="TARGET", exit_timestamp=candle["timestamp"].isoformat(),
+                             exit_reason="OPENING_HIGH_TARGET", exit_price=trade["target"])
+            if trade["status"] in ("SL", "TARGET", "AMBIGUOUS"):
+                trade["holding_time_minutes"] = elapsed
+                trade["points_gained_lost"] = (None if trade["exit_price"] is None else
+                                               trade["exit_price"] - trade["entry"])
+                trade["realized_pnl"] = trade["points_gained_lost"]
+                trade["outcome"] = trade["status"]
+                events.append(self._emit("EKALAYAVA", "TRADE_UPDATE", candle, **trade))
+                return
+            trade["outcome"] = trade["status"]
+            events.append(self._emit("EKALAYAVA", "TRADE_UPDATE", candle, **trade))
+        else:
+            trade["outcome"] = "UNRESOLVED"
+            candidate_sl_status = ("DATA_GAP_UNRESOLVED" if trade["status"] == "DATA_GAP_UNRESOLVED"
+                                   else "OBSERVATION_ONLY_BUFFER_UNSET")
+            observation = {**trade, "sl": None,
+                           "candidate_sl_status": candidate_sl_status,
+                           "outcome": "UNRESOLVED"}
+            events.append(self._emit("EKALAYAVA", "OBSERVATION_UPDATE", candle, **observation))

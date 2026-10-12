@@ -81,4 +81,5 @@ def test_ekalayava_replay_matches_causal_entry_and_never_marks_touch_as_exit():
     assert trade["target_touch_timestamp"] == expected.iloc[0].target_touch_time.tz_convert("Asia/Kolkata").isoformat()
     assert trade["status"] == "UNRESOLVED"
     assert trade["realized_pnl"] is None
-    assert signals[0]["candidate_sl_status"] == "OBSERVATION_ONLY_UNAPPROVED"
+    assert signals[0]["candidate_sl_status"] == "OBSERVATION_ONLY_BUFFER_UNSET"
+    assert signals[0]["sl"] is None

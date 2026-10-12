@@ -14,6 +14,10 @@ def _same_day_future(df,event,horizon_bars=78):
     return df.loc[(timestamps>entry_timestamp)&(local_dates==entry_date)].sort_values("timestamp").head(horizon_bars)
 
 def simulate_level(df,event):
+    if float(event.entry)>=float(event.target):
+        return {"exit_time":None,"exit_price":None,"outcome":"SKIPPED_TARGET_ALREADY_REACHED",
+                "mfe":0.0,"mae":0.0,"intrabar_ambiguous":False,
+                "skip_reason":"entry close is at or above the configured target"}
     if float(event.entry)<=float(event.sl):
         return {"exit_time":None,"exit_price":None,"outcome":"SKIPPED_SL_ALREADY_BREACHED",
                 "mfe":0.0,"mae":0.0,"intrabar_ambiguous":False,
@@ -46,7 +50,7 @@ def backtest_level_to_level(df,contract=None,sl_points=4,start="09:15",end="11:0
                     "strike":contract.get("strike"),"option_type":contract.get("option_type"),
                     "itm_rank":contract.get("itm_rank"),**result})
         row["points_gained_lost"]=(row["exit_price"]-row["entry"]
-                                    if row["exit_price"] is not None and row["outcome"]!="SKIPPED_SL_ALREADY_BREACHED" else None)
+                                    if row["exit_price"] is not None and not str(row["outcome"]).startswith("SKIPPED") else None)
         row["time_to_exit_minutes"]=(
             (row["exit_time"]-row["timestamp"]).total_seconds()/60
             if row["exit_time"] is not None else None

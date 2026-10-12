@@ -68,3 +68,19 @@ def test_level_signal_is_skipped_if_entry_close_is_already_below_its_stop():
     assert result.iloc[0].outcome=="SKIPPED_SL_ALREADY_BREACHED"
     assert pd.isna(result.iloc[0].points_gained_lost)
     assert result.iloc[0].skip_reason=="entry close is at or below the configured stop-loss"
+
+
+def test_level_signal_is_skipped_if_entry_close_is_at_or_above_target():
+    candles=pd.DataFrame([
+        {"timestamp":pd.Timestamp("2026-09-01 09:15",tz="Asia/Kolkata"),"open":105,"high":110,"low":100,"close":105},
+        {"timestamp":pd.Timestamp("2026-09-01 09:20",tz="Asia/Kolkata"),"open":102,"high":103,"low":99,"close":101},
+        {"timestamp":pd.Timestamp("2026-09-01 09:25",tz="Asia/Kolkata"),"open":109,"high":115,"low":108,"close":112},
+        {"timestamp":pd.Timestamp("2026-09-01 09:30",tz="Asia/Kolkata"),"open":112,"high":116,"low":111,"close":115},
+    ])
+
+    result=backtest_level_to_level(candles)
+
+    assert len(result)==1
+    assert result.iloc[0].outcome=="SKIPPED_TARGET_ALREADY_REACHED"
+    assert pd.isna(result.iloc[0].points_gained_lost)
+    assert result.iloc[0].skip_reason=="entry close is at or above the configured target"

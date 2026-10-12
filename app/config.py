@@ -26,6 +26,10 @@ def _credential(name):
 
 def _csv(name, cast=str):
     return [cast(x.strip()) for x in os.getenv(name, "").split(",") if x.strip()]
+
+def _optional_float(name):
+    value = os.getenv(name, "").strip()
+    return None if not value else float(value)
 @dataclass(frozen=True)
 class Config:
     api_key: str=_credential("GROWW_API_KEY")
@@ -46,6 +50,8 @@ class Config:
     level_entry_end: str=os.getenv("LEVEL_ENTRY_END","11:00")
     ek_start: str=os.getenv("EKALAYAVA_START","09:15")
     ek_end: str=os.getenv("EKALAYAVA_END","15:15")
+    # No evidence-backed numeric buffer has been selected. Unset keeps Ekalayava observational.
+    ekalayava_sl_buffer_points: float|None=_optional_float("EKALAYAVA_SL_BUFFER_POINTS")
     execution_allowed: bool=os.getenv("EXECUTION_ALLOWED","false").lower()=="true"
     paper_only: bool=os.getenv("PAPER_ONLY","true").lower()=="true"
     kill_switch: bool=os.getenv("KILL_SWITCH","false").lower()=="true"
