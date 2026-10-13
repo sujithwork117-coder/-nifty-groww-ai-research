@@ -2,11 +2,14 @@
 
 ## Result
 
-Guide 7's bounded Groww retrieval and offline replay completed. Decision:
+Guide 7's bounded Groww retrieval and offline replay completed; Guide 8 added
+the per-policy target/stop and touch reconciliation. Decision:
 **no stop-loss/target policy approved**. `C_B2_2R_V1` passed the limited
-validation screen and was evaluated once on the untouched Nov–Dec 2025 test;
-its training result and seven exact 2026 paths contradict a stable winner.
-No experimental policy was wired into the paper engine.
+validation screen. It was evaluated first on the Nov–Dec 2025 test; Guide 8
+later made a one-pass descriptive accounting replay for all fixed candidates
+there, without changing the validation selection. Its training result and
+seven exact 2026 paths contradict a stable winner. No experimental policy was
+wired into the paper engine.
 
 ## Files and outputs
 
@@ -20,7 +23,13 @@ No experimental policy was wired into the paper engine.
   `reports/EKALAYAVA_HISTORICAL_DATA_COVERAGE_JUL_DEC_2025.md`,
   `reports/EKALAYAVA_MULTI_PERIOD_EXIT_VALIDATION.md`, and
   `reports/EKALAYAVA_FINAL_RULE_SPEC.md`.
-* Automated focused coverage: `tests/test_ekalayava_guide7_research.py`.
+* Automated focused coverage:
+  `tests/test_ekalayava_guide7_research.py` and
+  `tests/test_ekalayava_guide8_reconciliation.py`.
+* Guide 8 outcome accounting:
+  `tools/run_ekalayava_guide8_reconciliation.py`,
+  `reports/EKALAYAVA_TARGET_SL_COUNT_RECONCILIATION.md`, and
+  `reports/ekalayava_guide8_*.csv`.
 
 ## Validation
 
@@ -31,7 +40,7 @@ are present:
 .venv/bin/python -m tools.run_ekalayava_guide7_research
 ```
 
-Tests run:
+Guide 7 tests run:
 
 ```sh
 .venv/bin/python -m pytest -q \
@@ -42,12 +51,10 @@ Tests run:
   tests/test_safety.py
 ```
 
-Focused result: **23 passed**. Full repository result: **119 passed**.
-Python syntax compilation passed for the retriever, runner, and new tests.
-Two ordinary report-run issues (monthly timestamp ordering and missing
-test-entry timestamps) were fixed and the final replay completed. Pylance did
-not recognize the new untracked runner as a workspace user file, so no
-Pylance file diagnostic was available.
+Guide 7 focused result: **23 passed**; full repository result at that stage:
+**119 passed**. Guide 8 adds a focused count/touch suite; see
+`reports/EKALAYAVA_GUIDE8_EXECUTION_SUMMARY.md` for final combined test results.
+Python syntax compilation passed for both research runners and their tests.
 
 ## Remaining limitations and safety
 

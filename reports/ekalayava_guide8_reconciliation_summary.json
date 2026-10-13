@@ -1,0 +1,38 @@
+{
+  "2026_missing_exact_paths": 246,
+  "candidate_count_rows": 63,
+  "candidate_ids": [
+    "A_B4_TP25_V1",
+    "A_B4_OPENING_HIGH_V1",
+    "B_B2_LOWER_LOW_TRAIL_OPENING_HIGH_V1",
+    "C_B2_1R_V1",
+    "C_B2_1_5R_V1",
+    "C_B2_2R_V1",
+    "A_STRUCTURAL_TROUGH_B4_TP25"
+  ],
+  "entry_observations_2025": 194,
+  "entry_observations_2026": 253,
+  "exact_2025_complete_paths": 192,
+  "exact_2025_partial_paths": 2,
+  "exact_2026_paths": 7,
+  "execution_allowed": false,
+  "orders_submitted": false,
+  "paper_only": true,
+  "test_reproduction": {
+    "2025_candidate_rows": 1358,
+    "2026_complete_paths": 7,
+    "archived_tp25_comparable": 7,
+    "archived_tp25_matches": 7,
+    "counts": {
+      "END_OF_SESSION": 8,
+      "STOP_LOSS": 40,
+      "TARGET": 21
+    },
+    "existing_rows": 69,
+    "gross_points": 172.70000000000002,
+    "longest_losing_streak": 10,
+    "matching_rows": 69,
+    "max_drawdown": 221.25000000000006,
+    "unresolved": 0
+  }
+}

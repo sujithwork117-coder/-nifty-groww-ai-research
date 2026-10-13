@@ -73,9 +73,19 @@ conventions to these candidates:
 
 No formula above is selected for operational use. The validation-selected
 `C_B2_2R_V1` failed to show cross-period stability: −258.20 training points,
-+75.85 validation points, +172.70 untouched 2025 test points, and −71.30
++75.85 validation points, +172.70 2025 test points, and −71.30
 across seven exact 2026 paths. The sample and missing data do not support a
 reliable winner.
+
+The later all-candidate accounting found 61 2R target exits, 123 stop exits,
+17 experimental end-of-session exits, and 246 unresolved exact-path gaps over
+the combined 447-entry ledger (−80.95 gross points on the 201 entries with
+exact paths). Detailed candidate counts and the additional prespecified
+November–December replays are in
+[EKALAYAVA_TARGET_SL_COUNT_RECONCILIATION.md](./EKALAYAVA_TARGET_SL_COUNT_RECONCILIATION.md).
+The `B_B2_LOWER_LOW_TRAIL_OPENING_HIGH_V1` proxy had the strongest descriptive
+combined gross result among the candidates but was nearly flat or negative in
+validation, test, and the sparse exact 2026 subset; it remains unapproved.
 
 Live order execution remains disabled (`EXECUTION_ALLOWED=False`);
 paper-only mode remains enabled (`PAPER_ONLY=True`). No order was submitted,

@@ -1,5 +1,11 @@
 # Ekalayava Multi-Period Exit Validation
 
+> **Guide 8 follow-up:** All pre-existing candidates have now been run once
+> over the Nov–Dec 2025 rows for count reconciliation, without changing the
+> validation selection. These extra holdout-period comparisons are descriptive
+> only. See [EKALAYAVA_TARGET_SL_COUNT_RECONCILIATION.md](./EKALAYAVA_TARGET_SL_COUNT_RECONCILIATION.md)
+> for overall outcomes and the strongest descriptive candidate.
+
 ## Protocol
 
 The canonical entry analyzer was held fixed. Six exit candidates were
