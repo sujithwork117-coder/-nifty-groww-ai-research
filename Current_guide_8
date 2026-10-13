@@ -1,0 +1,345 @@
+Ekalayava — Complete SL/Target Optimization, Overall Trade Counts, Historical Validation and Final Decision
+
+Mission
+
+Act as the autonomous research engineer responsible for completing the Ekalayava strategy’s stop-loss and target research.
+
+The goal is to establish, using the best evidence available:
+
+1. The exact overall number of target exits.
+2. The exact overall number of stop-loss exits.
+3. The number of ambiguous, unresolved, skipped and other exits.
+4. The performance of each tested stop-loss/target policy.
+5. Whether one policy is sufficiently robust to recommend as the final Ekalayava exit rule.
+6. Whether the selected rule remains effective across historical periods and realistic trading costs.
+
+Do not stop after producing a plan. Inspect the existing code and reports, run the necessary bounded analyses, reconcile the results, execute tests, and produce the complete report.
+
+Do not claim the strategy is foolproof. A final decision must be based on reproducible evidence, not on whichever candidate has the highest target-hit percentage.
+
+⸻
+
+1. Inspect the existing project first
+
+Inspect the current repository, entry ledger, simulator, historical-data manifests and all relevant research artifacts, especially:
+
+* EKALAYAVA_FINAL_SL_TARGET_DECISION.md
+* EKALAYAVA_FINAL_RULE_SPEC.md
+* EKALAYAVA_EXIT_POLICY_RESEARCH_2026-10-13.md
+* EKALAYAVA_TARGET_SL_COUNT_RECONCILIATION.md, if already created.
+* Existing entry and trade ledgers.
+* Exact-contract five-minute option candle files.
+* Underlying NIFTY candle files.
+* Existing historical data-coverage reports.
+* Candidate exit-policy implementations and automated tests.
+* Existing paper-trading engine and execution safeguards.
+
+Use the actual repository contents as the source of truth. Do not assume a file, dataset or result exists simply because an earlier report mentioned it.
+
+Preserve the canonical Ekalayava entry logic.
+
+2. Preserve the canonical entry conditions
+
+The baseline entry logic must continue to:
+
+1. Use completed five-minute candles.
+2. Mark the opening high and low from the first completed five-minute candle.
+3. Require the option premium to break below the opening low.
+4. Identify a subsequent recovery or reversal structure using only information available at that time.
+5. Identify the eligible causal swing high.
+6. Enter at the completed candle close when the premium breaks the eligible swing high before reaching the opening high.
+7. Permit the entry candle to close below the opening high, as allowed by the existing rule.
+8. Match the exact option contract and expiry.
+
+Do not use future candles to determine entries, swing highs, stop adjustments or target decisions.
+
+Do not alter the canonical entry conditions merely to improve backtest results. Investigate entry improvements separately if a concrete defect is identified.
+
+3. Evaluate all existing SL/target candidates
+
+Reconcile and evaluate the following existing candidates without silently changing their definitions:
+
+* A_B4_TP25_V1
+* A_B4_OPENING_HIGH_V1
+* B_B2_LOWER_LOW_TRAIL_OPENING_HIGH_V1
+* C_B2_1R_V1
+* C_B2_1_5R_V1
+* C_B2_2R_V1
+* Archived A_STRUCTURAL_TROUGH_B4_TP25
+
+Keep these two target definitions separate:
+
+Fixed 25-point target
+
+A_B4_TP25_V1 uses:
+
+* Initial stop: L - 4
+* Target: E + 25
+
+Archived fractional opening-range target
+
+A_STRUCTURAL_TROUGH_B4_TP25 uses:
+
+* Initial stop based on the structural trough with a four-point buffer.
+* Target: E + 0.25 * (H - E)
+
+Here, E is the entry price, L is the causal structural trough observed by entry, and H is the opening-range high.
+
+For the remaining candidates, preserve the existing formulas:
+
+* Opening-high target: stop L - 4, target H.
+* Trailing candidate: initial stop L - 2, target H, with the existing causal lower-low trailing proxy.
+* Reward-to-risk candidates: stop L - 2, risk R = E - (L - 2), targets E + R, E + 1.5R and E + 2R.
+
+Do not invent new parameters or run another large optimization grid. If an existing candidate has an implementation defect, document and correct it only when supported by evidence and tests.
+
+4. Mandatory overall target and stop-loss report
+
+This is a primary deliverable, not an optional appendix.
+
+For every candidate, produce the following counts across all eligible, usable historical entries, including all eligible periods that can be reconstructed reliably.
+
+Required metric	What to count
+Total detected setups	All setups found by the canonical entry detector
+Eligible entries	Setups that satisfy the canonical entry rules
+Simulated entries	Entries with a valid entry price and usable simulation
+Target exits	Trades that actually exited at the target while the position was open
+Stop-loss exits	Trades that actually exited at the stop while the position was open
+Ambiguous exits	Trades where the stop and target were both touched and order cannot be determined
+End-of-session exits	Trades closed under an explicitly identified experimental session-close rule
+Other exits	Any other separately defined exit category
+Unresolved entries	Trades without sufficient subsequent candle data to classify the outcome
+Skipped entries	Entries not taken, with exact reasons
+Invalid entries	Entries with invalid risk, price or contract data
+
+For every metric, report both the count and, where meaningful, its percentage of the appropriate denominator.
+
+Do not calculate target-hit or stop-loss percentages using all detected setups if only a subset was eligible or simulated. Clearly label every denominator.
+
+Overall totals required
+
+Provide a clearly visible summary near the beginning of the report:
+
+* Overall actual simulated target exits: N
+* Overall actual simulated stop-loss exits: N
+* Overall ambiguous outcomes: N
+* Overall end-of-session exits: N
+* Overall other exits: N
+* Overall unresolved entries: N
+* Overall eligible entries: N
+* Overall simulated entries: N
+
+Produce this summary separately for each exit-policy candidate.
+
+Also produce an overall result for the candidate selected by the documented selection process, if one is justified. If no policy is approved, label the counts as that candidate’s experimental results rather than as the strategy’s official results.
+
+Do not add target exits from different candidate policies together. The same entry may be a target exit under one policy and a stop-loss under another. Candidate-specific totals must remain separate.
+
+Count reconciliation
+
+For each candidate, verify that the simulated entries reconcile with mutually exclusive outcomes:
+
+Simulated entries = target exits + stop-loss exits + ambiguous exits + end-of-session exits + other exits + unresolved entries
+
+Adapt this identity only when the simulator’s documented definitions require it, and explain every exception.
+
+Ensure a trade is counted only once in its final exit category. A later target touch after the position has already stopped out must not count as a target exit.
+
+If the existing data does not support exact overall counts, report the exact count for the reconstructable subset and the number of entries whose outcomes cannot be established. Never estimate missing outcomes.
+
+5. Report the target-touch count separately
+
+For each candidate and for the canonical entry observations, distinguish:
+
+1. Target touched while trade was open.
+2. Actual simulated target exit.
+3. Target price touched after the trade had already exited.
+4. Target touch impossible to verify because the candle path is incomplete.
+
+These are different metrics.
+
+A trade that hits its stop-loss first and touches the target later must remain a stop-loss outcome.
+
+Report the canonical opening-high touch count separately from each experimental policy’s actual target exits.
+
+6. Provide period-by-period and combined results
+
+Use only eligible data that is genuinely available and sufficiently reconstructable.
+
+Report separately:
+
+* July–August 2025: training.
+* September–October 2025: validation.
+* November–December 2025: untouched test.
+* Available exact-contract 2026 observations.
+
+Then provide combined historical totals for each candidate, with the included date range and usable sample count explicitly stated.
+
+For every period and candidate, show:
+
+* Eligible entries.
+* Simulated entries.
+* Target exits.
+* Stop-loss exits.
+* Ambiguous outcomes.
+* End-of-session exits.
+* Other exits.
+* Unresolved entries.
+* Gross premium points.
+* Win rate.
+* Profit factor.
+* Maximum chronological drawdown.
+* Longest losing streak.
+
+Where possible, include CE versus PE and ITM rank breakdowns, but only where sample sizes and data coverage support meaningful comparisons.
+
+Do not claim that seven complete 2026 paths represent all 253 saved observations.
+
+7. Historical-data constraints
+
+Inspect existing local files and manifests for the requested July 1–December 31, 2025 period and the existing 2026 dataset.
+
+Make one bounded attempt to locate the required historical data using existing local files and already configured, authorized sources.
+
+* Use exact contract symbols, expiries and timestamps.
+* Do not substitute neighboring strikes or expiries.
+* Do not interpolate missing option candles.
+* Do not repeatedly retry unavailable endpoints.
+* Do not initiate broad historical downloads.
+* Do not seek 2022–2024 data.
+* Do not incur new costs or contact additional providers without authorization.
+
+If the requested data is unavailable, stop retrieval, document the coverage limitation, and complete all analysis supported by the existing data.
+
+Separate complete paths, partial paths, missing paths and mismatched contracts.
+
+8. Verify the previously reported result
+
+The existing decision report states that C_B2_2R_V1 produced the following November–December 2025 holdout result:
+
+* 69 eligible and resolved simulated entries.
+* 21 target exits.
+* 40 stop-loss exits.
+* 8 experimental end-of-session exits.
+* Maximum drawdown of 221.25 gross points.
+* Longest losing streak of 10.
+
+Independently reproduce these figures from the underlying trade ledger and candle paths wherever possible.
+
+If the counts do not reproduce, trace the discrepancy to the data, eligibility rules, simulator sequencing or report generation. Correct the result only when supported by evidence.
+
+Do not assume that the previously reported counts are correct without verification.
+
+9. Compare performance fairly
+
+Use the same eligible entries and complete candle paths when comparing policies wherever possible.
+
+Report:
+
+* Gross premium points.
+* Net results only where reliable cost inputs exist.
+* Average and median trade outcome.
+* Target exit rate and stop-loss exit rate.
+* Profit factor.
+* Maximum drawdown.
+* Longest losing streak.
+* Average initial risk.
+* Average holding time.
+* Maximum favorable excursion and maximum adverse excursion.
+* Monthly performance.
+* Performance by training, validation and untouched test period.
+* Sensitivity to reasonable cost and slippage assumptions where inputs support it.
+
+Do not rank candidates by target-hit percentage alone.
+
+A high target-hit percentage can coexist with negative overall returns if losses are larger than wins. Include the size of wins and losses in every performance assessment.
+
+10. Determine whether a final SL/target rule is justified
+
+After reconciling all counts and performance metrics:
+
+* Identify the best-supported candidate, if one exists.
+* Explain why it is better supported than the baseline and other candidates.
+* Assess whether results are reasonably consistent across chronological periods.
+* Account for data coverage, costs, drawdown and losing streaks.
+* Do not tune repeatedly on the validation or untouched test set.
+* Do not approve a policy merely because it passed a limited screening threshold.
+
+If a policy is sufficiently supported, document its exact initial stop, target, adjustment rules, gap handling, ambiguous-candle handling and exit lifecycle.
+
+If no policy is sufficiently supported, explicitly state that no final rule is approved and identify the minimum additional evidence required.
+
+Do not connect an unapproved candidate to the paper engine.
+
+11. Improve implementation quality where justified
+
+Inspect the simulator and automated tests for:
+
+* Duplicate entries or exits.
+* Incorrect entry-to-contract matching.
+* Look-ahead bias.
+* Incorrect stop/target sequencing.
+* Incorrect trailing-stop activation.
+* Gap handling errors.
+* Incorrect handling of incomplete candle paths.
+* Invalid or non-positive initial risk.
+* Inconsistent denominators and percentages.
+* Incorrect aggregate totals.
+
+Fix genuine reproducible defects and add regression tests. Do not modify canonical strategy rules simply to increase target counts or gross points.
+
+12. Required deliverables
+
+Create or update:
+
+1. EKALAYAVA_TARGET_SL_COUNT_RECONCILIATION.md
+    * Overall target exits and stop-loss exits for every candidate.
+    * Target touches versus actual target exits.
+    * Mutually exclusive exit categories and reconciliation checks.
+    * Period-by-period and combined totals.
+    * Data-coverage limitations.
+2. EKALAYAVA_FINAL_SL_TARGET_DECISION.md
+    * Current decision.
+    * Exact candidate comparison.
+    * Whether a final rule is approved or remains experimental.
+3. EKALAYAVA_FINAL_RULE_SPEC.md
+    * Canonical entry rules.
+    * Approved rule only if evidence supports approval.
+    * Otherwise, explicit unresolved status and experimental candidate definitions.
+4. Automated tests and code changes for any verified simulator defects.
+5. A final execution summary listing files changed, tests run, discrepancies found, reproduction commands and remaining limitations.
+
+13. Operating safeguards
+
+This remains a research and paper-trading project.
+
+* Keep EXECUTION_ALLOWED=False.
+* Keep PAPER_ONLY=True.
+* Do not submit, modify or cancel actual orders.
+* Do not assume that an empty trading-account balance is a safety mechanism.
+* Do not expose credentials or tokens.
+* Preserve duplicate-signal protection, logging, authentication safeguards and the kill switch.
+
+14. Completion requirements
+
+Continue until all analyses supported by the available data are complete, the candidate-specific counts have been reconciled, the previously reported test result has been checked, and the reports and tests are complete.
+
+Do not stop after writing a plan or reporting that data is missing. Complete all remaining work that can be performed reliably.
+
+If an individual task is blocked by unavailable data or an unauthorized action, document the blocker and proceed with other tasks. Do not fabricate counts, chase unavailable data indefinitely, incur unauthorized costs or claim a policy is proven when the evidence is insufficient.
+
+Final response
+
+Start the final response with a concise table showing each candidate’s:
+
+* Overall target exits.
+* Overall stop-loss exits.
+* Other exits.
+* Unresolved entries.
+* Total eligible entries.
+* Gross points.
+* Approval status.
+
+Then summarize the period-by-period results, the reconciliation of the reported 21/40/8 test result, and the final decision.
+
+The primary objective is an accurate, auditable answer to how many targets were actually achieved and how many stop-losses were hit overall, followed by an evidence-based decision on Ekalayava’s exit policy.
