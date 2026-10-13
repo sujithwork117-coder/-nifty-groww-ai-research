@@ -347,11 +347,17 @@ class GrowwPaperObserver:
                         events = engine.process_candle(bar, nifty_price=nifty_price)
                         missing_now = int(engine.state.get("missing_intervals", 0))
                         if missing_now > previous_missing:
+                            missing_count = missing_now - previous_missing
                             self._record_observer_event(
                                 "CANDLE_GAP_DETECTED", current, stream="OPTIONS", symbol=symbol,
                                 reason="missing intervals between completed candles",
                                 last_completed_candle=previous_candle,
-                                missing_intervals=missing_now - previous_missing)
+                                missing_intervals=missing_count)
+                            option_failures.append({
+                                "symbol": symbol,
+                                "reason": "MISSING_CANDLE_INTERVALS",
+                                "missing_intervals": missing_count,
+                            })
                         self.status["signals"].extend(
                             event for event in events if event.get("event_type") == "SIGNAL")
                         self.status["signals"] = self.status["signals"][-50:]

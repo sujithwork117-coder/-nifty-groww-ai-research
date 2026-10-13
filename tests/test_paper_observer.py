@@ -132,6 +132,33 @@ def test_observer_marks_stale_option_stream_and_disables_its_entries(tmp_path):
                for record in records)
 
 
+def test_observer_reports_internal_option_gaps_as_degraded_and_disables_entries(tmp_path):
+    class GappedOptionGroww(FakeGroww):
+        def get_historical_candles(self, **kwargs):
+            payload = super().get_historical_candles(**kwargs)
+            if kwargs["groww_symbol"] == "NSE-NIFTY-15Oct26-9950-CE":
+                payload["candles"] = [
+                    candle for candle in payload["candles"]
+                    if candle[0] != "2026-10-12T09:20:00+05:30"
+                ]
+            return payload
+
+    observer = GrowwPaperObserver(GappedOptionGroww(), make_config(), tmp_path)
+    status = observer.run_once(datetime.fromisoformat("2026-10-12T09:32:00+05:30"))
+
+    assert status["health"] == "DEGRADED_OPTION_DATA"
+    gapped_symbol = "NSE-NIFTY-15Oct26-9950-CE"
+    assert status["paper_positions"][gapped_symbol]["data_quality_status"] == "PARTIAL_MISSING_CANDLES"
+    assert not any(event["symbol"] == gapped_symbol for event in status["signals"])
+    assert any(item.get("symbol") == gapped_symbol
+               and item["reason"] == "MISSING_CANDLE_INTERVALS"
+               and item["missing_intervals"] == 1 for item in status["skipped"])
+    records = [__import__("json").loads(line) for line in
+               list(tmp_path.rglob("paper_journal.jsonl"))[0].read_text().splitlines()]
+    assert any(record["event_type"] == "CANDLE_GAP_DETECTED"
+               and record["symbol"] == gapped_symbol for record in records)
+
+
 def test_observer_run_forever_reauthenticates_after_transient_failure(tmp_path):
     class FailOnceGroww(FakeGroww):
         def __init__(self):
