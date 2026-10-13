@@ -5,6 +5,13 @@
 **Data actually tested:** 2026-01-01–2026-09-29 only. No 2025 H2 data was available locally.
 **Mode:** offline historical research; gross premium points; no live orders or observer.
 
+> **Follow-up:** This report records the inventory available on its run date.
+> The requested 2025 H2 history was subsequently retrieved through the
+> bounded Groww process and evaluated. Its prior “unavailable/not tested”
+> statements are superseded by
+> [EKALAYAVA_HISTORICAL_DATA_COVERAGE_JUL_DEC_2025.md](./EKALAYAVA_HISTORICAL_DATA_COVERAGE_JUL_DEC_2025.md)
+> and [EKALAYAVA_MULTI_PERIOD_EXIT_VALIDATION.md](./EKALAYAVA_MULTI_PERIOD_EXIT_VALIDATION.md).
+
 ## Executive findings
 
 - **2025 H2 was unavailable.** Local inventory and saved caches contained 2026 data only. Groww's documented 5-minute history endpoint is limited to recent history (roughly three months plus request constraints), so 2025 H2 is outside the documented range ([Python SDK docs](https://groww.in/trade-api/docs/python-sdk/historical-data); [cURL docs](https://groww.in/trade-api/docs/curl/historical-data)). No unsupported retrieval was retried and no other provider, expiry, strike, or fabricated bar was substituted. 2022–2024 were not requested or tested.

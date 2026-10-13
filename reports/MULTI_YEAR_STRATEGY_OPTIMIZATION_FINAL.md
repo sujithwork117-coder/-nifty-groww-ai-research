@@ -4,6 +4,13 @@
 **Scope:** offline historical research using saved Groww-derived 5-minute data; no new market data was downloaded.  
 **Recommendation:** **NO RELIABLE WINNER — MORE EVIDENCE REQUIRED.** Operationally retain the canonical baseline. No production rules or observer settings were changed.
 
+> **Follow-up:** This report reflects the dataset available on its run date.
+> A bounded Groww retrieval of 2025 H2 and its exact-contract Ekalayava replay
+> were completed afterward. Its earlier Ekalayava data-availability claims
+> are superseded by
+> [EKALAYAVA_HISTORICAL_DATA_COVERAGE_JUL_DEC_2025.md](./EKALAYAVA_HISTORICAL_DATA_COVERAGE_JUL_DEC_2025.md)
+> and [EKALAYAVA_MULTI_PERIOD_EXIT_VALIDATION.md](./EKALAYAVA_MULTI_PERIOD_EXIT_VALIDATION.md).
+
 ## Executive summary
 
 The repository contains suitable 5-minute market data only for 2026, from 2026-01-01 through 2026-09-29. There is no local 2022–2025 dataset. Groww's official historical-data documentation says 5-minute history is available for the last three months and limits a 5-minute request to 15 days, so those older years could not be retrieved within the supported documented path. No alternate provider or substitute contract was used. Thus this is a 2026-only bounded validation, not multi-year evidence.

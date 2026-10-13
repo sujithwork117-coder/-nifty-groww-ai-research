@@ -1,5 +1,13 @@
 # Ekalayava Exit-Policy Research — 2026-10-13
 
+> **Follow-up:** This is the earlier local-data snapshot. Its 2025 coverage
+> statements were superseded by the bounded Groww retrieval and exact-path
+> replay documented in
+> [EKALAYAVA_HISTORICAL_DATA_COVERAGE_JUL_DEC_2025.md](./EKALAYAVA_HISTORICAL_DATA_COVERAGE_JUL_DEC_2025.md)
+> and [EKALAYAVA_MULTI_PERIOD_EXIT_VALIDATION.md](./EKALAYAVA_MULTI_PERIOD_EXIT_VALIDATION.md).
+> The final no-policy-approved decision is in
+> [EKALAYAVA_FINAL_SL_TARGET_DECISION.md](./EKALAYAVA_FINAL_SL_TARGET_DECISION.md).
+
 ## Decision
 
 **No experimental stop/target policy is selected or approved. Keep the canonical
