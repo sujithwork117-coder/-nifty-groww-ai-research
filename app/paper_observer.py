@@ -26,6 +26,7 @@ from .groww_data import get_session_candles
 from .journal import append_paper_record
 from .nse_calendar import DEFAULT_NSE_CALENDAR, NSECalendar
 from .paper_engine import PaperContractEngine
+from .paper_shadow import EkalayavaShadowBook
 from .safety import ExecutionLock
 
 IST = ZoneInfo("Asia/Kolkata")
@@ -114,6 +115,8 @@ class GrowwPaperObserver:
             "invalid_data_events": 0,
             "journal_status": "NOT_VERIFIED",
             "reconnect_attempts": 0,
+            "shadow_candidates": {},
+            "shadow_candidate_errors": {},
             "last_option_candles": {}, "signals": [], "paper_positions": {},
             "skipped": [], "errors": [], "execution_allowed": False,
             "paper_only": True, "kill_switch": bool(config.kill_switch),
@@ -218,6 +221,7 @@ class GrowwPaperObserver:
             "simulation_mode": "READ_ONLY_OBSERVATION",
             "date": current.date().isoformat(), "timestamp": candle_timestamp,
             "close_time": _local(candle["close_time"]).isoformat(),
+            "stream": stream,
             "symbol": symbol, "expiry": contract.get("expiry") if contract else None,
             "strike": contract.get("strike") if contract else None,
             "option_type": contract.get("option_type") if contract else None,
@@ -401,9 +405,33 @@ class GrowwPaperObserver:
             option_failures = []
             self.status["last_option_candles"] = {}
             self.status["paper_positions"] = {}
+            self.status["shadow_candidates"] = {}
+            self.status["shadow_candidate_errors"] = {}
             for contract in selection["contracts"]:
                 symbol = contract["symbol"]
                 engine = engines[symbol]
+                try:
+                    shadow = EkalayavaShadowBook(
+                        self._state_path(trading_date, symbol).with_suffix(".shadow.json"),
+                        self._journal_path(trading_date), self.config,
+                    )
+                except Exception as exc:
+                    error_type = type(exc).__name__
+                    self.status["shadow_candidate_errors"][symbol] = error_type
+                    option_failures.append({"symbol": symbol, "reason": "SHADOW_STATE_INVALID"})
+                    self.status["paper_positions"][symbol] = {
+                        "l2l": self._position_summary(engine.state.get("l2l", {}).get("trade")),
+                        "ekalayava": self._position_summary(engine.state.get("ekalayava", {}).get("trade")),
+                        "last_completed_candle": engine.state.get("last_timestamp"),
+                        "stale": True,
+                        "data_quality_status": engine.state.get("data_quality_status"),
+                        "missing_intervals": engine.state.get("missing_intervals", 0),
+                    }
+                    self._record_observer_event(
+                        "SHADOW_CANDIDATE_ERROR", current, stream="OPTIONS",
+                        symbol=symbol, error_type=error_type,
+                        reason="isolated candidate state could not be restored")
+                    continue
                 try:
                     option_frame = self._fetch(symbol, session_start, request_end, self.config.segment_fno)
                     option_bars = _completed_session_bars(option_frame, trading_date, current)
@@ -486,7 +514,28 @@ class GrowwPaperObserver:
                         nifty_price = nifty_by_time.get(bar["timestamp"].isoformat())
                         previous_missing = int(engine.state.get("missing_intervals", 0))
                         previous_candle = engine.state.get("last_timestamp")
+                        try:
+                            shadow.advance(bar)
+                        except Exception as exc:
+                            error_type = type(exc).__name__
+                            self.status["shadow_candidate_errors"][symbol] = error_type
+                            self._record_observer_event(
+                                "SHADOW_CANDIDATE_ERROR", current, stream="OPTIONS",
+                                symbol=symbol, error_type=error_type,
+                                reason="isolated candidate state failed closed")
+                            raise
                         events = engine.process_candle(bar, nifty_price=nifty_price)
+                        for event in events:
+                            try:
+                                shadow.observe_signal(event)
+                            except Exception as exc:
+                                error_type = type(exc).__name__
+                                self.status["shadow_candidate_errors"][symbol] = error_type
+                                self._record_observer_event(
+                                    "SHADOW_CANDIDATE_ERROR", current, stream="OPTIONS",
+                                    symbol=symbol, error_type=error_type,
+                                    reason="canonical signal could not initialize isolated candidates")
+                                raise
                         missing_now = int(engine.state.get("missing_intervals", 0))
                         if missing_now > previous_missing:
                             missing_count = missing_now - previous_missing
@@ -515,6 +564,10 @@ class GrowwPaperObserver:
                         "data_quality_status": engine.state.get("data_quality_status"),
                         "missing_intervals": engine.state.get("missing_intervals", 0),
                     }
+                    self.status["shadow_candidates"][symbol] = [
+                        dict(candidate)
+                        for candidate in shadow.snapshot()["candidates"].values()
+                    ]
                     LOG.warning("Exact option stream rejected (%s, %s)", symbol, type(exc).__name__)
                     continue
                 last_bar = (option_bars[-1]["timestamp"].isoformat() if option_bars else
@@ -682,6 +735,7 @@ def main():
         "missing_underlying_intervals", "last_option_candles", "signals",
         "duplicate_candles_suppressed", "invalid_data_events", "journal_status",
         "reconnect_attempts", "paper_positions",
+        "shadow_candidates", "shadow_candidate_errors",
         "skipped", "errors", "kill_switch", "execution_allowed", "paper_only",
     )}, sort_keys=True, default=str))
     return 0

@@ -210,3 +210,137 @@ Continue a consecutive predeclared observation horizon of **at least 100 qualify
 | Real-session contract availability/freshness/signal behavior | **LIVE VERIFICATION REQUIRED** | Must be checked in tomorrow's supervised read-only session; 2026-10-13 snapshot had 2/4 contracts. |
 | Real-session reconnect/recovery | **LIVE VERIFICATION REQUIRED** | Mock coverage is not evidence of actual provider behavior. |
 | Mission 11 report and GitHub delivery | **COMPLETED** | The implementation/report and report-only status-update commits are pushed to `origin/main`; final branch and clean-worktree checks follow. |
+
+## 11. Final Offline Strategy Finalisation — 2026-10-13
+
+### Outcome
+
+The safely achievable offline work is complete. The seven experimental Ekalayava policies remain **research-only**; none is approved or activated. The canonical engine remains observation-only for Ekalayava, and L2L retains its existing option-premium entry/exit rules. No continuous observer was run for this finalisation and no real-session result is claimed.
+
+Baseline before this mission: `main` at `f3bac63866352515e469684b17b4132697ee16fd`, equal to `origin/main`. This mission starts from the clean pulled baseline and preserves the historical source reports and datasets.
+
+### Changed files
+
+| File | Change |
+|---|---|
+| `app/paper_shadow.py` | Added an isolated, persisted seven-candidate shadow state machine. It accepts only canonical Ekalayava signals and completed option candles; candidate exits, ambiguity, data gaps, stop-update activation time and null quote/fill/cost fields remain separate from the canonical engine. |
+| `app/paper_observer.py` | Advances the separate shadow book on the same validated option bars, initializes it only from canonical signals, persists it per contract/day, and exposes candidate states/errors in health. Shadow failures degrade observer health. |
+| `app/paper_reconcile.py` | Added read-only journal/state/health reconciliation for both strategy signal states and all seven candidate states, candle integrity and gaps, candidate outcomes/points, null versus zero points, missing contracts and absent quote/fill/cost evidence. Supports the observer's parent-level health snapshot. |
+| `tools/reconcile_paper_session.py` | Added deterministic JSON stdout and human stderr CLI; exits non-zero (`2`) on integrity failures without changing source records. |
+| `app/journal.py` | Added candidate identity/state and explicitly hypothetical exit fields to the JSONL schema; actual quote, fill and cost fields remain null. Existing CRLF formatting is preserved. |
+| `tests/test_paper_shadow.py` | Covers independent candidate processing, restart/idempotency, trailing-stop timing, ambiguous bars, gaps and invalid candles. |
+| `tests/test_paper_observer.py` | Verifies seven candidate states per qualifying mock signal and visible/degraded health on shadow errors. |
+| `tests/test_paper_reconcile.py` | Covers deterministic repeated runs, counts, ambiguity, partial paths, duplicate/malformed records, gaps, conflicting exits, zero versus absent points, date-scoped state layout, and CLI failure output. |
+
+No historical data or prior research output was overwritten. Canonical strategy definitions and parameters were not changed. The shadow evaluator neither changes canonical signals nor creates broker instructions.
+
+### Scorecard A — Software and research milestones
+
+The denominator is the **14 top-level milestones** in the Mission 11 matrix above. The Mission 11 baseline had 8 complete, 2 partial, 2 blocked and 2 live-only.
+
+| Final status | Count | Milestones / evidence |
+|---|---:|---|
+| Fully completed offline | **10** | Original 8: research baseline/reconciliation; canonical behavior preservation; read-only auth/profile preflight; candle ordering/completion; exact contract selection/no substitution; durable journal/restart; order-path isolation; Mission 11 report/delivery. Newly completed: isolated seven-candidate observer shadow workflow (focused observer/shadow tests); deterministic end-of-session reconciliation CLI (fixture tests, help and non-zero failure behavior). |
+| Partially completed | **1** | Health/freshness/gaps/reconnect: offline error reporting and mocked bounded reconnect are tested; actual market-time freshness and provider reconnect remain unobserved. |
+| Blocked by missing evidence | **1** | Real quote/spread/fill/transaction-cost evidence: no sourced, supervised paper quote/fill/cost dataset exists. |
+| Requires actual live-session verification | **2** | Exact four-contract availability, advancing/fresh live candles and signals; real provider reconnect/restart/recovery. |
+| **Total** | **14** | **10/14 complete (71.4%)**; 4 remain in the categories above. |
+
+**Previous complete: 8/14. Newly completed in this mission: 2** (seven-candidate observer shadow integration; offline session reconciliation). The completed shadow milestone means the isolated software path is implemented and regression-tested; it does not assert real-provider readiness or strategy approval.
+
+### Scorecard B — Historical strategy outcomes
+
+All points below are **gross option-premium points**, not currency P&L. No actual transaction costs or executable fills are available. For the Ekalayava comparisons, each hypothetical cost scenario subtracts the stated per-round-trip cost from each of the 447 resolved outcomes; the scenarios are sensitivities, not fee estimates. The 447 denominator is 194 exact 2025 H2 entries plus 253 saved 2026 entry observations. The 2025 set has 192 complete and 2 partial paths; the saved 2026 set has 253 exact recovered paths. The saved 2026 entries were not all independently redetected. Candidate totals include both 2025 partial source paths; the existing ledger reports 447/447 simulated outcomes, with zero unresolved and zero excluded outcomes.
+
+#### L2L — canonical Opening-High policy
+
+The reproduced baseline is 361 setups: 203 eligible entries, 57 targets, 145 stops, 1 ambiguous outcome and 0 unresolved outcomes; 158 setups were skipped (157 already at/below stop and 1 already at/above target). The 202 resolved trades sum to **+237.45 option-premium points**, with 250.05 maximum drawdown on the equal-unit chronological resolved-event sequence. One skipped target-already-reached entry is not counted as a target. Under purely hypothetical round-trip costs of 0.5 and 1.0 premium points per resolved trade, the net sensitivity is +136.45 and +35.45 points, respectively; these are not measured fees or fill costs. The break-even uniform cost is about 1.18 points per resolved trade. The underlying NIFTY is used for contract selection/reference; the strategy's opening range, entry, stop, target and reported points are from the selected **option premium** candles. No forced session-end exit is introduced.
+
+The existing chronological summaries vary by period: Jan–Jun 2026 +134.85 (n=147 resolved), Jul–Aug +81.40 (n=41), and incomplete Sep +21.20 (n=14). The baseline does not report a per-entry partial-path count (**UNKNOWN**); the separate coverage inventory records 1 partial and 178 missing/unselectable contract-days out of 740 expected, which is not a count of affected trades. Missing option coverage can suppress setups; Sep ends before the full requested period. These retrospective, coverage-dependent figures and the absence of measured costs do not establish robust net expectancy or live readiness.
+
+#### Ekalayava — seven fixed candidate policies
+
+`Evaluated` is the policy replay count, not the number of real paper trades. All 447 rows received a reported terminal simulation outcome; no candidate had an ambiguous terminal result, unresolved result or excluded entry in the fixed ledger. The two partial source paths remain flagged as partial/unverifiable input evidence for each policy.
+
+| Candidate | Eligible / evaluated | Target | Stop | Ambiguous | EOD* | Unresolved | Partial paths | Gross points | Net @ 0.5 points/trade | Net @ 1.0 point/trade | 2025 Nov–Dec gross (n=69) |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| `A_B4_OPENING_HIGH_V1` | 447 / 447 | 164 | 243 | 0 | 40 | 0 | 2 | +685.55 | +462.05 | +238.55 | +167.25 |
+| `A_B4_TP25_V1` | 447 / 447 | 197 | 232 | 0 | 18 | 0 | 2 | −1,476.05 | −1,699.55 | −1,923.05 | +148.20 |
+| `A_STRUCTURAL_TROUGH_B4_TP25` | 447 / 447 | 281 | 160 | 0 | 6 | 0 | 2 | −440.14 | −663.64 | −887.14 | −7.36 |
+| `B_B2_LOWER_LOW_TRAIL_OPENING_HIGH_V1` | 447 / 447 | 112 | 331 | 0 | 4 | 0 | 2 | +278.10 | +54.60 | −168.90 | +1.25 |
+| `C_B2_1R_V1` | 447 / 447 | 190 | 239 | 0 | 18 | 0 | 2 | −1,740.85 | −1,964.35 | −2,187.85 | +76.95 |
+| `C_B2_1_5R_V1` | 447 / 447 | 154 | 265 | 0 | 28 | 0 | 2 | −1,289.90 | −1,513.40 | −1,736.90 | +118.22 |
+| `C_B2_2R_V1` | 447 / 447 | 127 | 282 | 0 | 38 | 0 | 2 | −1,151.50 | −1,375.00 | −1,598.50 | +172.70 |
+
+*EOD means experimental session-end exits; it is not part of canonical Ekalayava behavior. Candidate counts, target touches and simulated exits are not additive across policies.
+
+The already-preserved [Guide 8 candidate counts](./ekalayava_guide8_candidate_counts.csv) and [per-observation outcomes](./ekalayava_guide8_candidate_trade_outcomes.csv) contain the existing split, subgroup, win-rate, mean/median, profit-factor, drawdown, streak, holding-time, MFE/MAE and exit-reason detail; the [Guide 9 B2 audit](./EKALAYAVA_GUIDE9_B2_TRAILING_PROXY_AUDIT.md) has the explicit B2 path and excursion diagnostics. These are the same historical populations and definitions summarized here, not newly generated or independently re-collected measurements.
+
+The existing chronological slices do not establish a robust winner. For example, `A_B4_OPENING_HIGH_V1` is the aggregate gross leader, but the previously reported 2025 Jul–Aug training and Sep–Oct validation segments were −120.90 and −141.60, before +167.25 in the already-inspected Nov–Dec segment and +780.80 on the saved 2026 ledger. B2's +278.10 gross aggregate falls to +54.60 at a hypothetical 0.5-point cost and −168.90 at 1 point; its previously reported validation and incomplete-September periods were negative. The 2025 test, candidate selection and 2026 ledger have all been inspected; none is an untouched holdout. Costs, bid/ask, spread, slippage and real fills are not measured.
+
+**Per-policy evidence classification: `RESEARCH ONLY — PROMISING BUT UNVALIDATED`** for the two gross-positive aggregates; `REJECTED — INSUFFICIENT OR UNSTABLE EVIDENCE` for the other five. None is eligible for exit approval or live trading. The seven rows contain historical signal observations only; this mission produced **zero real-session qualifying signals**. The four signals in observer tests are mock fixtures, not market observations.
+
+### Observer shadow and session-reconciliation verification
+
+The observer processes shadow bars separately from `PaperContractEngine`, using the same exact validated option stream; it initializes candidate states only after a canonical Ekalayava signal, records candidate-specific hypothetical levels/outcomes and keeps quote/fill/cost fields null. Stop changes from the lower-low proxy become active only on the following completed candle. Same-bar stop/target ambiguity and data gaps remain explicit. No continuous observer was started.
+
+Command:
+
+```sh
+./.venv/bin/python -m tools.reconcile_paper_session data/paper_observer/YYYY-MM-DD
+```
+
+It reads the date-scoped journal and state files plus the observer health snapshot (stored one directory above by the current observer), detects signal/state mismatches, duplicate IDs/timestamps, out-of-order candles, five-minute gaps, incomplete paths and duplicate/conflicting terminal outcomes, and reports per-candidate counts/points and absent quotes/fills/costs. JSON is printed to stdout; the concise summary goes to stderr; integrity failures return exit status 2. Repeated fixture runs are deterministic and read-only. **No real observer session journal exists in `data/paper_observer`; therefore no real-session reconciliation result is claimed.**
+
+### Tests and safety
+
+Executed with workspace Python 3.14.2:
+
+```text
+pytest -q tests/test_paper_shadow.py tests/test_paper_reconcile.py tests/test_paper_observer.py tests/test_journal.py
+28 passed
+
+pytest -q
+151 passed
+
+python -m compileall -q app tests tools
+passed
+
+Pylance syntax checks: app/paper_shadow.py, app/paper_reconcile.py,
+tests/test_paper_shadow.py, tests/test_paper_reconcile.py
+no syntax errors
+
+python -m tools.reconcile_paper_session --help
+passed
+
+ExecutionLock: EXECUTION_ALLOWED=False, PAPER_ONLY=True
+passed
+```
+
+The existing report artifacts were used for historical reconciliation; no large simulation or data retrieval was repeated. No lint/type-check configuration was found beyond the repository's pytest setup. The source changes introduce no order API path. A read-only authentication/profile preflight was **not** repeated during this offline finalisation; repeat it tomorrow before observation. No order was submitted, modified or cancelled.
+
+### Tomorrow-only supervised checks
+
+Run only during the next market session, with the terminal visible:
+
+```sh
+./.venv/bin/python -c 'from app.config import CFG; from app.safety import ExecutionLock; print(f"EXECUTION_ALLOWED={CFG.execution_allowed}; PAPER_ONLY={CFG.paper_only}; KILL_SWITCH={CFG.kill_switch}"); ExecutionLock(CFG).assert_paper_only()'
+./.venv/bin/python -m app.main --auth
+./.venv/bin/python -m app.paper_observer
+```
+
+Before interpreting a signal, verify the actual session date/expiry, exact CE ITM2, CE ITM3, PE ITM2 and PE ITM3 symbols, `contract_coverage == "4/4"`, and empty `missing_contracts`. Confirm a completed 09:15 NIFTY opening bar, advancing and fresh five-minute timestamps for NIFTY and every selected option, no unexplained gaps/duplicates/stale/out-of-order events, healthy status, persisted health/journal, and seven candidate states per canonical Ekalayava signal. If any exact contract is absent, record incomplete coverage—never substitute.
+
+Stop with Ctrl-C; confirm `STOPPED_BY_OPERATOR`, state and journal persistence, and (only after the observer has stopped) run:
+
+```sh
+./.venv/bin/python -m tools.reconcile_paper_session data/paper_observer/YYYY-MM-DD
+```
+
+Treat any failed safety/auth check, missing opening NIFTY candle, non-4/4 coverage, persistent degraded health, unexplained staleness/gap, persistence error or exhausted reconnect limit as an abort. A supervised observation is still paper-only and does not approve any exit lifecycle.
+
+### Remaining blockers and delivery
+
+The remaining work is exactly one offline-evidence blocker (real sourced quote/fill/cost observations) and two live-only milestones (actual date/contract/feed/signal verification and real provider reconnect/recovery); freshness/reconnect implementation remains partially complete until those observations exist. No candidate exit is selected. Readiness means the isolated software is prepared for a supervised read-only attempt **if** tomorrow's abort gates pass; it is not evidence of current live data quality or trading authorization.
+
+The baseline commit is recorded above. Final commit and push status are reported only after the verified Git delivery for this section; the report and code are to be committed without market-data artifacts and pushed only if `origin/main` is still safe to advance.

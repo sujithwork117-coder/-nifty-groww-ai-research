@@ -91,6 +91,8 @@ def test_observer_selects_exact_daily_contracts_processes_closed_bars_and_recove
     assert len(status["signals"]) == 4
     assert all(event["strategy_version"] == "observer-test-v1" for event in status["signals"])
     assert all(event["setup_id"] == event["event_id"] for event in status["signals"])
+    assert all(len(candidates) == 7 for candidates in status["shadow_candidates"].values())
+    assert status["shadow_candidate_errors"] == {}
     assert all(event["close_time"].endswith("09:30:00+05:30") for event in status["signals"])
     assert all(value.endswith("09:25:00+05:30") for value in status["last_option_candles"].values())
     assert status["underlying_candle_age_seconds"] == 120
@@ -151,6 +153,34 @@ def test_observer_quarantines_invalid_candle_sequence_and_continues(tmp_path):
     assert len(status["signals"]) == 3
     assert status["paper_positions"]["NSE-NIFTY-15Oct26-9950-CE"]["stale"] is True
     assert any(item["reason"].startswith("INVALID_CANDLE_SEQUENCE_") for item in status["skipped"])
+
+
+def test_shadow_candidate_error_is_visible_and_degrades_health(tmp_path, monkeypatch):
+    def fail_shadow(self, candle):
+        raise RuntimeError("candidate test failure")
+
+    monkeypatch.setattr("app.paper_observer.EkalayavaShadowBook.advance", fail_shadow)
+    observer = GrowwPaperObserver(FakeGroww(), make_config(), tmp_path)
+    status = observer.run_once(datetime.fromisoformat("2026-10-12T09:32:00+05:30"))
+
+    assert status["health"] == "DEGRADED_OPTION_DATA"
+    assert status["shadow_candidate_errors"]
+    assert set(status["shadow_candidate_errors"].values()) == {"RuntimeError"}
+    assert status["signals"] == []
+
+
+def test_corrupt_shadow_state_is_visible_and_degrades_health(tmp_path, monkeypatch):
+    def fail_restore(self, *args, **kwargs):
+        raise ValueError("invalid shadow state")
+
+    monkeypatch.setattr("app.paper_observer.EkalayavaShadowBook.__init__", fail_restore)
+    observer = GrowwPaperObserver(FakeGroww(), make_config(), tmp_path)
+    status = observer.run_once(datetime.fromisoformat("2026-10-12T09:32:00+05:30"))
+
+    assert status["health"] == "DEGRADED_OPTION_DATA"
+    assert set(status["shadow_candidate_errors"].values()) == {"ValueError"}
+    assert all(status["paper_positions"][contract["symbol"]]["stale"]
+               for contract in status["selected_contracts"])
 
 
 def test_observer_marks_stale_option_stream_and_disables_its_entries(tmp_path):

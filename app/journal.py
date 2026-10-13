@@ -43,6 +43,9 @@ PAPER_RECORD_FIELDS = (
     "underlying_reference_candle_timestamp", "contract_catalog_retrieved_at",
     "selection_rationale", "selected_contracts_json", "expected_strikes_json",
     "observed_strike_step",
+    "candidate_id", "candidate_state_json", "hypothetical_stop",
+    "hypothetical_target", "hypothetical_exit_price", "hypothetical_points",
+    "source_candle_timestamp",
 )
 
 
