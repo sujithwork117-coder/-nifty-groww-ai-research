@@ -57,7 +57,7 @@ def _completed_session_bars(frame, trading_date, now):
     local_now = _local(now)
     session_end = datetime.combine(trading_date, time(15, 30), IST)
     end = min(local_now, session_end)
-    latest_closed_start = pd.Timestamp(end.to_pydatetime() - timedelta(minutes=5))
+    latest_closed_start = pd.Timestamp(end) - timedelta(minutes=5)
     local = local.loc[
         (local["timestamp"].dt.date == trading_date)
         & (local["timestamp"].dt.time >= time(9, 15))

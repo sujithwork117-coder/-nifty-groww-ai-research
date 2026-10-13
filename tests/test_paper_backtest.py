@@ -37,6 +37,36 @@ def test_level_backtest_marks_same_candle_ambiguity_without_inventing_exit_price
     assert pd.isna(result.iloc[0].exit_price)
 
 
+def test_level_backtest_marks_missing_candle_before_later_target_as_unresolved():
+    candles=pd.DataFrame([
+        {"timestamp":pd.Timestamp("2026-09-01 09:15",tz="Asia/Kolkata"),"open":105,"high":110,"low":100,"close":105},
+        {"timestamp":pd.Timestamp("2026-09-01 09:20",tz="Asia/Kolkata"),"open":102,"high":103,"low":99,"close":101},
+        {"timestamp":pd.Timestamp("2026-09-01 09:25",tz="Asia/Kolkata"),"open":100,"high":103,"low":100,"close":102},
+        {"timestamp":pd.Timestamp("2026-09-01 09:35",tz="Asia/Kolkata"),"open":103,"high":110,"low":102,"close":109},
+    ])
+
+    result=backtest_level_to_level(candles)
+
+    assert len(result)==1
+    assert result.iloc[0].outcome=="UNRESOLVED_DATA_GAP"
+    assert pd.isna(result.iloc[0].points_gained_lost)
+    assert result.iloc[0].missing_candle_timestamp==pd.Timestamp("2026-09-01 09:30",tz="Asia/Kolkata")
+
+
+def test_level_backtest_marks_entry_without_future_candles_as_unresolved():
+    candles=pd.DataFrame([
+        {"timestamp":pd.Timestamp("2026-09-01 09:15",tz="Asia/Kolkata"),"open":105,"high":110,"low":100,"close":105},
+        {"timestamp":pd.Timestamp("2026-09-01 09:20",tz="Asia/Kolkata"),"open":102,"high":103,"low":99,"close":101},
+        {"timestamp":pd.Timestamp("2026-09-01 09:25",tz="Asia/Kolkata"),"open":100,"high":103,"low":100,"close":102},
+    ])
+
+    result=backtest_level_to_level(candles)
+
+    assert len(result)==1
+    assert result.iloc[0].outcome=="UNRESOLVED_NO_FUTURE_CANDLES"
+    assert pd.isna(result.iloc[0].points_gained_lost)
+
+
 def test_level_metrics_stop_at_exit_and_at_end_of_entry_day():
     candles=pd.DataFrame([
         {"timestamp":pd.Timestamp("2026-09-01 09:15",tz="Asia/Kolkata"),"open":105,"high":110,"low":100,"close":105},

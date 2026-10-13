@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import pandas as pd
 
 from .strategies import level_to_level_events
@@ -25,14 +27,28 @@ def simulate_level(df,event):
     d=_same_day_future(df,event)
     result={"exit_time":None,"exit_price":None,"outcome":"OPEN","mfe":0.0,"mae":0.0,
             "intrabar_ambiguous":False}
+    entry_value=event.get("timestamp") if isinstance(event,dict) else event.timestamp
+    expected_timestamp=pd.to_datetime(entry_value,utc=True)+timedelta(minutes=5)
     path=[]
+    if d.empty:
+        result.update({"outcome":"UNRESOLVED_NO_FUTURE_CANDLES",
+                       "missing_candle_timestamp":expected_timestamp})
     for _,r in d.iterrows():
+        candle_timestamp=pd.to_datetime(r.timestamp,utc=True)
+        if candle_timestamp!=expected_timestamp:
+            result.update({
+                "outcome":"UNRESOLVED_DATA_GAP",
+                "missing_candle_timestamp":expected_timestamp,
+                "next_available_timestamp":candle_timestamp,
+            })
+            break
         path.append(r)
         sl=r.low<=event.sl;tg=r.high>=event.target
         if sl and tg:result.update({"exit_time":r.timestamp,"exit_price":None,"outcome":"AMBIGUOUS",
                                     "intrabar_ambiguous":True});break
         if sl:result.update({"exit_time":r.timestamp,"exit_price":event.sl,"outcome":"SL"});break
         if tg:result.update({"exit_time":r.timestamp,"exit_price":event.target,"outcome":"TARGET"});break
+        expected_timestamp=candle_timestamp+timedelta(minutes=5)
     if path:
         observed=pd.DataFrame(path)
         result["mfe"]=float(observed.high.max()-event.entry)

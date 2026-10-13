@@ -1,6 +1,6 @@
 # Paper-Trading Readiness — Independent Verification
 
-**Updated:** 2026-10-12. Repository and source audit, local tests, and one read-only Groww profile check were performed. At verification time it was about 23:56 IST, after NSE market hours. Authentication and `get_user_profile()` succeeded in this run. No candle-data endpoint was called, no observer session was started, and no historical data was downloaded.
+**Updated:** 2026-10-13. Repository/source audit, local tests, a read-only Groww profile check, and one bounded after-hours candle-processing check were performed. The candle endpoint returned data and provider validation succeeded, but the observer hit a local final-bar timestamp exception before completion. That offline code defect is fixed and covered by a regression test; the corrected code has not been rerun against Groww. No candle data was written to disk, no continuous observer session was started, and no historical dataset was downloaded.
 
 ## Decision
 
@@ -13,10 +13,10 @@ Both remain paper-only: `EXECUTION_ALLOWED=false`, `PAPER_ONLY=true`. Neither is
 
 ## What was verified
 
-- **Actual Groww connectivity:** read-only authentication and `get_user_profile()` both succeeded at about 23:56 IST on 2026-10-12. Credential values were not printed. No candle, quote, LTP, or order API was called. This verifies authentication/profile access only, not market-data delivery.
+- **Actual Groww connectivity:** read-only authentication and `get_user_profile()` succeeded at about 23:56 IST on 2026-10-12. During the later bounded check, read-only authentication, the NIFTY cash 5-minute candle request, and provider candle validation succeeded; local observer processing then failed on an after-close final-bar timestamp. No credentials were printed. This does not verify a full observer run, live option-contract selection, or reconnect/restart.
 - **Unit-tested:** canonical L2L red-break → first subsequent green entry, target-already-reached skip, stop/target/ambiguity, completed bar enforcement, duplicate/restart state, exact contract selection, calendar, and paper-only safety.
 - **Mock integration tested:** NIFTY opening bar → exact daily catalog-first expiry and ITM2/ITM3 CE/PE symbols → same-session completed 5-minute bars → per-contract engines → durable state/journal; per-symbol failures, reconnect, stale option feed, invalid timestamps, and restart/replayed candles.
-- **Not verified with Groww candles:** live 5-minute endpoint response shape/timing, actual four-contract completeness, rate-limit behavior against service, and recovery in a live market session.
+- **Not verified end to end with Groww:** corrected observer processing of the response, live option-chain selection/completeness, candle latency during market hours, rate-limit behavior, and recovery in a live market session.
 
 ## Findings and fixes in this verification
 
@@ -24,6 +24,7 @@ Both remain paper-only: `EXECUTION_ALLOWED=false`, `PAPER_ONLY=true`. Neither is
 - A stale option response could previously leave the observer healthy and permit delayed bars to be processed as current. Stale underlying/option candles now degrade health; stale option streams are durably marked and their engine disables new entries while open positions remain unresolved.
 - The journal now carries stable `setup_id`, Ekalayava structural-low distance from entry, and durable observer events for stale/unavailable streams, gaps, exact-contract omissions, reconnects, and replayed-candle suppression. Appends are deduplicated, serialized in-process, written as complete JSONL records, and fsynced. Run only one observer process per state directory.
 - `app.paper_observer` now has an explicit manual CLI. It is not started on import. Invalid candle sequences are quarantined to that exact stream while other exact contracts continue.
+- `_completed_session_bars` now handles the final completed bar after market close when the clamped session end is a Python `datetime`. Regression coverage is in `test_completed_session_bars_handles_the_final_bar_after_market_close`.
 
 ## Strategy audit
 
@@ -41,7 +42,7 @@ No numeric Ekalayava buffer is canonical. With buffer unset, signals and subsequ
 
 Signal records contain stable event/setup IDs, IST event and candle timestamps, exact symbol/expiry/strike/side/rank, opening range, entry and setup timestamps, Ekalayava swing/anchor/distance, optional buffer, defined stops/targets, MFE/MAE, exit/outcome, and data quality. MFE/MAE use post-entry completed-candle highs/lows; the entry candle is excluded because entry is at its close. Observer operational events share the per-session journal and use stable record IDs. Duplicate rows are ignored; a partial trailing line is separated before the next append. State snapshots and health snapshots use temporary-file replacement. Do not run simultaneous observer processes against one state directory.
 
-The exact catalog selector leaves absent CE/PE ITM2/ITM3 ranks missing; it does not substitute an adjacent strike. Existing Jan–Sep coverage remains incomplete (740 expected option contract-days: 561 complete, 1 partial, 178 missing/unselectable; 42,149/55,500 intervals, 75.9%). No historical figures were recalculated in this verification.
+The exact catalog selector leaves absent CE/PE ITM2/ITM3 ranks missing; it does not substitute an adjacent strike. Existing Jan–Sep coverage remains incomplete (740 expected option contract-days: 561 complete, 1 partial, 178 missing/unselectable; 42,149/55,500 intervals, 75.9%). Historical target-hit metrics were reconciled from saved ledgers in [`TARGET_HIT_ANALYSIS_L2L_EKALAYAVA_2026-10-13.md`](TARGET_HIT_ANALYSIS_L2L_EKALAYAVA_2026-10-13.md); no optimization grid was rerun.
 
 ## Supervised manual validation
 
@@ -59,18 +60,21 @@ Focused verification command:
 .\.venv\Scripts\python.exe -m pytest -q tests/test_live_listener.py tests/test_paper_observer.py tests/test_nse_calendar.py tests/test_journal.py tests/test_config_secrets.py tests/test_contract_selection.py tests/test_groww_data.py tests/test_safety_audit.py tests/test_safety.py tests/test_paper_replay.py
 ```
 
-Final verification on 2026-10-12: focused readiness/observer/selector/journal/safety tests **44 passed**; full repository suite **99 passed**. Commands:
+Earlier verification on 2026-10-12: focused readiness/observer/selector/journal/safety tests **44 passed** and the full suite **99 passed**. Latest verification on 2026-10-13: focused backtest/report/observer tests **18 passed**; full repository suite **114 passed**. Exact latest commands and results:
 
-```powershell
-.\.venv\Scripts\python.exe -m pytest -q tests/test_live_listener.py tests/test_paper_observer.py tests/test_nse_calendar.py tests/test_journal.py tests/test_config_secrets.py tests/test_contract_selection.py tests/test_groww_data.py tests/test_safety_audit.py tests/test_safety.py tests/test_paper_replay.py
-.\.venv\Scripts\python.exe -m pytest -q
+```text
+/home/codespace/.python/current/bin/python -m pytest -q tests/test_paper_backtest.py tests/test_target_hit_analysis.py tests/test_paper_observer.py
+18 passed in 1.09s (exit code 0)
+
+/home/codespace/.python/current/bin/python -m pytest -q
+114 passed in 6.87s (exit code 0)
 ```
 
 ## Safety
 
-- Runtime flags were checked as booleans only: `EXECUTION_ALLOWED=false`, `PAPER_ONLY=true`.
+- Effective `app.config.CFG` values were checked without printing credentials: `EXECUTION_ALLOWED=false`, `PAPER_ONLY=true`, `KILL_SWITCH=false`, and `EKALAYAVA_EXPERIMENTAL_EXIT_SIMULATION=false`.
 - `.env`, `secrets.txt`, credential/token patterns, and `data/paper_observer/` are ignored; no credential values are in reports or journal schema.
 - Application source has no order-placement, modification, or cancellation calls.
-- Groww authentication/profile succeeded; no market-data endpoint or order endpoint was called. No real orders were submitted and no observer was started.
+- The bounded check used only read-only authentication and candle retrieval; no order endpoint was called. No real orders were submitted, no continuous observer was started, and no downloaded candles were persisted.
 
 Historical findings remain in [`l2l_final_validation.md`](l2l_final_validation.md), [`EKALAYAVA_FINAL_RESEARCH.md`](EKALAYAVA_FINAL_RESEARCH.md), and [`STRATEGY_FINAL_COMPARISON.md`](STRATEGY_FINAL_COMPARISON.md); they were not regenerated.

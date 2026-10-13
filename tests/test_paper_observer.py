@@ -1,7 +1,9 @@
-from datetime import datetime
+from datetime import date, datetime
 from types import SimpleNamespace
 
-from app.paper_observer import GrowwPaperObserver
+import pandas as pd
+
+from app.paper_observer import GrowwPaperObserver, _completed_session_bars
 
 
 class FakeGroww:
@@ -50,6 +52,22 @@ def make_config():
         ekalayava_experimental_exit_simulation=False, model_version="test-model",
         strategy_version="observer-test-v1", segment_cash="CASH", segment_fno="FNO",
     )
+
+
+def test_completed_session_bars_handles_the_final_bar_after_market_close():
+    frame = pd.DataFrame([{
+        "timestamp": pd.Timestamp("2026-10-12 15:25:00", tz="Asia/Kolkata"),
+        "open": 100, "high": 101, "low": 99, "close": 100,
+    }])
+
+    bars = _completed_session_bars(
+        frame, date(2026, 10, 12),
+        datetime.fromisoformat("2026-10-12T15:35:00+05:30"),
+    )
+
+    assert len(bars) == 1
+    assert bars[0]["timestamp"] == pd.Timestamp("2026-10-12 15:25:00", tz="Asia/Kolkata")
+    assert bars[0]["close_time"] == pd.Timestamp("2026-10-12 15:30:00", tz="Asia/Kolkata")
 
 
 def test_observer_selects_exact_daily_contracts_processes_closed_bars_and_recovers(tmp_path):

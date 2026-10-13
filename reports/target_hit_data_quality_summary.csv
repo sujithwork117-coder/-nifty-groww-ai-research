@@ -1,0 +1,26 @@
+strategy,check,observed_value,expected_value,status,note
+L2L,saved_policy_trade_rows,4332,4332,VERIFIED,
+L2L,unique_policy_setup_pairs,4332,4332,VERIFIED,
+L2L,distinct_policy_definitions,12,12,VERIFIED,
+L2L,source_bar_count_75,4332,4332,VERIFIED,
+L2L,target_exit_plus_ambiguous_is_touch,962,,VERIFIED,Counts one target touch per terminal target/ambiguous outcome; does not count post-exit candle touches.
+L2L,saved_unresolved_outcomes,0,0,VERIFIED,Historical policy rows do not retain per-candle timestamps for independent path replay.
+L2L,canonical_baseline_setup_count,361,361,VERIFIED,
+L2L,full_policy_grid_replayed,NO,NO,VERIFIED,Existing CSV ledgers were aggregated only.
+EKALAYAVA,saved_policy_trade_rows,9361,9361,VERIFIED,
+EKALAYAVA,unique_policy_setup_pairs,9361,9361,VERIFIED,
+EKALAYAVA,distinct_policy_definitions,37,37,VERIFIED,
+EKALAYAVA,source_bar_count_75,9361,9361,VERIFIED,
+EKALAYAVA,canonical_observation_entries,253,253,VERIFIED,
+EKALAYAVA,canonical_opening_high_touches,109,109,VERIFIED,Observation only; no canonical exit or realized P&L.
+EKALAYAVA,canonical_realized_pnl_present,0,0,VERIFIED,
+EKALAYAVA,C_anchor_independent_policy_count,0,0,VERIFIED,C is an alias of A and was not independently simulated.
+EKALAYAVA,saved_unresolved_policy_outcomes,0,0,VERIFIED,
+EKALAYAVA,full_policy_grid_replayed,NO,NO,VERIFIED,Saved ledgers and MFE observations were aggregated only.
+DATA_SCOPE,local_market_data_2022,NONE,AVAILABLE,UNAVAILABLE,No local 5-minute datasets; no data downloaded.
+DATA_SCOPE,local_market_data_2023,NONE,AVAILABLE,UNAVAILABLE,No local 5-minute datasets; no data downloaded.
+DATA_SCOPE,local_market_data_2024,NONE,AVAILABLE,UNAVAILABLE,No local 5-minute datasets; no data downloaded.
+DATA_SCOPE,local_market_data_2025,NONE,AVAILABLE,UNAVAILABLE,No local 5-minute datasets; no data downloaded.
+DATA_SCOPE,2026_option_contract_days_complete_partial_missing,561 / 1 / 178 of 740,740 expected,VERIFIED,
+DATA_SCOPE,September_status,INCOMPLETE through 2026-09-29,Complete through 2026-09-30,INCOMPLETE,No Sep 30 underlying; Sep 29 underlying misses 17 late bars.
+DATA_SCOPE,downloaded_new_market_data,NO,NO,VERIFIED,
