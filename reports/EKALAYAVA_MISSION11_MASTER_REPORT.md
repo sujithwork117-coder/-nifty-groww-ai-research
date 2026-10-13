@@ -395,3 +395,24 @@ observer operation were not run. The NSE calendar only establishes 2026
 sessions. Use `python run_research.py` for the safe default; authentication,
 fetching and supervised observation require explicit commands. `live` remains
 paper-only and is not live-trading or strategy-exit approval.
+
+### Follow-up verification — 2026-10-13
+
+The pushed terminal workflow was subsequently checked from the synchronized
+Windows checkout. `python run_research.py auth-check` succeeded for Groww
+authentication and the read-only profile response; no credential or profile
+values were displayed. The offline default and study commands completed, the
+seven-candidate smoke/reconciliation acceptance test passed, and the complete
+suite passed (**157 tests**). `compileall` and `doctor` passed with
+`EXECUTION_ALLOWED=false`, `PAPER_ONLY=true`, and `ExecutionLock` satisfied.
+No historical data was fetched and no observer or order function was run.
+
+The local CSV inventory still contains 2026-01-01 through 2026-09-29 only.
+The saved 2025 H2 reports provide aggregate research evidence for 194 canonical
+Ekalayava entries (192 complete paths, 2 partial), but the H2 raw manifest and
+datasets are absent from this checkout; no 2025 L2L baseline is available.
+2024 remains unavailable. The saved 2026 coverage audit reports 13,783 NIFTY
+bars, 42,149 option bars, 561 complete and 1 partial contract-days, 178
+missing/unselectable contract-days, and 112 fully usable / 55 partial / 18
+unusable days. These are existing artifacts, not fresh downloads.
+
