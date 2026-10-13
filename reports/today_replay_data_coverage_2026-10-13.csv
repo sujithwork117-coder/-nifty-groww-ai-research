@@ -1,0 +1,6 @@
+stream,symbol,expiry,option_type,itm_rank,segment,raw_rows,completed_rows,first_completed_ist,last_completed_ist,missing_intervals_from_open,opening_bar_present,selection_status,coverage_status,notes
+CASH,NIFTY,,,,CASH,56,55,2026-10-13T09:15:00+05:30,2026-10-13T13:45:00+05:30,0,true,NOT_APPLICABLE,PARTIAL_SESSION,13:50 bucket excluded as incomplete; session ongoing at retrieval
+FNO,NSE-NIFTY-13Oct26-22300-CE,2026-10-13,CE,2,FNO,56,55,2026-10-13T09:15:00+05:30,2026-10-13T13:45:00+05:30,0,true,SELECTED,PARTIAL_SESSION,13:50 bucket excluded as incomplete; exact selector result; catalog timestamp unavailable
+FNO,NSE-NIFTY-13Oct26-22500-PE,2026-10-13,PE,3,FNO,56,55,2026-10-13T09:15:00+05:30,2026-10-13T13:45:00+05:30,0,true,SELECTED,PARTIAL_SESSION,13:50 bucket excluded as incomplete; exact selector result; catalog timestamp unavailable
+FNO,NOT_SELECTED,2026-10-13,CE,3,FNO,0,0,,,,false,NOT_AVAILABLE,BLOCKED,Exact CE ITM3 absent from current selector response; no substitute requested
+FNO,NOT_SELECTED,2026-10-13,PE,2,FNO,0,0,,,,false,NOT_AVAILABLE,BLOCKED,Exact PE ITM2 absent from current selector response; no substitute requested
