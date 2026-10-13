@@ -1,0 +1,401 @@
+Ekalayava — Final Research Mission: Find a Robust Exit Policy or Prove What Is Missing
+
+ROLE AND OBJECTIVE
+
+Act as the senior quantitative researcher, trading-system engineer and independent strategy auditor for the existing Ekalayava NIFTY options research project.
+
+This is a continuation of the existing repository. Do not create a new project or discard previous work.
+
+Your responsibility is to determine whether Ekalayava can achieve a repeatable positive trading expectancy after realistic costs, and, if supported by evidence, identify and implement the strongest stop-loss and target policy for supervised paper trading.
+
+Do not optimize merely to increase target-hit percentage, win rate or historical gross points.
+
+The real objective is to find an exit policy that:
+
+* Uses a precisely defined and causally valid rule.
+* Produces a positive and economically meaningful result after realistic costs.
+* Does not depend on one unusually favourable historical period.
+* Has acceptable drawdown and losing-streak characteristics.
+* Remains credible across different market periods.
+* Can be reproduced independently from the underlying candle data.
+* Can be evaluated safely in paper trading.
+
+Do not claim the strategy is foolproof or guarantee future profitability.
+
+Continue until every feasible, authorized research and verification task is complete. Do not stop after writing a plan or discovering the first limitation. Do not fabricate evidence when data is unavailable.
+
+1. AUDIT THE EXISTING PROJECT
+
+Read the current versions of:
+
+* EKALAYAVA_TARGET_SL_COUNT_RECONCILIATION.md
+* EKALAYAVA_FINAL_SL_TARGET_DECISION.md
+* EKALAYAVA_FINAL_RULE_SPEC.md
+* EKALAYAVA_GUIDE8_EXECUTION_SUMMARY.md, or its latest equivalent.
+* EKALAYAVA_FINAL_EVIDENCE_AND_DATA_COVERAGE.md, if present.
+* All existing Ekalayava research reports.
+* Saved entry and candidate trade ledgers.
+* Historical candle manifests and exact-contract option data.
+* Existing candidate implementations, simulators and automated tests.
+* Paper-trading engine, configuration and execution safeguards.
+
+Inspect the actual code and data rather than blindly trusting prior reports.
+
+Verify the current repository state, actual date coverage, candidate definitions and whether previously reported calculations can be reproduced.
+
+Preserve all useful existing research. Do not overwrite canonical rules or delete previous reports.
+
+2. PRESERVE THE CANONICAL ENTRY STRATEGY
+
+Use the existing canonical Ekalayava entry logic as the baseline:
+
+1. Process completed five-minute option candles chronologically.
+2. Mark the Opening High and Opening Low from the first completed five-minute candle.
+3. Require the premium to break below the Opening Low.
+4. Detect the subsequent recovery or reversal structure using only information available at the time.
+5. Identify the eligible causal swing high.
+6. Enter at the completed candle close when the premium breaks the eligible swing high before reaching the Opening High.
+7. Preserve the existing rule that the entry candle may close below the Opening High.
+8. Match the exact contract, expiry and timestamps.
+
+Do not use future candles to qualify entries or make stop/target decisions.
+
+Do not change the entry logic merely to improve backtest performance. If you identify a specific weakness, create a separate experimental variant and evaluate it independently against the unchanged baseline.
+
+3. PRIORITIZE HISTORICAL DATA QUALITY
+
+The latest reconciliation reported:
+
+* 194 exact-path observations from the second half of 2025.
+* 253 saved 2026 entry observations.
+* Only 7 reconstructable exact-contract paths from the 2026 ledger.
+* 246 2026 observations without sufficient exact-contract paths.
+
+Verify these figures directly from the current files.
+
+Prioritize July 1–December 31, 2025 and the existing 2026 data already available locally.
+
+Inspect:
+
+* Exact option symbols and expiry dates.
+* Entry timestamps and post-entry five-minute candles.
+* Missing intervals and partial paths.
+* Duplicate entries and duplicate exits.
+* Contract-selection mismatches.
+* Whether a path is complete enough to establish an exit.
+* Whether the entry ledger and candle files refer to the same instrument.
+
+Make one bounded attempt to locate additional relevant data through existing local files and already configured, authorized sources.
+
+If a source is unavailable, stop retrying it. Do not initiate broad historical downloads, seek 2022–2024 data, purchase another data subscription or incur new costs without separate authorization.
+
+Do not interpolate missing option prices, substitute neighbouring strikes or infer unobserved outcomes.
+
+Classify each entry as:
+
+* Complete reconstructable path.
+* Partial but resolvable path.
+* Partial unresolved path.
+* Missing path.
+* Invalid or mismatched data.
+
+Report actual counts by period and contract category.
+
+If sufficient data cannot be obtained, complete the work supported by existing evidence and specify the exact missing data required next.
+
+4. INVESTIGATE THE LEADING TRAILING-STOP CANDIDATE
+
+The current leading research candidate is:
+
+B_B2_LOWER_LOW_TRAIL_OPENING_HIGH_V1
+
+Its existing experimental definition is:
+
+* Initial stop-loss: structural trough minus 2 premium points.
+* Target: Opening High.
+* Trailing-stop proxy: lower of the prior two completed candle lows minus 2 points, with the updated stop active from the following candle.
+
+The latest reconciliation reported:
+
+* 57 target exits.
+* 143 stop-loss exits.
+* 1 experimental end-of-session exit.
+* 201 simulated observations.
+* +197.50 combined gross points.
+* Combined profit factor of 1.143.
+* Combined maximum drawdown of 190.70 points.
+
+However, the period results were:
+
+* July–August 2025: +217.65 gross points.
+* September–October 2025: −19.85.
+* November–December 2025: +1.25.
+* Seven exact 2026 paths: −1.55.
+
+These are research results, not proof of profitability.
+
+Required investigation
+
+Trace every trade in this candidate’s underlying ledger.
+
+Determine:
+
+* Which individual trades contribute most to the gross result.
+* Whether a small number of large winners dominate performance.
+* Whether the training-period advantage survives in later periods.
+* Whether the initial stop is calculated correctly.
+* Whether the trailing rule is implemented exactly as documented.
+* Whether the trailing stop can be widened accidentally.
+* Whether the update becomes active only after the relevant completed candle.
+* Whether any stop or target is counted after the position has closed.
+* Whether the candidate’s edge disappears under plausible cost and slippage assumptions.
+
+Compare the current proxy with a separately defined, causal structural swing-low trailing rule only if there is a concrete reason to believe that the proxy is inadequate.
+
+Do not silently replace the existing rule. Version any experimental alternative and retain the original as a benchmark.
+
+5. RECONCILE EVERY CANDIDATE’S OUTCOMES
+
+Evaluate the existing candidates without changing their definitions:
+
+* A_B4_TP25_V1
+* A_B4_OPENING_HIGH_V1
+* B_B2_LOWER_LOW_TRAIL_OPENING_HIGH_V1
+* C_B2_1R_V1
+* C_B2_1_5R_V1
+* C_B2_2R_V1
+* Archived A_STRUCTURAL_TROUGH_B4_TP25
+
+Keep the fixed E + 25 target separate from the archived fractional target E + 0.25 * (H - E).
+
+For each candidate, produce exact overall and period-by-period counts for:
+
+* Eligible entries.
+* Simulated entries.
+* Actual target exits.
+* Actual stop-loss exits.
+* Ambiguous outcomes.
+* Experimental end-of-session exits.
+* Other exits.
+* Unresolved entries.
+* Skipped entries.
+* Gross points.
+
+Also report win rate, profit factor, average win, average loss, maximum drawdown, longest losing streak and holding time where supported by the underlying data.
+
+Distinguish:
+
+1. Target touched while the position was open.
+2. Actual target exit.
+3. Target touched after the position had already exited.
+4. Target outcome unverifiable because data is incomplete.
+
+A later target touch after a stop-loss is not a winning trade.
+
+Use mutually exclusive exit categories. Explain any reconciliation discrepancy and correct only verified defects.
+
+Do not add outcomes from different candidate policies together.
+
+6. EVALUATE WHY LOSSES OCCUR
+
+Do not simply tighten the stop to reduce the number of stop-loss exits.
+
+Investigate the trade paths to determine whether losses arise from:
+
+* Entries that reverse immediately after breakout.
+* Stop placement that is too tight for normal premium fluctuations.
+* A structural trough that does not represent meaningful invalidation.
+* Trailing-stop updates that close positions during ordinary pullbacks.
+* Large adverse gaps.
+* Market-regime changes.
+* Poor entry timing.
+* Missing or unreliable candle data.
+* Unrealistic simulation assumptions.
+
+Where the data supports it, compare the distributions of maximum adverse excursion and maximum favorable excursion.
+
+Measure how often a stopped-out trade subsequently reaches the target, but keep that diagnostic separate from actual simulated trade profitability.
+
+Determine whether a proposed improvement reduces losses without disproportionately cutting winning trades.
+
+Do not assume that every stop-loss is a strategy defect. A stop-loss is part of risk control; the objective is positive expectancy and controlled downside, not zero stop-outs.
+
+7. USE A DISCIPLINED VALIDATION PROCESS
+
+Use chronological evaluation based on available data:
+
+* July–August 2025: training.
+* September–October 2025: validation.
+* November–December 2025: historical test.
+* Existing exact-contract 2026 observations: limited additional evidence.
+
+Verify whether these splits were already used to make candidate-selection decisions. Treat previously inspected test results as retrospective evidence if they have already influenced decisions.
+
+Do not call repeatedly inspected data an untouched test set.
+
+Freeze the candidate definitions and selection procedure before any genuinely new out-of-sample evaluation.
+
+Use identical eligible entries and candle paths for fair comparisons wherever possible.
+
+If the sample is insufficient for meaningful inference, report the limitation instead of claiming statistical certainty.
+
+Do not tune repeatedly on the validation period or use the same test set to choose a new winner.
+
+8. TEST REALISTIC ECONOMICS
+
+The existing reports do not establish reliable fees, taxes, spread, slippage, executable fills, position sizing or rupee-level returns.
+
+Determine what reliable inputs are available from the project configuration or authorized sources.
+
+Where supported, calculate net results using the applicable transaction costs.
+
+Where costs are unknown, provide clearly labelled sensitivity scenarios. Never invent a single cost figure and present it as actual.
+
+Evaluate:
+
+* Gross and net expectancy per trade.
+* Average win and average loss.
+* Profit factor.
+* Drawdown.
+* Losing streaks.
+* Monthly results.
+* Performance by period.
+* Sensitivity to costs and execution assumptions.
+* Position-sizing implications only where account and instrument specifications are known.
+
+Do not confuse option premium points with rupee profit.
+
+A positive gross result that disappears after modest costs is not a demonstrated trading edge.
+
+9. ALLOW EVIDENCE-BASED IMPROVEMENTS
+
+Use bounded autonomy to make reasonable engineering and research decisions.
+
+You may:
+
+* Fix verified simulator defects.
+* Improve historical data reconciliation.
+* Add regression tests.
+* Improve causal trailing-stop calculations.
+* Compare the existing candidates on common paths.
+* Test a small number of clearly motivated alternatives.
+* Investigate market-regime effects where the available sample supports it.
+* Improve reporting and reproducibility.
+
+Every new candidate must have:
+
+1. A specific hypothesis.
+2. A documented formula.
+3. A clear reason for testing it.
+4. A fair comparison against the baseline.
+5. Chronological validation.
+6. An explicit accept/reject decision.
+
+Do not run a massive parameter grid, add arbitrary indicators, introduce unnecessary machine learning or keep trying combinations until one looks profitable.
+
+Prefer the simplest policy with the strongest evidence across independent periods.
+
+10. SELECT THE BEST-SUPPORTED EXIT POLICY
+
+At completion, choose one of two outcomes.
+
+Outcome A — Evidence supports a candidate
+
+Identify the strongest candidate and document its exact:
+
+* Initial stop-loss.
+* Target.
+* Trailing or adjustment rules.
+* Entry and exit sequencing.
+* Gap handling.
+* Ambiguous-candle handling.
+* End-of-session treatment.
+* Cost assumptions.
+* Period-by-period results.
+* Remaining uncertainty.
+
+Only integrate the selected version into a separate paper-trading configuration after the documented research checks pass.
+
+Outcome B — Evidence remains insufficient
+
+Do not force a winner.
+
+State precisely why no policy can be approved, which evidence is missing, and how to collect the minimum useful additional observations.
+
+Create a supervised paper-observation plan recording:
+
+* Exact contract and expiry.
+* Entry timestamp and price.
+* Opening-range levels.
+* Structural trough and swing high.
+* Initial stop and target.
+* Any trailing-stop changes.
+* Five-minute post-entry price path.
+* Exit price and reason.
+* Costs and slippage assumptions.
+* Data quality and unresolved events.
+
+Do not approve a policy simply because the user wants a final answer. The final decision must follow the evidence.
+
+11. PAPER-TRADING SAFETY
+
+This project remains strictly research-only and paper-trading-only.
+
+* Keep EXECUTION_ALLOWED=False.
+* Keep PAPER_ONLY=True.
+* Never submit, modify or cancel real orders.
+* Do not treat an empty account balance as a safety mechanism.
+* Preserve authentication protections, duplicate-signal prevention, logging and the kill switch.
+* Ensure the paper simulator uses the same deterministic exit logic as the research simulator.
+* Do not wire an unapproved policy into the paper engine.
+
+Historical performance is not authorization for live trading.
+
+12. REQUIRED DELIVERABLES
+
+Create or update:
+
+1. EKALAYAVA_FINAL_EVIDENCE_AND_DATA_COVERAGE.md
+2. EKALAYAVA_TARGET_SL_COUNT_RECONCILIATION.md
+3. EKALAYAVA_FINAL_SL_TARGET_DECISION.md
+4. EKALAYAVA_FINAL_RULE_SPEC.md
+5. Versioned experimental policy code and automated tests, if justified.
+6. EKALAYAVA_PAPER_TRADING_READINESS.md
+7. EKALAYAVA_FINAL_RESEARCH_EXECUTION_SUMMARY.md
+
+The reports must agree on candidate definitions, entry counts, target/stop counts, gross results, date coverage and approval status.
+
+Include reproducible commands and list all tests actually run. Do not claim a test passed unless it was executed.
+
+13. COMPLETION REQUIREMENTS
+
+Continue through all feasible tasks until:
+
+* The historical data inventory is verified.
+* The bounded data-recovery attempt is complete.
+* Candidate outcomes are reconciled.
+* The leading trailing-stop candidate has been audited trade by trade.
+* Period-by-period performance and costs are assessed as far as reliable inputs allow.
+* Any verified code defects are fixed and tested.
+* The final selection decision is documented.
+* All required reports are generated.
+* Live execution remains disabled.
+
+If a source is unavailable, stop retrying it and complete the remaining work. Do not chase data indefinitely, incur unauthorized costs, fabricate observations or claim that the strategy is proven.
+
+Final response format
+
+Begin with:
+
+1. Whether additional usable data was recovered.
+2. How many complete and partial paths are available.
+3. The strongest candidate and its exact target/stop counts.
+4. Its training, validation, test and 2026 results.
+5. Whether net profitability can be established.
+6. Whether a policy is approved for paper trading.
+7. Tests run and any failures.
+8. The remaining concrete blockers.
+
+Be candid. If the strategy has no demonstrated edge, say so. If the evidence supports a promising candidate but is not conclusive, explain that distinction.
+
+The goal is to establish whether Ekalayava has a defensible, repeatable trading edge and, only if justified, prepare it for supervised paper trading.
