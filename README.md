@@ -49,7 +49,8 @@ fetch market data, or start the observer.
 python run_research.py
 python run_research.py doctor
 python run_research.py smoke-test
-python run_research.py study --years 2024 2025 2026
+python run_research.py study --years 2026
+python run_research.py study --years 2024 2025 2026 --offline
 python run_research.py test
 ```
 
@@ -57,15 +58,28 @@ On Windows, use `.\.venv\Scripts\python.exe run_research.py` in place of
 `python run_research.py`. Reports are written to the ignored
 `data/reports/run_research_*` files.
 
-Groww access is explicit. Configure `.env` using `.env.example` and run
-`python run_research.py auth-check` to test read-only authentication/profile
-access. `fetch-history` accepts a maximum 31-calendar-day request and only
-retrieves explicitly requested five-minute history; Groww's supported recent
-history window and the repository's currently supported 2026 NSE calendar limit
-what can be established. Raw responses are kept under the ignored
-`data/raw/groww_history/`, while normalized candles and provenance manifests
-are under `data/derived/groww_history/`. Empty or failed responses are not
-reported as successful coverage.
+Selecting years with `study` explicitly allows read-only Groww retrieval for
+missing data. It processes months sequentially, reuses local candles, fetches
+the NIFTY underlying plus exact CE/PE ITM2/ITM3 option contracts where Groww
+returns an authoritative catalog, and then runs the existing L2L/Ekalayava
+baseline and isolated seven-candidate shadow analysis on the exact available
+paths. Use `--offline` to suppress authentication and retrieval and analyze
+local data only. The root default `python run_research.py` remains offline.
+
+Groww's supported five-minute history window is limited to the most recent
+90 days in this runner; older requested months are listed as unavailable and
+skipped before any request. The included NSE session calendar currently covers
+2026 only. Therefore a year report may be partial or contain only existing
+research artifacts; missing months, catalogs, contracts and candle intervals
+are never invented or counted as complete. Empty and failed responses are
+reported as partial, and later months are still processed. Raw responses are
+kept under the ignored `data/raw/groww_history/`, while normalized candles,
+contract catalogs and provenance manifests are under
+`data/derived/groww_history/`. Strategy runs remain historical OHLC
+simulations—not verified fills, transaction costs, or trading advice.
+
+`fetch-history` remains an explicitly bounded single-instrument command with a
+maximum 31-calendar-day request:
 
 ```sh
 python run_research.py fetch-history --start 2026-10-01 --end 2026-10-13

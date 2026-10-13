@@ -396,6 +396,35 @@ sessions. Use `python run_research.py` for the safe default; authentication,
 fetching and supervised observation require explicit commands. `live` remains
 paper-only and is not live-trading or strategy-exit approval.
 
+## 9. Month-by-month year retrieval and fresh analysis
+
+Following the user's report that `study --years` completed in seconds, the
+runner was changed: `study --years YEAR` now authenticates read-only when the
+requested year overlaps the supported recent Groww window and missing data is
+not already recorded complete. It processes months sequentially, reuses local
+candles, reports progress, retrieves NIFTY underlying bars and exact daily
+CE/PE ITM2/ITM3 option bars from Groww's returned expiry/contract catalogs, and
+continues to later months when a month's candles or catalog are unavailable.
+It then reuses the canonical requested-period L2L/Ekalayava engine and runs the
+seven existing exits in separate shadow books for each unique canonical
+Ekalayava signal.
+
+The default root command remains offline. `study --offline` explicitly bypasses
+Groww and evaluates local data only. Complete recent-year manifests are reused
+without an additional Groww login. Every retrieval writes separate raw and
+normalized data, the year/contract catalog and a month-level coverage manifest.
+The manifest marks coverage partial if any requested exact option path is
+missing or incomplete.
+
+Data availability remains bounded: the collector does not request five-minute
+history older than 90 days, and the exchange calendar currently supports 2026
+only. Consequently a 2024 or 2025 request records months outside the Groww
+window and uses existing artifacts/local data where analysis is possible. In
+2026 only months intersecting the recent window are eligible for retrieval.
+Historical OHLC and candidate outcomes do not establish real fills or costs;
+no exit policy is approved. Real Groww retrieval for a full-year CLI invocation
+was not repeated as part of implementation validation.
+
 ### Follow-up verification — 2026-10-13
 
 The pushed terminal workflow was subsequently checked from the synchronized
@@ -415,4 +444,3 @@ datasets are absent from this checkout; no 2025 L2L baseline is available.
 bars, 42,149 option bars, 561 complete and 1 partial contract-days, 178
 missing/unselectable contract-days, and 112 fully usable / 55 partial / 18
 unusable days. These are existing artifacts, not fresh downloads.
-

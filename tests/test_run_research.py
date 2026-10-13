@@ -8,6 +8,257 @@ import pandas as pd
 import run_research
 
 
+def test_year_study_retrieves_supported_months_sequentially_and_skips_old_ones(
+    tmp_path, monkeypatch,
+):
+    from app import year_research
+
+    now = datetime(2026, 10, 13, 17, 0, tzinfo=year_research.IST)
+    fetched_months = []
+
+    def fake_request(client, symbol, segment, expected, expected_days,
+                     year, month, raw_dir, root):
+        assert client is not None and expected_days
+        assert raw_dir.is_relative_to(root / "data" / "raw")
+        fetched_months.append((year, month, symbol, segment))
+        frame = pd.DataFrame({
+            "timestamp": sorted(expected),
+            "open": 100.0, "high": 101.0, "low": 99.0, "close": 100.0,
+            "volume": None, "oi": None,
+        })
+        return frame, {"status": "DATA_RETURNED", "rows": len(frame)}
+
+    monkeypatch.setattr(year_research, "_request_month", fake_request)
+    monkeypatch.setattr(
+        year_research, "_collect_contract_catalog",
+        lambda *_: {"expiry_queries": [], "chains": []},
+    )
+    monkeypatch.setattr(
+        year_research, "_fetch_option_month",
+        lambda *_: {
+            "requested_contracts": 0, "contracts": [], "unavailable_days": [],
+        },
+    )
+    progress = []
+
+    result = year_research.collect_year(
+        object(), 2026, tmp_path, now=now, progress=progress.append,
+    )
+
+    assert [month for _, month, symbol, _ in fetched_months if symbol == "NIFTY"] == [
+        7, 8, 9, 10,
+    ]
+    assert all(segment == "CASH" for _, _, symbol, segment in fetched_months
+               if symbol == "NIFTY")
+    assert [item["status"] for item in result["months"][:6]] == [
+        "OUTSIDE_GROWW_FIVE_MINUTE_HISTORY_WINDOW"
+    ] * 6
+    assert [item["status"] for item in result["months"][-2:]] == [
+        "FUTURE_MONTH", "FUTURE_MONTH",
+    ]
+    assert len([line for line in progress if "skipped:" in line]) == 8
+    assert len([line for line in progress if "finished:" in line]) == 4
+    assert (tmp_path / result["underlying_csv"]).is_file()
+
+
+def test_complete_local_year_manifest_avoids_repeat_groww_fetch(tmp_path):
+    from app import year_research
+
+    now = datetime(2026, 10, 13, 17, 0, tzinfo=year_research.IST)
+    base = tmp_path / "data" / "derived" / "groww_history"
+    base.mkdir(parents=True)
+    (base / "contract_catalog_2026.json").write_text(
+        json.dumps({"2026-10-29": [{"symbol": "NSE-NIFTY-29Oct26-25000-CE"}]}),
+        encoding="utf-8",
+    )
+    months = []
+    earliest = now.date() - timedelta(days=year_research.HISTORY_WINDOW_DAYS)
+    for month in range(1, 13):
+        first, last = year_research._month_dates(2026, month)
+        if first > now.date():
+            continue
+        start, end = max(first, earliest), min(last, now.date())
+        if start > end:
+            continue
+        days = [
+            date(2026, month, day)
+            for day in range(start.day, end.day + 1)
+            if year_research.DEFAULT_NSE_CALENDAR.session_for(
+                date(2026, month, day)
+            )
+        ]
+        expected_count = len(year_research._expected_stamps(days, now))
+        if expected_count:
+            months.append({
+                "month": f"2026-{month:02d}",
+                "status": "COMPLETE",
+                "requested_start": start.isoformat(),
+                "requested_end": end.isoformat(),
+                "underlying_expected_bars": expected_count,
+            })
+    (base / "year_study_2026.manifest.json").write_text(
+        json.dumps({"months": months}), encoding="utf-8",
+    )
+
+    assert year_research.local_year_study_complete(2026, tmp_path, now=now)
+
+
+def test_month_request_keeps_only_expected_completed_interval(tmp_path, monkeypatch):
+    from app import year_research
+
+    day = date(2026, 10, 12)
+    payload = {
+        "candles": [
+            ["2026-10-12 08:55:00", 100, 101, 99, 100],
+            ["2026-10-12 09:15:00", 100, 101, 99, 100],
+            ["2026-10-12 09:20:00", 100, 101, 99, 100],
+        ]
+    }
+    expected_stamp = pd.Timestamp("2026-10-12 03:45:00+00:00")
+    monkeypatch.setattr(year_research, "_fetch", lambda *_: payload)
+
+    frame, request = year_research._request_month(
+        object(), "NIFTY", "CASH", {expected_stamp}, {day},
+        2026, 10, tmp_path / "raw", tmp_path,
+    )
+
+    assert len(frame) == 1
+    assert frame["timestamp"].iloc[0] == expected_stamp
+    assert request["status"] == "DATA_RETURNED"
+    assert (tmp_path / request["raw_payload"]).is_file()
+
+
+def test_fresh_year_analysis_reuses_period_engine_and_seven_candidate_set(tmp_path):
+    from app import year_research
+    from app.groww_data import DATA_COLUMNS
+
+    stamps = pd.date_range(
+        "2026-10-12 09:15", periods=75, freq="5min", tz=run_research.IST,
+    ).tz_convert("UTC")
+    base = tmp_path / "data" / "derived" / "groww_history"
+    options_dir = base / "options"
+    options_dir.mkdir(parents=True)
+    underlying = pd.DataFrame({
+        "timestamp": stamps,
+        "open": 25020.0, "high": 25030.0, "low": 25010.0, "close": 25020.0,
+        "volume": None, "oi": None,
+    })
+    underlying.to_csv(base / "NIFTY.csv", index=False)
+
+    contracts = []
+    for strike, kind in (
+        (24950, "CE"), (24900, "CE"), (25100, "PE"), (25150, "PE"),
+    ):
+        symbol = f"NSE-NIFTY-15Oct26-{strike}-{kind}"
+        contracts.append({
+            "symbol": symbol, "expiry": "2026-10-15",
+            "strike": strike, "option_type": kind,
+        })
+        pd.DataFrame({
+            "timestamp": stamps,
+            "open": 100.0, "high": 101.0, "low": 99.0, "close": 100.0,
+            "volume": None, "oi": None,
+        }, columns=DATA_COLUMNS).to_csv(options_dir / f"{symbol}.csv", index=False)
+    (base / "contract_catalog_2026.json").write_text(
+        json.dumps({"2026-10-15": contracts}), encoding="utf-8",
+    )
+
+    result = year_research.analyze_year(2026, tmp_path)
+
+    assert result["status"] == "ANALYZED"
+    assert result["data_completeness"]["fully_usable_days"] == 1, json.dumps({
+        "data_completeness": result["data_completeness"],
+        "contract_day_coverage": result["contract_day_coverage"],
+        "missing_data": result["missing_data"],
+    }, indent=2)
+    assert result["ekalayava_seven_candidate_shadow"]["unique_canonical_signals"] == 0
+    assert len(result["ekalayava_seven_candidate_shadow"]["results"]) == 7
+
+
+def test_year_study_does_not_authenticate_in_offline_mode(tmp_path, monkeypatch):
+    from app import year_research
+
+    monkeypatch.setattr(run_research, "ROOT", tmp_path)
+    monkeypatch.setattr(run_research, "_inventory_data", lambda: {})
+    monkeypatch.setattr(
+        run_research, "_study_evidence",
+        lambda years: {"requested_years": years},
+    )
+
+    def fake_build_report(title, payload, summary):
+        assert title.startswith("NIFTY") and summary
+        assert payload["command"] == "study"
+        return tmp_path / "report.json", tmp_path / "report.md"
+
+    monkeypatch.setattr(
+        run_research, "_build_report", fake_build_report,
+    )
+    monkeypatch.setattr(
+        year_research, "analyze_year",
+        lambda year, root: {
+            "status": "INSUFFICIENT_DATA", "year": year, "root": str(root),
+        },
+    )
+
+    assert run_research.study([2025], offline=True) == 0
+
+
+def test_explicit_year_study_authenticates_and_fetches_missing_data(
+    tmp_path, monkeypatch,
+):
+    from app import groww_auth, year_research
+
+    client = SimpleNamespace(get_user_profile=lambda: {"read_only": True})
+    calls = []
+    monkeypatch.setattr(run_research, "ROOT", tmp_path)
+    monkeypatch.setattr(run_research, "_inventory_data", lambda: {})
+    monkeypatch.setattr(
+        run_research, "_study_evidence",
+        lambda years: {"requested_years": years},
+    )
+
+    def fake_build_report(title, payload, summary):
+        assert title.startswith("NIFTY") and summary
+        assert payload["command"] == "study"
+        return tmp_path / "report.json", tmp_path / "report.md"
+
+    monkeypatch.setattr(
+        run_research, "_build_report", fake_build_report,
+    )
+    monkeypatch.setattr(
+        year_research, "year_has_fetchable_sessions",
+        lambda year: year == 2026,
+    )
+    monkeypatch.setattr(
+        year_research, "local_year_study_complete",
+        lambda year, root: year == 999 or root == tmp_path and False,
+    )
+
+    def fake_authenticate(config):
+        assert config is run_research.CFG
+        return client
+
+    monkeypatch.setattr(groww_auth, "authenticate", fake_authenticate)
+
+    def fake_collect(authenticated_client, year, root, progress):
+        assert callable(progress)
+        calls.append((authenticated_client, year, root))
+        return {"months": []}
+
+    monkeypatch.setattr(
+        year_research, "collect_year", fake_collect,
+    )
+    monkeypatch.setattr(
+        year_research, "analyze_year",
+        lambda year, root: {
+            "status": "ANALYZED", "year": year, "root": str(root),
+        },
+    )
+
+    assert run_research.study([2026]) == 0
+    assert calls == [(client, 2026, tmp_path)]
+
+
 def test_inventory_counts_rows_once_and_handles_mixed_timestamp_zones(tmp_path):
     raw = tmp_path / "data" / "raw"
     raw.mkdir(parents=True)

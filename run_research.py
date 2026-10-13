@@ -362,29 +362,108 @@ def smoke_test() -> int:
     return 0
 
 
-def study(years: list[int]) -> int:
+def study(years: list[int], offline: bool = False) -> int:
     invalid = sorted(set(years) - {2024, 2025, 2026})
     if invalid:
         print(f"Unsupported year(s): {', '.join(map(str, invalid))}; use 2024, 2025, 2026.")
         return 2
+    from app.year_research import (
+        analyze_year, collect_year, local_year_study_complete,
+        year_has_fetchable_sessions,
+    )
+
+    requested_years = list(dict.fromkeys(years))
+    network_used = False
+    client = None
+    authentication_error = None
+    fetchable_years = [
+        year for year in requested_years
+        if year_has_fetchable_sessions(year)
+        and not local_year_study_complete(year, ROOT)
+    ]
+    if not offline and fetchable_years:
+        from app.groww_auth import authenticate
+
+        network_used = True
+        try:
+            ExecutionLock(CFG).assert_paper_only()
+            client = authenticate(CFG)
+            if not isinstance(client.get_user_profile(), dict):
+                raise RuntimeError("read-only profile validation failed")
+        except Exception as exc:
+            authentication_error = type(exc).__name__
+            client = None
+
+    year_reports: dict[str, Any] = {}
+    analysis_performed = False
+    for year in requested_years:
+        if offline:
+            retrieval = {
+                "status": "SKIPPED_OFFLINE",
+                "reason": "The --offline option prevents authentication and Groww requests.",
+            }
+        elif (
+            year_has_fetchable_sessions(year)
+            and local_year_study_complete(year, ROOT)
+        ):
+            retrieval = {
+                "status": "REUSED_COMPLETE_LOCAL_YEAR_MANIFEST",
+                "reason": "Recent requested months and exact-option paths are already complete.",
+            }
+        elif year in fetchable_years and client is None:
+            retrieval = {
+                "status": "AUTHENTICATION_FAILED",
+                "error_type": authentication_error or "UnknownError",
+            }
+            print(
+                f"[{year}] Groww retrieval unavailable "
+                f"({authentication_error or 'authentication failed'}); continuing with local evidence"
+            )
+        else:
+            try:
+                retrieval = collect_year(
+                    client, year, ROOT, progress=print,
+                )
+            except Exception as exc:
+                retrieval = {
+                    "status": "RETRIEVAL_FAILED",
+                    "error_type": type(exc).__name__,
+                }
+
+        try:
+            analysis = analyze_year(year, ROOT)
+        except Exception as exc:
+            analysis = {
+                "status": "ANALYSIS_FAILED",
+                "error_type": type(exc).__name__,
+            }
+        analysis_performed |= analysis.get("status") == "ANALYZED"
+        year_reports[str(year)] = {
+            "groww_retrieval": retrieval,
+            "fresh_strategy_analysis": analysis,
+        }
+
     inventory = _inventory_data()
-    evidence = _study_evidence(years)
+    evidence = _study_evidence(requested_years)
+    mode = "offline-only" if offline else "month-by-month Groww retrieval plus local analysis"
     summary = (
-        f"Offline study complete for {', '.join(map(str, years))}; "
-        "existing research artifacts reused; no network, new download, or expensive replay."
+        f"Year study finished for {', '.join(map(str, requested_years))} "
+        f"({mode}); unavailable months and incomplete exact-contract paths are reported, "
+        "not filled or treated as complete."
     )
     payload = {
         "command": "study",
         "safety": _safe_diagnostics(),
         "local_data_inventory": inventory,
         "historical_evidence": evidence,
-        "network_used": False,
-        "new_downloads": 0,
-        "full_simulation_rerun": False,
+        "groww_year_studies": year_reports,
+        "network_used": network_used,
+        "full_simulation_rerun": analysis_performed,
+        "offline_only": offline,
         "summary": summary,
     }
-    _build_report("NIFTY offline historical study", payload, summary)
-    return 0
+    _build_report("NIFTY month-by-month historical study", payload, summary)
+    return 2 if authentication_error else 0
 
 
 def default_workflow() -> int:
@@ -800,9 +879,16 @@ def _parser() -> argparse.ArgumentParser:
     subparsers.add_parser("test", help="run the full pytest suite")
     subparsers.add_parser("smoke-test", help="run an offline shadow/reconciliation acceptance test")
     subparsers.add_parser("auth-check", help="authenticate and validate Groww read-only profile")
-    study_parser = subparsers.add_parser("study", help="summarize supported local historical evidence")
+    study_parser = subparsers.add_parser(
+        "study",
+        help="fetch missing supported year data month by month and analyze available exact-contract candles",
+    )
     study_parser.add_argument("--years", nargs="+", type=int, choices=(2024, 2025, 2026),
                               default=[2024, 2025, 2026])
+    study_parser.add_argument(
+        "--offline", action="store_true",
+        help="skip Groww authentication/retrieval and analyze available local data only",
+    )
     fetch_parser = subparsers.add_parser("fetch-history", help="explicit bounded read-only history retrieval")
     fetch_parser.add_argument("--start", required=True, type=date.fromisoformat)
     fetch_parser.add_argument("--end", required=True, type=date.fromisoformat)
@@ -829,7 +915,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "auth-check":
         return auth_check()
     if args.command == "study":
-        return study(args.years)
+        return study(args.years, args.offline)
     if args.command == "fetch-history":
         return fetch_history(args.start, args.end, args.symbol, args.segment)
     if args.command == "live":
