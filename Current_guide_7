@@ -1,0 +1,345 @@
+Ekalayava — Final Stop-Loss & Target Research, Historical Validation, and Strategy Improvement
+
+Mission
+
+Act as the autonomous research engineer responsible for completing the Ekalayava options strategy.
+
+Your objective is to:
+
+1. Resolve the current Ekalayava stop-loss and target uncertainty.
+2. Determine the strongest evidence-supported exit policy.
+3. Validate that policy on historical data, including July 1 to December 31, 2025.
+4. Combine eligible historical datasets spanning more than one year where they are already available locally.
+5. Identify and implement justified strategy improvements without changing the original strategy unnecessarily.
+6. Produce a final, reproducible strategy specification and paper-trading-ready implementation.
+
+Do not stop after producing another research plan or listing possible next steps. Execute the available work, run the necessary tests, resolve implementation issues, and deliver a final decision.
+
+However, never fabricate data, bypass safeguards, repeatedly retry unavailable sources, or claim that a strategy is profitable or foolproof without sufficient evidence.
+
+⸻
+
+1. Start by inspecting the existing project
+
+Inspect the existing repository, including:
+
+* Canonical Ekalayava strategy definitions.
+* EKALAYAVA_EXIT_POLICY_RESEARCH_2026-10-13.md.
+* The latest data-coverage and policy-decision report, if available.
+* The saved Ekalayava entry ledger.
+* Exact-contract historical option candle files.
+* NIFTY underlying candles.
+* Existing historical-data manifests and coverage inventories.
+* Entry detection, swing-high detection, stop-loss, target and exit simulators.
+* Training/validation split logic.
+* Existing paper-trading engine, trade journal, tests and execution safeguards.
+
+Preserve the existing repository structure and canonical rules unless a specific change is justified by evidence.
+
+Do not assume that previously reported aggregate statistics can be independently reproduced without inspecting their underlying data.
+
+2. Preserve the canonical Ekalayava entry strategy
+
+The original entry logic must remain the baseline.
+
+The strategy should:
+
+1. Use completed five-minute candles only.
+2. Identify the opening-range high and low from the first completed five-minute candle.
+3. Observe the option premium falling below the opening-range low.
+4. Identify a subsequent recovery or base formation.
+5. Detect a swing high using only information available at that time.
+6. Enter on a valid breakout of that swing high before the premium reaches the opening-range high.
+7. Allow the entry candle to close below the opening-range high, as permitted by the existing canonical rules.
+8. Prevent future-candle information from influencing entry or exit decisions.
+
+Do not silently change entry conditions while optimizing exits.
+
+If you discover a genuine weakness in the entry strategy, document it separately and test it as an isolated experimental improvement. Do not replace the canonical entry rule merely to improve historical results.
+
+3. Resolve the final stop-loss and target policy
+
+Investigate and compare the existing exit-policy candidates using consistent, reproducible assumptions.
+
+At minimum, evaluate the following categories where supported by the available candle data:
+
+* Structural stop-loss: based on the relevant confirmed price-action structure, such as the structural trough.
+* Fixed target: a fixed premium-point target.
+* Opening-range target: a target based on the opening-range high, subject to the canonical entry conditions.
+* Reward-to-risk target: targets expressed as multiples of initial risk, such as 1R, 1.5R and 2R.
+* Trailing stop: a causally calculated trailing stop based on confirmed price action.
+* Hybrid policy: a structural stop combined with a fixed, reward-to-risk or trailing target, if the evidence supports it.
+
+These are candidates, not predetermined winners.
+
+For every candidate, define the exact formulas and specify:
+
+* Initial stop-loss.
+* Initial target.
+* Whether the stop or target can change after entry.
+* Conditions that move a stop, if applicable.
+* Conditions for taking partial profits, only if partial exits are supported by the simulator.
+* What happens when the target is reached.
+* What happens when the stop-loss is reached.
+* What happens if neither is reached.
+* How ambiguous five-minute candles are handled.
+* Whether any time-based or end-of-day exit is part of the experimental policy.
+
+Do not invent a canonical time-based exit if the existing strategy does not have one. Label any new time-based exit as an experimental policy and compare it separately.
+
+Stop-loss and target safety rules
+
+* Calculate risk from the actual simulated entry price and proposed stop.
+* Reject invalid or non-positive risk distances.
+* Do not move a stop farther away merely to avoid recording a loss.
+* Do not move the target retrospectively to match the observed price path.
+* Use only information available when each decision would have been made.
+* If a stop and target are both touched within the same candle and their order cannot be established, classify the trade as ambiguous or apply a clearly disclosed conservative assumption.
+* Include realistic brokerage, taxes, slippage and spread assumptions wherever the required inputs are available. If unavailable, report gross results separately and do not label them net profitability.
+
+4. Perform a bounded historical-data reconciliation
+
+First, inspect the local datasets and existing manifests. Reconcile each saved Ekalayava entry against the exact option contract, expiry, entry timestamp and subsequent five-minute candle path.
+
+Classify each entry as:
+
+1. Complete post-entry path.
+2. Partial post-entry path.
+3. No usable post-entry path.
+4. Invalid or mismatched contract/data.
+
+Report these counts separately for training, validation and testing periods.
+
+Historical period requirements
+
+Prioritize the following:
+
+A. July 1–December 31, 2025
+
+Use this as a required additional research period. Inspect whether historical NIFTY underlying candles and matching option-contract candles already exist locally or are available through an existing, documented and authorized data source.
+
+Do not assume the data exists simply because the period is requested.
+
+B. Existing 2026 data
+
+Use the eligible existing 2026 data already available in the repository, including the previously researched January–September period where coverage is adequate.
+
+C. Combined dataset
+
+Where both periods contain usable, comparable observations, create a combined dataset spanning more than one year. Record the actual date range, number of entries, usable candle paths and coverage limitations.
+
+Do not use unrelated option contracts or approximate prices as substitutes for missing exact-contract candles.
+
+Strict data-retrieval boundary
+
+Make one bounded attempt to identify and retrieve the requested July–December 2025 data through existing local files or a documented, authorized source already configured for this project.
+
+* Check existing data directories, manifests and documented loader capabilities first.
+* If the authorized source can provide the requested data, retrieve only the necessary date range and contracts.
+* If the data is unavailable, inaccessible, incomplete or not supported, stop retrieval.
+* Do not repeatedly retry failed endpoints.
+* Do not chase additional providers, start broad historical downloads, or incur new costs without explicit authorization.
+* Do not download 2022–2024 data.
+* Do not expand the research window beyond the specified periods.
+* Record precisely what was available, what was missing and what was attempted.
+
+Missing data is a limitation to report, not a reason to fabricate results or enter an endless retrieval loop.
+
+5. Build a reliable training, validation and testing process
+
+Use chronological splits to prevent look-ahead bias.
+
+* Training: earlier eligible observations used to develop candidate policies.
+* Validation: a later period used to compare candidates and select a provisional policy.
+* Out-of-sample testing: a separate, later untouched period used to assess the selected policy.
+
+Use July–December 2025 and the available 2026 observations according to their actual chronological order and coverage. Define the split after inspecting the data, and document it before running the final comparison.
+
+If the available history cannot support three meaningful chronological periods, report that limitation. Do not pretend the validation and test sets are independent when they are not.
+
+Never use out-of-sample test results to repeatedly tune the policy.
+
+Evaluate the selected policy once on the untouched test set after the decision is frozen.
+
+Where appropriate, also report results by:
+
+* CE versus PE.
+* ITM rank.
+* Entry time.
+* Volatility or market-regime category, if those features are available without leakage.
+* Month and data-coverage quality.
+
+Do not introduce excessive segmentation when the sample sizes are too small to support reliable conclusions.
+
+6. Evaluate complete trade outcomes, not target hits alone
+
+For each policy, calculate and report:
+
+* Number of eligible entries.
+* Number of executed simulated entries.
+* Target exits.
+* Stop-loss exits.
+* Ambiguous exits.
+* Unresolved or end-of-data trades.
+* Gross points and net results where costs can be calculated.
+* Average and median trade outcome.
+* Win rate.
+* Profit factor.
+* Maximum chronological drawdown.
+* Longest losing streak.
+* Average initial risk and reward-to-risk ratio.
+* Maximum favorable excursion (MFE).
+* Maximum adverse excursion (MAE).
+* Average holding time.
+* Monthly performance.
+* Training, validation and untouched test performance.
+* Sensitivity to reasonable changes in costs and slippage.
+
+Keep unexecuted, skipped and unresolved setups visible in the report.
+
+A target touch is not automatically a winning trade. The policy must account for the stop-loss, exit sequence, entry eligibility, costs and actual simulated exit price.
+
+Compare candidates on identical eligible observations wherever possible. Also disclose any differences in sample coverage.
+
+7. Independently reproduce the previous research results
+
+Before accepting prior findings, reproduce the existing exit-policy results from the underlying data and simulator wherever sufficient data is available.
+
+Investigate discrepancies between reported target touches, target exits and total trade outcomes.
+
+In particular, determine whether the previously reported high target-hit counts were affected by:
+
+* Stop-losses occurring first.
+* Targets being touched after the simulated trade had already closed.
+* Incomplete post-entry paths.
+* Incorrect contract matching.
+* Inconsistent treatment of ambiguous candles.
+* Different eligibility rules between candidates.
+
+Do not claim that all 253 historical entries were validated if their exact-contract candle paths cannot be reconstructed.
+
+If the previous results cannot be independently reproduced, label them as unverified aggregate results and explain why.
+
+8. Improve the strategy only when the evidence justifies it
+
+Act as a research engineer with bounded autonomy.
+
+You are authorized to:
+
+* Inspect and correct bugs in the existing research and simulation code.
+* Add tests for causal swing-high detection and stop/target sequencing.
+* Improve data reconciliation and reporting.
+* Compare the existing exit-policy families.
+* Implement a better-supported candidate as a separate experimental version.
+* Investigate a genuine strategy deviation when the evidence points to a specific weakness.
+* Make reasonable research decisions without asking for approval for every small implementation choice.
+
+For each proposed improvement:
+
+1. State the observed problem.
+2. Explain the proposed change.
+3. Test it against the baseline.
+4. Compare validation results.
+5. Check the untouched test set after freezing the policy.
+6. Record whether the improvement is accepted or rejected.
+
+Do not add indicators, machine learning, complicated filters or extra parameters merely to make the strategy look sophisticated.
+
+Avoid overfitting, repeated parameter searches on the same validation set, survivorship bias, future-data leakage and selective reporting.
+
+Prefer the simplest policy that demonstrates reasonably stable performance across the available periods.
+
+If no candidate beats the baseline reliably, retain the baseline or leave the exit policy explicitly unapproved. Do not manufacture a winner.
+
+9. Finalize the chosen policy in the codebase
+
+If the evidence supports a policy, implement it in a separate, versioned Ekalayava exit-policy module.
+
+Document the exact, deterministic rules for:
+
+* Entry.
+* Initial stop-loss.
+* Target.
+* Stop adjustments.
+* Target adjustments, if any.
+* Exit sequencing.
+* Ambiguous candles.
+* Unresolved trades.
+* End-of-day treatment.
+* Costs and slippage assumptions.
+* Invalid or missing market data.
+* Contract selection and expiry matching.
+
+Keep the original canonical strategy definition intact. Update it only after the experimental policy has been evaluated and clearly mark the version and approval status.
+
+Add unit tests for ordinary cases, stop-first cases, target-first cases, ambiguous candles, missing candles, invalid risk, gaps and end-of-data conditions.
+
+Run all relevant tests and confirm that the paper-trading engine uses the same exit-policy implementation as the backtester.
+
+10. Paper-trading safeguards
+
+This project remains strictly research-only and paper-trading-only.
+
+* Keep every live-order execution flag disabled.
+* Do not enable live trading.
+* Do not submit, modify or cancel actual orders.
+* Do not treat an empty account balance as a safety mechanism.
+* Preserve authentication and API safeguards.
+* Do not expose API keys, tokens or other secrets in reports.
+* Keep duplicate-signal protection, logging and the kill switch intact.
+
+A selected historical policy is not automatically approved for live trading. Any future live-trading decision requires a separate, explicit authorization and additional review.
+
+11. Required final deliverables
+
+Create the following reports and implementation artifacts in the existing repository:
+
+1. EKALAYAVA_FINAL_SL_TARGET_DECISION.md
+    * Final recommended stop-loss and target formulas, or an explicit decision that evidence is insufficient.
+    * Rationale, assumptions and approval status.
+2. EKALAYAVA_HISTORICAL_DATA_COVERAGE_JUL_DEC_2025.md
+    * Data availability, retrieval attempt, usable contracts, candle-path coverage and gaps for July–December 2025.
+3. EKALAYAVA_MULTI_PERIOD_EXIT_VALIDATION.md
+    * Baseline and candidate comparisons across the eligible historical periods.
+    * Chronological training, validation and untouched test results.
+    * Gross versus net results and limitations.
+4. EKALAYAVA_FINAL_RULE_SPEC.md
+    * The deterministic entry, stop-loss, target and exit lifecycle.
+5. A versioned experimental exit-policy implementation and automated tests, if a policy is supported by the evidence.
+6. A short execution summary identifying changed files, tests run, failures, unresolved limitations and the exact command to reproduce the research.
+
+12. Completion criteria — do not stop prematurely
+
+Continue working through the available, authorized steps until you have:
+
+* Inspected the current implementation and research artifacts.
+* Completed the bounded data-coverage investigation.
+* Used eligible July–December 2025 data if it is available.
+* Combined the usable 2025 and 2026 observations where appropriate.
+* Reconciled the historical entries against exact-contract candle paths.
+* Evaluated the candidate exit policies with consistent assumptions.
+* Completed the chronological validation process to the extent the data permits.
+* Selected a defensible policy or explicitly documented why no policy can yet be approved.
+* Implemented and tested any justified changes.
+* Generated the required final reports.
+* Verified that live execution remains disabled.
+
+If a data source fails, move to the next available task rather than repeatedly retrying it. If historical coverage is insufficient, complete all analysis supported by the available data and create a practical supervised paper-observation plan to fill the missing evidence.
+
+Do not stop simply because the first script fails or the first report exposes a limitation. Diagnose and fix ordinary code and test failures where possible.
+
+However, stop a particular line of work when it requires unavailable data, unauthorized access, new spending, or unsupported assumptions. Document the blocker and finish the remaining deliverables.
+
+Final response format
+
+At completion, report:
+
+1. Decision: selected SL/target policy, or not approved.
+2. Exact rule: formulas and exit conditions.
+3. Historical coverage: actual usable observations from July–December 2025 and 2026.
+4. Validation: baseline versus selected policy, including untouched test performance.
+5. Changes and tests: files changed and test results.
+6. Remaining limitations: only concrete unresolved issues.
+7. Paper-trading status: explicitly confirm that live execution remains disabled.
+
+The goal is a defensible, reproducible Ekalayava exit policy—not the highest backtest number, the highest target-hit count or an unsupported claim of a foolproof strategy.
