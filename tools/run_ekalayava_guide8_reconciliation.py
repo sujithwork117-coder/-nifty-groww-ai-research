@@ -378,6 +378,29 @@ def _write_markdown(
     opening_touch_rows: list[dict],
     verification: dict,
 ) -> None:
+    path_counts: dict[str, Counter] = defaultdict(Counter)
+    for row in opening_touch_rows:
+        path_counts[row["dataset"]][row["path_status"]] += 1
+    exact_2026 = path_counts["EXISTING_2026_ENTRY_LEDGER"]
+    exact_2025 = path_counts["GROWW_2025_H2"]
+    total_2026 = sum(exact_2026.values())
+    missing_2026 = exact_2026["NO_USABLE_POST_ENTRY_PATH"]
+    available_2026 = (
+        exact_2026["COMPLETE_POST_ENTRY_PATH"]
+        + exact_2026["PARTIAL_POST_ENTRY_PATH"]
+    )
+    total_with_paths = sum(
+        row["simulated_entries_with_exact_path"]
+        for row in count_rows
+        if row["period"] == "COMBINED_2025_H2_2026_LEDGER"
+        and row["policy_id"] == "B_B2_LOWER_LOW_TRAIL_OPENING_HIGH_V1"
+    )
+    eligible_total = sum(
+        row["eligible_entries"]
+        for row in count_rows
+        if row["period"] == "COMBINED_2025_H2_2026_LEDGER"
+        and row["policy_id"] == "B_B2_LOWER_LOW_TRAIL_OPENING_HIGH_V1"
+    )
     lines = [
         "# Ekalayava Target/Stop Count Reconciliation",
         "",
@@ -391,20 +414,22 @@ def _write_markdown(
         "candidates are descriptive only; they are not used for ranking or",
         "tuning.",
         "",
-        "The combined ledger has 447 recorded eligible entry observations:",
+        f"The combined ledger has {eligible_total} recorded eligible entry observations:",
         "194 independently redetected on exact 2025 H2 contract paths and 253",
-        "from the saved 2026 entry ledger. Exact post-entry paths exist for 194",
-        "2025 entries (192 complete, 2 partial) and 7 of the 253 2026 entries;",
-        "the other 246 2026 outcomes remain unresolved due to missing exact",
-        "contract candles. Entry observations in the historical 2026 saved",
-        "ledger are not all independently revalidated.",
+        f"from the saved 2026 entry ledger. The exact-path inventory has "
+        f"{exact_2025['COMPLETE_POST_ENTRY_PATH']} complete and "
+        f"{exact_2025['PARTIAL_POST_ENTRY_PATH']} partial 2025 entry paths, plus "
+        f"{available_2026} exact 2026 paths out of {total_2026}; "
+        f"{missing_2026} saved 2026 entries have no exact path after the bounded "
+        "recovery attempt. The 2026 entry signals themselves were not all",
+        "independently redetected.",
         "The canonical detector/ledger records entry signals, not all",
         "pre-entry candidate formations or rejected setups; those skipped",
         "formation counts are not available and are not estimated.",
         "",
         "Outcome categories are mutually exclusive. `simulated_entries_with_exact_path`",
         "counts valid candidate replays on available paths; `unresolved_entries`",
-        "also includes the 246 missing-path observations. Consequently the",
+        "also includes any missing-path observations. Consequently the",
         "eligible-entry reconciliation includes missing paths, while the",
         "simulated-entry reconciliation excludes them. Negative reconciliation",
         "deltas indicate an accounting defect and must be zero.",
@@ -430,44 +455,42 @@ def _write_markdown(
     lines.extend([
         "",
         "The combined table includes 2025 H2 plus the full saved 2026 ledger.",
-        "Every policy has 447 eligible entries; 201 have exact paths to run",
-        "(including two partial 2025 paths) and 246 2026 entries have no exact",
-        "path. Candidate gross totals include only resolved simulations, not",
+        f"Every policy has {eligible_total} eligible entries; "
+        f"{total_with_paths} have exact paths to run, including "
+        f"{exact_2025['PARTIAL_POST_ENTRY_PATH']} partial 2025 paths. "
+        f"{missing_2026} saved 2026 entries remain without exact paths. Candidate "
+        "gross totals include only resolved simulations, not",
         "missing or unresolved paths. A positive gross total is not evidence",
         "of net profitability.",
         "",
         "### Strongest experimental candidate (not approved)",
         "",
     ])
-    trail = next(
-        row for row in overall_rows
-        if row["policy_id"] == "B_B2_LOWER_LOW_TRAIL_OPENING_HIGH_V1"
-    )
-    trail_by_period = {
+    gross_leader = max(overall_rows, key=lambda row: row["gross_points"])
+    leader_by_period = {
         row["period"]: row for row in count_rows
-        if row["policy_id"] == trail["policy_id"]
+        if row["policy_id"] == gross_leader["policy_id"]
     }
+    leader_2026 = leader_by_period["EXISTING_2026_ENTRY_LEDGER"]
     lines.extend([
-        f"`{trail['policy_id']}` has the highest combined gross points "
-        f"({trail['gross_points']:.2f}), the highest combined profit factor "
-        f"({trail['profit_factor']:.3f}), and the lowest combined drawdown "
-        f"({trail['max_drawdown']:.2f}) among these fixed candidates. Its",
-        "chronological results do not establish stability:",
-        f"* Training: {trail_by_period['TRAIN_2025_JUL_AUG']['gross_points']:.2f} "
-        f"gross points (PF {trail_by_period['TRAIN_2025_JUL_AUG']['profit_factor']:.3f}).",
-        f"* Validation: {trail_by_period['VALIDATION_2025_SEP_OCT']['gross_points']:.2f} "
-        f"(PF {trail_by_period['VALIDATION_2025_SEP_OCT']['profit_factor']:.3f}).",
-        f"* Test: {trail_by_period['TEST_2025_NOV_DEC']['gross_points']:.2f} "
-        f"(PF {trail_by_period['TEST_2025_NOV_DEC']['profit_factor']:.3f}).",
-        f"* Seven exact 2026 paths: "
-        f"{trail_by_period['EXISTING_2026_ENTRY_LEDGER']['gross_points']:.2f} "
-        f"gross points.",
-        f"The test-period mean was "
-        f"{trail_by_period['TEST_2025_NOV_DEC']['gross_points'] / trail_by_period['TEST_2025_NOV_DEC']['simulated_entries_with_exact_path']:.3f} "
-        "gross points per entry; fees, spread and slippage are unavailable,",
-        "so even this small gross edge cannot support a net-efficiency claim.",
-        "This candidate is the lead for further evidence collection only; it",
-        "is not approved for the paper engine or trading.",
+        f"`{gross_leader['policy_id']}` has the highest combined gross points "
+        f"({gross_leader['gross_points']:.2f}) among the fixed candidates; its",
+        f"combined PF is {gross_leader['profit_factor']:.3f} and drawdown is "
+        f"{gross_leader['max_drawdown']:.2f}. This descriptive lead is not",
+        "stable across the chronological slices:",
+        f"* Training: {leader_by_period['TRAIN_2025_JUL_AUG']['gross_points']:.2f} "
+        f"gross points (PF {leader_by_period['TRAIN_2025_JUL_AUG']['profit_factor']:.3f}).",
+        f"* Validation: {leader_by_period['VALIDATION_2025_SEP_OCT']['gross_points']:.2f} "
+        f"(PF {leader_by_period['VALIDATION_2025_SEP_OCT']['profit_factor']:.3f}).",
+        f"* Test: {leader_by_period['TEST_2025_NOV_DEC']['gross_points']:.2f} "
+        f"(PF {leader_by_period['TEST_2025_NOV_DEC']['profit_factor']:.3f}).",
+        f"* Saved 2026 entries ({leader_2026['simulated_entries_with_exact_path']}/"
+        f"{leader_2026['eligible_entries']} exact paths): "
+        f"{leader_2026['gross_points']:.2f} gross points.",
+        "The additional all-candidate test replays are retrospective count",
+        "accounting; no test results were used to change or retune the frozen",
+        "candidate definitions. The lead remains unapproved for the paper",
+        "engine or trading.",
         "",
         "### Target-touch reconciliation by candidate (combined ledger)",
         "",
@@ -575,12 +598,21 @@ def _write_markdown(
         "",
         f"* 2025 exact-path rows replayed across each candidate: "
         f"{verification['2025_candidate_rows']}.",
-        f"* Exact 2026 paths: {verification['2026_complete_paths']}/253.",
+        f"* Exact 2026 paths: {verification['2026_complete_paths']}/"
+        f"{total_2026}.",
         f"* Archived fractional TP25 exact-path reproductions: "
         f"{verification['archived_tp25_matches']}/"
         f"{verification['archived_tp25_comparable']}.",
-        "* Full saved-ledger outcome counts are not inferable where exact 2026",
-        "  paths are missing.",
+        (
+            "* Saved-ledger outcomes remain unresolved where exact paths are missing."
+            if missing_2026 else
+            "* All 2026 saved entries have exact paths; 2025 partial paths remain"
+        ),
+        (
+            "  explicitly partial and were not extended or interpolated."
+            if not missing_2026 else
+            "  explicitly unresolved and were not imputed."
+        ),
         "",
     ])
     path.write_text("\n".join(lines), encoding="utf-8")
@@ -604,6 +636,7 @@ def main() -> None:
         ROOT / "data" / "raw" / "options",
         ROOT / "data" / "runs",
         ROOT / "data" / "derived" / "final_jan_sep_2026" / "assembled" / "options",
+        ROOT / "data" / "derived" / "ekalayava_guide9_2026_groww" / "options",
     ])
     observations = _read_csv(REPORTS / "multi_year_ekalayava_observations.csv")
     events_2026 = []

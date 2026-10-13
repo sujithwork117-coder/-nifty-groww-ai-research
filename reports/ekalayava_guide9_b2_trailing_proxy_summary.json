@@ -1,0 +1,813 @@
+{
+  "all_stop_updates_monotonic": true,
+  "break_even_round_trip_cost_points": 0.622147651006711,
+  "cost_scenarios": [
+    {
+      "gross_points": 278.0999999999998,
+      "net_expectancy_per_trade_scenario": 0.622147651006711,
+      "net_longest_losing_streak_scenario": 17,
+      "net_max_drawdown_scenario": 660.8999999999999,
+      "net_points_scenario": 278.0999999999998,
+      "net_profit_factor_scenario": 1.06721044045677,
+      "net_win_rate_scenario": 0.4004474272930649,
+      "period": "COMBINED_EXACT_PATHS",
+      "resolved_trades": 447,
+      "round_trip_cost_points": 0.0
+    },
+    {
+      "gross_points": 278.0999999999998,
+      "net_expectancy_per_trade_scenario": 0.37214765100671093,
+      "net_longest_losing_streak_scenario": 17,
+      "net_max_drawdown_scenario": 703.6499999999996,
+      "net_points_scenario": 166.3499999999998,
+      "net_profit_factor_scenario": 1.0395609883707104,
+      "net_win_rate_scenario": 0.3959731543624161,
+      "period": "COMBINED_EXACT_PATHS",
+      "resolved_trades": 447,
+      "round_trip_cost_points": 0.25
+    },
+    {
+      "gross_points": 278.0999999999998,
+      "net_expectancy_per_trade_scenario": 0.12214765100671095,
+      "net_longest_losing_streak_scenario": 17,
+      "net_max_drawdown_scenario": 746.3999999999996,
+      "net_points_scenario": 54.599999999999795,
+      "net_profit_factor_scenario": 1.0127795527156551,
+      "net_win_rate_scenario": 0.39373601789709173,
+      "period": "COMBINED_EXACT_PATHS",
+      "resolved_trades": 447,
+      "round_trip_cost_points": 0.5
+    },
+    {
+      "gross_points": 278.0999999999998,
+      "net_expectancy_per_trade_scenario": -0.37785234899328907,
+      "net_longest_losing_streak_scenario": 17,
+      "net_max_drawdown_scenario": 831.9,
+      "net_points_scenario": -168.9000000000002,
+      "net_profit_factor_scenario": 0.9616867797840487,
+      "net_win_rate_scenario": 0.38478747203579416,
+      "period": "COMBINED_EXACT_PATHS",
+      "resolved_trades": 447,
+      "round_trip_cost_points": 1.0
+    },
+    {
+      "gross_points": 278.0999999999998,
+      "net_expectancy_per_trade_scenario": -1.377852348993289,
+      "net_longest_losing_streak_scenario": 17,
+      "net_max_drawdown_scenario": 1005.2000000000005,
+      "net_points_scenario": -615.9000000000002,
+      "net_profit_factor_scenario": 0.8685925815295661,
+      "net_win_rate_scenario": 0.3668903803131991,
+      "period": "COMBINED_EXACT_PATHS",
+      "resolved_trades": 447,
+      "round_trip_cost_points": 2.0
+    },
+    {
+      "gross_points": -83.89999999999999,
+      "net_expectancy_per_trade_scenario": -5.593333333333333,
+      "net_longest_losing_streak_scenario": 10,
+      "net_max_drawdown_scenario": 135.1,
+      "net_points_scenario": -83.89999999999999,
+      "net_profit_factor_scenario": 0.423169474046064,
+      "net_win_rate_scenario": 0.13333333333333333,
+      "period": "OOS_SEP_INCOMPLETE",
+      "resolved_trades": 15,
+      "round_trip_cost_points": 0.0
+    },
+    {
+      "gross_points": -83.89999999999999,
+      "net_expectancy_per_trade_scenario": -5.843333333333333,
+      "net_longest_losing_streak_scenario": 10,
+      "net_max_drawdown_scenario": 137.6,
+      "net_points_scenario": -87.64999999999999,
+      "net_profit_factor_scenario": 0.4105581708137189,
+      "net_win_rate_scenario": 0.13333333333333333,
+      "period": "OOS_SEP_INCOMPLETE",
+      "resolved_trades": 15,
+      "round_trip_cost_points": 0.25
+    },
+    {
+      "gross_points": -83.89999999999999,
+      "net_expectancy_per_trade_scenario": -6.093333333333333,
+      "net_longest_losing_streak_scenario": 10,
+      "net_max_drawdown_scenario": 140.1,
+      "net_points_scenario": -91.39999999999999,
+      "net_profit_factor_scenario": 0.3984863441921685,
+      "net_win_rate_scenario": 0.13333333333333333,
+      "period": "OOS_SEP_INCOMPLETE",
+      "resolved_trades": 15,
+      "round_trip_cost_points": 0.5
+    },
+    {
+      "gross_points": -83.89999999999999,
+      "net_expectancy_per_trade_scenario": -6.593333333333333,
+      "net_longest_losing_streak_scenario": 10,
+      "net_max_drawdown_scenario": 146.5,
+      "net_points_scenario": -98.89999999999999,
+      "net_profit_factor_scenario": 0.3758283370148312,
+      "net_win_rate_scenario": 0.13333333333333333,
+      "period": "OOS_SEP_INCOMPLETE",
+      "resolved_trades": 15,
+      "round_trip_cost_points": 1.0
+    },
+    {
+      "gross_points": -83.89999999999999,
+      "net_expectancy_per_trade_scenario": -7.593333333333333,
+      "net_longest_losing_streak_scenario": 10,
+      "net_max_drawdown_scenario": 160.5,
+      "net_points_scenario": -113.89999999999999,
+      "net_profit_factor_scenario": 0.3356663750364538,
+      "net_win_rate_scenario": 0.13333333333333333,
+      "period": "OOS_SEP_INCOMPLETE",
+      "resolved_trades": 15,
+      "round_trip_cost_points": 2.0
+    },
+    {
+      "gross_points": 1.2499999999999218,
+      "net_expectancy_per_trade_scenario": 0.018115942028984373,
+      "net_longest_losing_streak_scenario": 10,
+      "net_max_drawdown_scenario": 163.70000000000005,
+      "net_points_scenario": 1.2499999999999218,
+      "net_profit_factor_scenario": 1.002837040399455,
+      "net_win_rate_scenario": 0.43478260869565216,
+      "period": "TEST_2025_NOV_DEC",
+      "resolved_trades": 69,
+      "round_trip_cost_points": 0.0
+    },
+    {
+      "gross_points": 1.2499999999999218,
+      "net_expectancy_per_trade_scenario": -0.23188405797101563,
+      "net_longest_losing_streak_scenario": 10,
+      "net_max_drawdown_scenario": 168.20000000000005,
+      "net_points_scenario": -16.000000000000078,
+      "net_profit_factor_scenario": 0.9644720772732318,
+      "net_win_rate_scenario": 0.43478260869565216,
+      "period": "TEST_2025_NOV_DEC",
+      "resolved_trades": 69,
+      "round_trip_cost_points": 0.25
+    },
+    {
+      "gross_points": 1.2499999999999218,
+      "net_expectancy_per_trade_scenario": -0.48188405797101563,
+      "net_longest_losing_streak_scenario": 10,
+      "net_max_drawdown_scenario": 172.70000000000005,
+      "net_points_scenario": -33.25000000000008,
+      "net_profit_factor_scenario": 0.9277331014996739,
+      "net_win_rate_scenario": 0.43478260869565216,
+      "period": "TEST_2025_NOV_DEC",
+      "resolved_trades": 69,
+      "round_trip_cost_points": 0.5
+    },
+    {
+      "gross_points": 1.2499999999999218,
+      "net_expectancy_per_trade_scenario": -0.9818840579710156,
+      "net_longest_losing_streak_scenario": 10,
+      "net_max_drawdown_scenario": 181.70000000000005,
+      "net_points_scenario": -67.75000000000009,
+      "net_profit_factor_scenario": 0.8587806149035954,
+      "net_win_rate_scenario": 0.42028985507246375,
+      "period": "TEST_2025_NOV_DEC",
+      "resolved_trades": 69,
+      "round_trip_cost_points": 1.0
+    },
+    {
+      "gross_points": 1.2499999999999218,
+      "net_expectancy_per_trade_scenario": -1.9818840579710155,
+      "net_longest_losing_streak_scenario": 10,
+      "net_max_drawdown_scenario": 199.70000000000002,
+      "net_points_scenario": -136.75000000000009,
+      "net_profit_factor_scenario": 0.7376498800959231,
+      "net_win_rate_scenario": 0.37681159420289856,
+      "period": "TEST_2025_NOV_DEC",
+      "resolved_trades": 69,
+      "round_trip_cost_points": 2.0
+    },
+    {
+      "gross_points": 217.64999999999998,
+      "net_expectancy_per_trade_scenario": 3.5680327868852455,
+      "net_longest_losing_streak_scenario": 7,
+      "net_max_drawdown_scenario": 150.0,
+      "net_points_scenario": 217.64999999999998,
+      "net_profit_factor_scenario": 1.5283408180604443,
+      "net_win_rate_scenario": 0.45901639344262296,
+      "period": "TRAIN_2025_JUL_AUG",
+      "resolved_trades": 61,
+      "round_trip_cost_points": 0.0
+    },
+    {
+      "gross_points": 217.64999999999998,
+      "net_expectancy_per_trade_scenario": 3.3180327868852455,
+      "net_longest_losing_streak_scenario": 7,
+      "net_max_drawdown_scenario": 155.75,
+      "net_points_scenario": 202.39999999999998,
+      "net_profit_factor_scenario": 1.4816753926701571,
+      "net_win_rate_scenario": 0.4426229508196721,
+      "period": "TRAIN_2025_JUL_AUG",
+      "resolved_trades": 61,
+      "round_trip_cost_points": 0.25
+    },
+    {
+      "gross_points": 217.64999999999998,
+      "net_expectancy_per_trade_scenario": 3.0680327868852455,
+      "net_longest_losing_streak_scenario": 7,
+      "net_max_drawdown_scenario": 161.5,
+      "net_points_scenario": 187.14999999999998,
+      "net_profit_factor_scenario": 1.4365523676230465,
+      "net_win_rate_scenario": 0.4426229508196721,
+      "period": "TRAIN_2025_JUL_AUG",
+      "resolved_trades": 61,
+      "round_trip_cost_points": 0.5
+    },
+    {
+      "gross_points": 217.64999999999998,
+      "net_expectancy_per_trade_scenario": 2.5680327868852455,
+      "net_longest_losing_streak_scenario": 7,
+      "net_max_drawdown_scenario": 173.0,
+      "net_points_scenario": 156.64999999999998,
+      "net_profit_factor_scenario": 1.3514695983845637,
+      "net_win_rate_scenario": 0.4262295081967213,
+      "period": "TRAIN_2025_JUL_AUG",
+      "resolved_trades": 61,
+      "round_trip_cost_points": 1.0
+    },
+    {
+      "gross_points": 217.64999999999998,
+      "net_expectancy_per_trade_scenario": 1.5680327868852457,
+      "net_longest_losing_streak_scenario": 8,
+      "net_max_drawdown_scenario": 195.99999999999997,
+      "net_points_scenario": 95.64999999999999,
+      "net_profit_factor_scenario": 1.198980653214063,
+      "net_win_rate_scenario": 0.4262295081967213,
+      "period": "TRAIN_2025_JUL_AUG",
+      "resolved_trades": 61,
+      "round_trip_cost_points": 2.0
+    },
+    {
+      "gross_points": 143.54999999999998,
+      "net_expectancy_per_trade_scenario": 0.7515706806282721,
+      "net_longest_losing_streak_scenario": 17,
+      "net_max_drawdown_scenario": 542.9499999999996,
+      "net_points_scenario": 143.54999999999998,
+      "net_profit_factor_scenario": 1.0624021909233177,
+      "net_win_rate_scenario": 0.3769633507853403,
+      "period": "TRAIN_JAN_JUN",
+      "resolved_trades": 191,
+      "round_trip_cost_points": 0.0
+    },
+    {
+      "gross_points": 143.54999999999998,
+      "net_expectancy_per_trade_scenario": 0.5015706806282721,
+      "net_longest_losing_streak_scenario": 17,
+      "net_max_drawdown_scenario": 564.6999999999998,
+      "net_points_scenario": 95.79999999999998,
+      "net_profit_factor_scenario": 1.0411105866197485,
+      "net_win_rate_scenario": 0.3717277486910995,
+      "period": "TRAIN_JAN_JUN",
+      "resolved_trades": 191,
+      "round_trip_cost_points": 0.25
+    },
+    {
+      "gross_points": 143.54999999999998,
+      "net_expectancy_per_trade_scenario": 0.25157068062827215,
+      "net_longest_losing_streak_scenario": 17,
+      "net_max_drawdown_scenario": 586.4499999999999,
+      "net_points_scenario": 48.04999999999998,
+      "net_profit_factor_scenario": 1.020357150422607,
+      "net_win_rate_scenario": 0.36649214659685864,
+      "period": "TRAIN_JAN_JUN",
+      "resolved_trades": 191,
+      "round_trip_cost_points": 0.5
+    },
+    {
+      "gross_points": 143.54999999999998,
+      "net_expectancy_per_trade_scenario": -0.24842931937172785,
+      "net_longest_losing_streak_scenario": 17,
+      "net_max_drawdown_scenario": 629.95,
+      "net_points_scenario": -47.45000000000002,
+      "net_profit_factor_scenario": 0.9804010656533323,
+      "net_win_rate_scenario": 0.3612565445026178,
+      "period": "TRAIN_JAN_JUN",
+      "resolved_trades": 191,
+      "round_trip_cost_points": 1.0
+    },
+    {
+      "gross_points": 143.54999999999998,
+      "net_expectancy_per_trade_scenario": -1.2484293193717277,
+      "net_longest_losing_streak_scenario": 17,
+      "net_max_drawdown_scenario": 746.55,
+      "net_points_scenario": -238.45000000000002,
+      "net_profit_factor_scenario": 0.9062807058916009,
+      "net_win_rate_scenario": 0.34554973821989526,
+      "period": "TRAIN_JAN_JUN",
+      "resolved_trades": 191,
+      "round_trip_cost_points": 2.0
+    },
+    {
+      "gross_points": -19.849999999999987,
+      "net_expectancy_per_trade_scenario": -0.3101562499999998,
+      "net_longest_losing_streak_scenario": 6,
+      "net_max_drawdown_scenario": 190.7,
+      "net_points_scenario": -19.849999999999987,
+      "net_profit_factor_scenario": 0.9595805334962331,
+      "net_win_rate_scenario": 0.390625,
+      "period": "VALIDATION_2025_SEP_OCT",
+      "resolved_trades": 64,
+      "round_trip_cost_points": 0.0
+    },
+    {
+      "gross_points": -19.849999999999987,
+      "net_expectancy_per_trade_scenario": -0.5601562499999998,
+      "net_longest_losing_streak_scenario": 6,
+      "net_max_drawdown_scenario": 203.7,
+      "net_points_scenario": -35.84999999999999,
+      "net_profit_factor_scenario": 0.9284216831386644,
+      "net_win_rate_scenario": 0.390625,
+      "period": "VALIDATION_2025_SEP_OCT",
+      "resolved_trades": 64,
+      "round_trip_cost_points": 0.25
+    },
+    {
+      "gross_points": -19.849999999999987,
+      "net_expectancy_per_trade_scenario": -0.8101562499999998,
+      "net_longest_losing_streak_scenario": 6,
+      "net_max_drawdown_scenario": 216.7,
+      "net_points_scenario": -51.84999999999999,
+      "net_profit_factor_scenario": 0.8984528006267137,
+      "net_win_rate_scenario": 0.390625,
+      "period": "VALIDATION_2025_SEP_OCT",
+      "resolved_trades": 64,
+      "round_trip_cost_points": 0.5
+    },
+    {
+      "gross_points": -19.849999999999987,
+      "net_expectancy_per_trade_scenario": -1.31015625,
+      "net_longest_losing_streak_scenario": 6,
+      "net_max_drawdown_scenario": 242.7,
+      "net_points_scenario": -83.85,
+      "net_profit_factor_scenario": 0.8418222976796831,
+      "net_win_rate_scenario": 0.390625,
+      "period": "VALIDATION_2025_SEP_OCT",
+      "resolved_trades": 64,
+      "round_trip_cost_points": 1.0
+    },
+    {
+      "gross_points": -19.849999999999987,
+      "net_expectancy_per_trade_scenario": -2.31015625,
+      "net_longest_losing_streak_scenario": 6,
+      "net_max_drawdown_scenario": 294.7,
+      "net_points_scenario": -147.85,
+      "net_profit_factor_scenario": 0.7402038306097346,
+      "net_win_rate_scenario": 0.375,
+      "period": "VALIDATION_2025_SEP_OCT",
+      "resolved_trades": 64,
+      "round_trip_cost_points": 2.0
+    },
+    {
+      "gross_points": 19.39999999999989,
+      "net_expectancy_per_trade_scenario": 0.41276595744680616,
+      "net_longest_losing_streak_scenario": 8,
+      "net_max_drawdown_scenario": 198.35000000000008,
+      "net_points_scenario": 19.39999999999989,
+      "net_profit_factor_scenario": 1.0557071069633879,
+      "net_win_rate_scenario": 0.46808510638297873,
+      "period": "VALIDATION_JUL_AUG",
+      "resolved_trades": 47,
+      "round_trip_cost_points": 0.0
+    },
+    {
+      "gross_points": 19.39999999999989,
+      "net_expectancy_per_trade_scenario": 0.16276595744680614,
+      "net_longest_losing_streak_scenario": 8,
+      "net_max_drawdown_scenario": 205.60000000000008,
+      "net_points_scenario": 7.6499999999998884,
+      "net_profit_factor_scenario": 1.0215796897038079,
+      "net_win_rate_scenario": 0.46808510638297873,
+      "period": "VALIDATION_JUL_AUG",
+      "resolved_trades": 47,
+      "round_trip_cost_points": 0.25
+    },
+    {
+      "gross_points": 19.39999999999989,
+      "net_expectancy_per_trade_scenario": -0.08723404255319386,
+      "net_longest_losing_streak_scenario": 8,
+      "net_max_drawdown_scenario": 212.85000000000008,
+      "net_points_scenario": -4.1000000000001116,
+      "net_profit_factor_scenario": 0.9886347886347883,
+      "net_win_rate_scenario": 0.46808510638297873,
+      "period": "VALIDATION_JUL_AUG",
+      "resolved_trades": 47,
+      "round_trip_cost_points": 0.5
+    },
+    {
+      "gross_points": 19.39999999999989,
+      "net_expectancy_per_trade_scenario": -0.5872340425531939,
+      "net_longest_losing_streak_scenario": 8,
+      "net_max_drawdown_scenario": 227.35000000000008,
+      "net_points_scenario": -27.60000000000011,
+      "net_profit_factor_scenario": 0.9260747288067495,
+      "net_win_rate_scenario": 0.44680851063829785,
+      "period": "VALIDATION_JUL_AUG",
+      "resolved_trades": 47,
+      "round_trip_cost_points": 1.0
+    },
+    {
+      "gross_points": 19.39999999999989,
+      "net_expectancy_per_trade_scenario": -1.587234042553194,
+      "net_longest_losing_streak_scenario": 8,
+      "net_max_drawdown_scenario": 258.6500000000001,
+      "net_points_scenario": -74.60000000000011,
+      "net_profit_factor_scenario": 0.8135699112832686,
+      "net_win_rate_scenario": 0.425531914893617,
+      "period": "VALIDATION_JUL_AUG",
+      "resolved_trades": 47,
+      "round_trip_cost_points": 2.0
+    }
+  ],
+  "coverage_by_dataset_period_type_rank_status": [
+    {
+      "dataset": "EXISTING_2026_ENTRY_LEDGER",
+      "entries": 4,
+      "itm_rank": "2",
+      "option_type": "CE",
+      "path_status": "COMPLETE_POST_ENTRY_PATH",
+      "period": "OOS_SEP_INCOMPLETE"
+    },
+    {
+      "dataset": "EXISTING_2026_ENTRY_LEDGER",
+      "entries": 5,
+      "itm_rank": "3",
+      "option_type": "CE",
+      "path_status": "COMPLETE_POST_ENTRY_PATH",
+      "period": "OOS_SEP_INCOMPLETE"
+    },
+    {
+      "dataset": "EXISTING_2026_ENTRY_LEDGER",
+      "entries": 3,
+      "itm_rank": "2",
+      "option_type": "PE",
+      "path_status": "COMPLETE_POST_ENTRY_PATH",
+      "period": "OOS_SEP_INCOMPLETE"
+    },
+    {
+      "dataset": "EXISTING_2026_ENTRY_LEDGER",
+      "entries": 3,
+      "itm_rank": "3",
+      "option_type": "PE",
+      "path_status": "COMPLETE_POST_ENTRY_PATH",
+      "period": "OOS_SEP_INCOMPLETE"
+    },
+    {
+      "dataset": "EXISTING_2026_ENTRY_LEDGER",
+      "entries": 48,
+      "itm_rank": "2",
+      "option_type": "CE",
+      "path_status": "COMPLETE_POST_ENTRY_PATH",
+      "period": "TRAIN_JAN_JUN"
+    },
+    {
+      "dataset": "EXISTING_2026_ENTRY_LEDGER",
+      "entries": 47,
+      "itm_rank": "3",
+      "option_type": "CE",
+      "path_status": "COMPLETE_POST_ENTRY_PATH",
+      "period": "TRAIN_JAN_JUN"
+    },
+    {
+      "dataset": "EXISTING_2026_ENTRY_LEDGER",
+      "entries": 50,
+      "itm_rank": "2",
+      "option_type": "PE",
+      "path_status": "COMPLETE_POST_ENTRY_PATH",
+      "period": "TRAIN_JAN_JUN"
+    },
+    {
+      "dataset": "EXISTING_2026_ENTRY_LEDGER",
+      "entries": 46,
+      "itm_rank": "3",
+      "option_type": "PE",
+      "path_status": "COMPLETE_POST_ENTRY_PATH",
+      "period": "TRAIN_JAN_JUN"
+    },
+    {
+      "dataset": "EXISTING_2026_ENTRY_LEDGER",
+      "entries": 12,
+      "itm_rank": "2",
+      "option_type": "CE",
+      "path_status": "COMPLETE_POST_ENTRY_PATH",
+      "period": "VALIDATION_JUL_AUG"
+    },
+    {
+      "dataset": "EXISTING_2026_ENTRY_LEDGER",
+      "entries": 10,
+      "itm_rank": "3",
+      "option_type": "CE",
+      "path_status": "COMPLETE_POST_ENTRY_PATH",
+      "period": "VALIDATION_JUL_AUG"
+    },
+    {
+      "dataset": "EXISTING_2026_ENTRY_LEDGER",
+      "entries": 11,
+      "itm_rank": "2",
+      "option_type": "PE",
+      "path_status": "COMPLETE_POST_ENTRY_PATH",
+      "period": "VALIDATION_JUL_AUG"
+    },
+    {
+      "dataset": "EXISTING_2026_ENTRY_LEDGER",
+      "entries": 14,
+      "itm_rank": "3",
+      "option_type": "PE",
+      "path_status": "COMPLETE_POST_ENTRY_PATH",
+      "period": "VALIDATION_JUL_AUG"
+    },
+    {
+      "dataset": "GROWW_2025_H2",
+      "entries": 20,
+      "itm_rank": "2",
+      "option_type": "CE",
+      "path_status": "COMPLETE_POST_ENTRY_PATH",
+      "period": "TEST_2025_NOV_DEC"
+    },
+    {
+      "dataset": "GROWW_2025_H2",
+      "entries": 16,
+      "itm_rank": "3",
+      "option_type": "CE",
+      "path_status": "COMPLETE_POST_ENTRY_PATH",
+      "period": "TEST_2025_NOV_DEC"
+    },
+    {
+      "dataset": "GROWW_2025_H2",
+      "entries": 17,
+      "itm_rank": "2",
+      "option_type": "PE",
+      "path_status": "COMPLETE_POST_ENTRY_PATH",
+      "period": "TEST_2025_NOV_DEC"
+    },
+    {
+      "dataset": "GROWW_2025_H2",
+      "entries": 16,
+      "itm_rank": "3",
+      "option_type": "PE",
+      "path_status": "COMPLETE_POST_ENTRY_PATH",
+      "period": "TEST_2025_NOV_DEC"
+    },
+    {
+      "dataset": "GROWW_2025_H2",
+      "entries": 17,
+      "itm_rank": "2",
+      "option_type": "CE",
+      "path_status": "COMPLETE_POST_ENTRY_PATH",
+      "period": "TRAIN_2025_JUL_AUG"
+    },
+    {
+      "dataset": "GROWW_2025_H2",
+      "entries": 18,
+      "itm_rank": "3",
+      "option_type": "CE",
+      "path_status": "COMPLETE_POST_ENTRY_PATH",
+      "period": "TRAIN_2025_JUL_AUG"
+    },
+    {
+      "dataset": "GROWW_2025_H2",
+      "entries": 13,
+      "itm_rank": "2",
+      "option_type": "PE",
+      "path_status": "COMPLETE_POST_ENTRY_PATH",
+      "period": "TRAIN_2025_JUL_AUG"
+    },
+    {
+      "dataset": "GROWW_2025_H2",
+      "entries": 13,
+      "itm_rank": "3",
+      "option_type": "PE",
+      "path_status": "COMPLETE_POST_ENTRY_PATH",
+      "period": "TRAIN_2025_JUL_AUG"
+    },
+    {
+      "dataset": "GROWW_2025_H2",
+      "entries": 12,
+      "itm_rank": "2",
+      "option_type": "CE",
+      "path_status": "COMPLETE_POST_ENTRY_PATH",
+      "period": "VALIDATION_2025_SEP_OCT"
+    },
+    {
+      "dataset": "GROWW_2025_H2",
+      "entries": 1,
+      "itm_rank": "2",
+      "option_type": "CE",
+      "path_status": "PARTIAL_POST_ENTRY_PATH",
+      "period": "VALIDATION_2025_SEP_OCT"
+    },
+    {
+      "dataset": "GROWW_2025_H2",
+      "entries": 10,
+      "itm_rank": "3",
+      "option_type": "CE",
+      "path_status": "COMPLETE_POST_ENTRY_PATH",
+      "period": "VALIDATION_2025_SEP_OCT"
+    },
+    {
+      "dataset": "GROWW_2025_H2",
+      "entries": 1,
+      "itm_rank": "3",
+      "option_type": "CE",
+      "path_status": "PARTIAL_POST_ENTRY_PATH",
+      "period": "VALIDATION_2025_SEP_OCT"
+    },
+    {
+      "dataset": "GROWW_2025_H2",
+      "entries": 20,
+      "itm_rank": "2",
+      "option_type": "PE",
+      "path_status": "COMPLETE_POST_ENTRY_PATH",
+      "period": "VALIDATION_2025_SEP_OCT"
+    },
+    {
+      "dataset": "GROWW_2025_H2",
+      "entries": 20,
+      "itm_rank": "3",
+      "option_type": "PE",
+      "path_status": "COMPLETE_POST_ENTRY_PATH",
+      "period": "VALIDATION_2025_SEP_OCT"
+    }
+  ],
+  "data_coverage": {
+    "2026_missing_exact_paths": 0,
+    "entry_observations_2025": 194,
+    "entry_observations_2026": 253,
+    "exact_2025_complete_paths": 192,
+    "exact_2025_partial_paths": 2,
+    "exact_2026_paths": 253
+  },
+  "duplicate_entry_observation_extras": 0,
+  "duplicate_exit_timestamp_extras": 0,
+  "execution_allowed": false,
+  "gap_stop_exits": 0,
+  "gross_points": 278.0999999999998,
+  "mae_points": {
+    "count": 447,
+    "mean": -14.768232662192394,
+    "median": -11.5,
+    "p25": -19.699999999999996,
+    "p75": -6.350000000000005
+  },
+  "mean_gross_points_per_resolved": 0.622147651006711,
+  "mfe_points": {
+    "count": 447,
+    "mean": 20.346868008948544,
+    "median": 12.050000000000011,
+    "p25": 4.6499999999999915,
+    "p75": 26.775000000000006
+  },
+  "orders_submitted": false,
+  "overlapping_same_contract_positions": 0,
+  "paper_only": true,
+  "periods": {
+    "OOS_SEP_INCOMPLETE": {
+      "end_of_session_exits": 1,
+      "entries": 15,
+      "gross_points": -83.89999999999999,
+      "mean_gross_points_per_resolved": -5.593333333333333,
+      "resolved": 15,
+      "stop_exits": 13,
+      "target_exits": 1,
+      "unresolved": 0
+    },
+    "TEST_2025_NOV_DEC": {
+      "end_of_session_exits": 0,
+      "entries": 69,
+      "gross_points": 1.2499999999999218,
+      "mean_gross_points_per_resolved": 0.018115942028984373,
+      "resolved": 69,
+      "stop_exits": 47,
+      "target_exits": 22,
+      "unresolved": 0
+    },
+    "TRAIN_2025_JUL_AUG": {
+      "end_of_session_exits": 1,
+      "entries": 61,
+      "gross_points": 217.64999999999998,
+      "mean_gross_points_per_resolved": 3.5680327868852455,
+      "resolved": 61,
+      "stop_exits": 42,
+      "target_exits": 18,
+      "unresolved": 0
+    },
+    "TRAIN_JAN_JUN": {
+      "end_of_session_exits": 2,
+      "entries": 191,
+      "gross_points": 143.54999999999998,
+      "mean_gross_points_per_resolved": 0.7515706806282721,
+      "resolved": 191,
+      "stop_exits": 144,
+      "target_exits": 45,
+      "unresolved": 0
+    },
+    "VALIDATION_2025_SEP_OCT": {
+      "end_of_session_exits": 0,
+      "entries": 64,
+      "gross_points": -19.849999999999987,
+      "mean_gross_points_per_resolved": -0.3101562499999998,
+      "resolved": 64,
+      "stop_exits": 49,
+      "target_exits": 15,
+      "unresolved": 0
+    },
+    "VALIDATION_JUL_AUG": {
+      "end_of_session_exits": 0,
+      "entries": 47,
+      "gross_points": 19.39999999999989,
+      "mean_gross_points_per_resolved": 0.41276595744680616,
+      "resolved": 47,
+      "stop_exits": 36,
+      "target_exits": 11,
+      "unresolved": 0
+    }
+  },
+  "policy_id": "B_B2_LOWER_LOW_TRAIL_OPENING_HIGH_V1",
+  "replay_matches": 447,
+  "resolved_exact_path_trades": 447,
+  "rows_in_ledger": 447,
+  "stopped_out": 331,
+  "stops_after_trailing_update": 266,
+  "stops_with_observed_opening_high_touch_after_exit": 78,
+  "stops_with_observed_opening_high_touch_after_exit_rate": 0.23564954682779457,
+  "stops_within_15_minutes": 51,
+  "stops_within_5_minutes": 5,
+  "top_5_share_of_positive_points": 0.15495318002196634,
+  "top_winners": [
+    {
+      "date": "2026-01-21",
+      "period": "TRAIN_JAN_JUN",
+      "points": 158.10000000000002,
+      "setup_id": "9112f48bc0ac1afae2cb",
+      "symbol": "NSE-NIFTY-27Jan26-25000-CE"
+    },
+    {
+      "date": "2026-01-21",
+      "period": "TRAIN_JAN_JUN",
+      "points": 149.89999999999998,
+      "setup_id": "af9be1f17d02bcf2344c",
+      "symbol": "NSE-NIFTY-27Jan26-25050-CE"
+    },
+    {
+      "date": "2026-01-12",
+      "period": "TRAIN_JAN_JUN",
+      "points": 147.5,
+      "setup_id": "64a2e1203c12ecd496e5",
+      "symbol": "NSE-NIFTY-13Jan26-25550-CE"
+    },
+    {
+      "date": "2026-01-12",
+      "period": "TRAIN_JAN_JUN",
+      "points": 116.8,
+      "setup_id": "1c97d8bd359055d4d854",
+      "symbol": "NSE-NIFTY-13Jan26-25600-CE"
+    },
+    {
+      "date": "2026-06-03",
+      "period": "TRAIN_JAN_JUN",
+      "points": 111.94999999999999,
+      "setup_id": "9e8e42a78ca5aae08881",
+      "symbol": "NSE-NIFTY-09Jun26-23300-CE"
+    },
+    {
+      "date": "2026-06-03",
+      "period": "TRAIN_JAN_JUN",
+      "points": 106.5,
+      "setup_id": "d178516a1061f0213416",
+      "symbol": "NSE-NIFTY-09Jun26-23350-CE"
+    },
+    {
+      "date": "2025-08-12",
+      "period": "TRAIN_2025_JUL_AUG",
+      "points": 82.79999999999998,
+      "setup_id": "NSE-NIFTY-14Aug25-24700-PE|2025-08-12|2025-08-12T04:45:00+00:00",
+      "symbol": "NSE-NIFTY-14Aug25-24700-PE"
+    },
+    {
+      "date": "2026-03-20",
+      "period": "TRAIN_JAN_JUN",
+      "points": 81.44999999999999,
+      "setup_id": "e267ff2e0e798ea70cbd",
+      "symbol": "NSE-NIFTY-24Mar26-23250-PE"
+    },
+    {
+      "date": "2026-04-29",
+      "period": "TRAIN_JAN_JUN",
+      "points": 81.1,
+      "setup_id": "003267a0d337d2adc0f1",
+      "symbol": "NSE-NIFTY-05May26-24250-PE"
+    },
+    {
+      "date": "2026-04-29",
+      "period": "TRAIN_JAN_JUN",
+      "points": 74.1,
+      "setup_id": "eb0bbed8e20a747ae958",
+      "symbol": "NSE-NIFTY-05May26-24200-PE"
+    }
+  ],
+  "trades_with_trail_updates": 303
+}

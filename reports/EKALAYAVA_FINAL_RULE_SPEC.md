@@ -74,18 +74,24 @@ conventions to these candidates:
 No formula above is selected for operational use. The validation-selected
 `C_B2_2R_V1` failed to show cross-period stability: −258.20 training points,
 +75.85 validation points, +172.70 2025 test points, and −71.30
-across seven exact 2026 paths. The sample and missing data do not support a
+across seven exact 2026 paths in the pre-recovery snapshot. After Guide 9's
+bounded recovery, all 253 saved 2026 entry paths are exact and complete. The
+2R policy then records 127 targets, 282 stops and 38 experimental
+end-of-session exits, with −1151.50 gross points over the 447-entry combined
+ledger. The sample, temporal instability and unknown costs do not support a
 reliable winner.
 
-The later all-candidate accounting found 61 2R target exits, 123 stop exits,
-17 experimental end-of-session exits, and 246 unresolved exact-path gaps over
-the combined 447-entry ledger (−80.95 gross points on the 201 entries with
-exact paths). Detailed candidate counts and the additional prespecified
-November–December replays are in
+The latest all-candidate accounting shows 447/447 classified rows per policy,
+including the 253 recovered 2026 paths; 2025 retains 192 complete and 2
+partial paths. Detailed candidate counts and period results are in
 [EKALAYAVA_TARGET_SL_COUNT_RECONCILIATION.md](./EKALAYAVA_TARGET_SL_COUNT_RECONCILIATION.md).
-The `B_B2_LOWER_LOW_TRAIL_OPENING_HIGH_V1` proxy had the strongest descriptive
-combined gross result among the candidates but was nearly flat or negative in
-validation, test, and the sparse exact 2026 subset; it remains unapproved.
+`A_B4_OPENING_HIGH_V1` now leads descriptively at +685.55 combined gross points
+(PF 1.105, maximum drawdown 602.05), despite negative training and validation.
+The B2 proxy, previously the leader, returned +278.10 (PF 1.067, maximum
+drawdown 660.90); its test-period result was only +1.25 and the unknown costs
+prevent any net-profit claim. Neither policy is approved. The row-level B2
+audit and cost sensitivities are in
+[EKALAYAVA_GUIDE9_B2_TRAILING_PROXY_AUDIT.md](./EKALAYAVA_GUIDE9_B2_TRAILING_PROXY_AUDIT.md).
 
 Live order execution remains disabled (`EXECUTION_ALLOWED=False`);
 paper-only mode remains enabled (`PAPER_ONLY=True`). No order was submitted,

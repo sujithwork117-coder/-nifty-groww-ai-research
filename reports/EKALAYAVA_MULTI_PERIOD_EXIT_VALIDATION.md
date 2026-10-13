@@ -1,5 +1,13 @@
 # Ekalayava Multi-Period Exit Validation
 
+> **Historical snapshot:** This report's 7/253 exact-path 2026 subset was
+> superseded by Guide 9's bounded recovery of 253/253 saved 2026 paths. Its
+> previously examined 2025 chronological results remain historical evidence,
+> but the sparse-2026 statements below must not be read as current coverage.
+> See [EKALAYAVA_FINAL_EVIDENCE_AND_DATA_COVERAGE.md](./EKALAYAVA_FINAL_EVIDENCE_AND_DATA_COVERAGE.md)
+> and [EKALAYAVA_FINAL_SL_TARGET_DECISION.md](./EKALAYAVA_FINAL_SL_TARGET_DECISION.md)
+> for the current reconciliation and decision.
+
 > **Guide 8 follow-up:** All pre-existing candidates have now been run once
 > over the Nov–Dec 2025 rows for count reconciliation, without changing the
 > validation selection. These extra holdout-period comparisons are descriptive

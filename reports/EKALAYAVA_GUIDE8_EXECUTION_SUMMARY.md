@@ -1,5 +1,13 @@
 # Ekalayava Guide 8 Execution Summary
 
+> **Historical snapshot:** This report predates Guide 9's bounded 2026
+> exact-path recovery. Its 7/253 coverage and resulting candidate ranking are
+> superseded by
+> [EKALAYAVA_FINAL_EVIDENCE_AND_DATA_COVERAGE.md](./EKALAYAVA_FINAL_EVIDENCE_AND_DATA_COVERAGE.md),
+> [EKALAYAVA_TARGET_SL_COUNT_RECONCILIATION.md](./EKALAYAVA_TARGET_SL_COUNT_RECONCILIATION.md),
+> and [EKALAYAVA_FINAL_SL_TARGET_DECISION.md](./EKALAYAVA_FINAL_SL_TARGET_DECISION.md).
+> The Guide 8 run and test record below remains historical.
+
 ## Result
 
 The seven fixed candidates were reconciled once across the 2025 H2 entry set
