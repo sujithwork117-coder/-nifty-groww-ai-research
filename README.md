@@ -21,6 +21,7 @@ Create `.env` from `.env.example`, then set `GROWW_API_KEY` and exactly one of
 for your Groww API key. Never commit `.env` or print access tokens.
 
 ## Install
+
 Windows:
 
 ```powershell
@@ -36,6 +37,46 @@ python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
 ```
+
+## Terminal-first research runner
+
+From the repository root, the default command is offline: it checks the
+paper-only lock, runs a synthetic shadow/reconciliation smoke test, inventories
+local data and summarizes existing research artifacts. It does not authenticate,
+fetch market data, or start the observer.
+
+```sh
+python run_research.py
+python run_research.py doctor
+python run_research.py smoke-test
+python run_research.py study --years 2024 2025 2026
+python run_research.py test
+```
+
+On Windows, use `.\.venv\Scripts\python.exe run_research.py` in place of
+`python run_research.py`. Reports are written to the ignored
+`data/reports/run_research_*` files.
+
+Groww access is explicit. Configure `.env` using `.env.example` and run
+`python run_research.py auth-check` to test read-only authentication/profile
+access. `fetch-history` accepts a maximum 31-calendar-day request and only
+retrieves explicitly requested five-minute history; Groww's supported recent
+history window and the repository's currently supported 2026 NSE calendar limit
+what can be established. Raw responses are kept under the ignored
+`data/raw/groww_history/`, while normalized candles and provenance manifests
+are under `data/derived/groww_history/`. Empty or failed responses are not
+reported as successful coverage.
+
+```sh
+python run_research.py fetch-history --start 2026-10-01 --end 2026-10-13
+python run_research.py reconcile --date 2026-10-13
+```
+
+`live` is an explicit, supervised, read-only observer command. Run it only
+during a supported open NSE session, keep the terminal visible, and stop
+normally with Ctrl-C. It refuses to proceed unless its paper-only, feed-health
+and exact-contract preflight checks pass. It never enables order execution.
+`auth-check`, `fetch-history`, and `live` are not part of the default workflow.
 
 ## Local test
 pytest -q

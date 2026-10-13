@@ -344,3 +344,54 @@ Treat any failed safety/auth check, missing opening NIFTY candle, non-4/4 covera
 The remaining work is exactly one offline-evidence blocker (real sourced quote/fill/cost observations) and two live-only milestones (actual date/contract/feed/signal verification and real provider reconnect/recovery); freshness/reconnect implementation remains partially complete until those observations exist. No candidate exit is selected. Readiness means the isolated software is prepared for a supervised read-only attempt **if** tomorrow's abort gates pass; it is not evidence of current live data quality or trading authorization.
 
 The implementation and initial finalisation-report commit `9776fd0f40f9b106c5c5f9f4018440725e526fa8` was pushed to `origin/main` by a normal fast-forward from the verified baseline. This final delivery-status update is a report-only follow-up; its commit and the final `HEAD == origin/main` check are recorded in the task completion summary. No market-data or recovery artifacts were staged.
+
+## 8. Terminal-first entry point (2026-10-13)
+
+Added root-level `run_research.py` as the single offline-first command surface.
+With no subcommand it verifies the paper-only lock, runs a synthetic seven-policy
+shadow/reconciliation acceptance check, inventories local timestamped CSVs and
+summarizes existing research evidence. It does not authenticate, request market
+data, or start the observer. Explicit subcommands provide `doctor`, `test`,
+`smoke-test`, `auth-check`, `study`, bounded `fetch-history`, supervised `live`,
+and date-based `reconcile`.
+
+`fetch-history` rejects invalid, over-31-day and out-of-recent-window requests
+before authentication; it stores raw payloads separately from normalized data,
+filters returned candles to the requested dates and session intervals, and
+marks coverage complete only when all expected five-minute bars for supported
+sessions are present. Empty responses remain partial. Raw Groww payloads and
+generated reports are ignored by Git. Only mocked Groww responses were used to
+test this path; no real authentication or historical request was made.
+
+The 2026-10-13 terminal validation on Python 3.14.2:
+
+```text
+python run_research.py
+PASS — offline safety, shadow/reconciliation smoke, data inventory and evidence summary
+
+python run_research.py doctor
+PASS — ExecutionLock; EXECUTION_ALLOWED=False; PAPER_ONLY=True; no network or observer
+
+python run_research.py smoke-test
+PASS — 7 candidate states, 7 target exits, canonical reconciliation integrity
+
+python run_research.py test
+157 passed
+
+python run_research.py fetch-history --start 2025-01-01 --end 2025-01-14
+Rejected before authentication; request was outside the supported recent history window
+
+Order API source scan
+No order-submission method calls found in app/, tools/, or run_research.py
+```
+
+Added six focused runner tests for CLI dispatch, mixed-timezone inventory,
+request-range rejection, mocked history filtering/coverage, empty-response
+handling and request grouping. Pylance reports no errors; compile validation
+passed. The test and compile commands did not contact Groww.
+
+**Not verified:** Groww auth/profile, real market-data retrieval, and `live`
+observer operation were not run. The NSE calendar only establishes 2026
+sessions. Use `python run_research.py` for the safe default; authentication,
+fetching and supervised observation require explicit commands. `live` remains
+paper-only and is not live-trading or strategy-exit approval.
