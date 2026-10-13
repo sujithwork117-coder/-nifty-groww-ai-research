@@ -187,9 +187,10 @@ Continue a consecutive predeclared observation horizon of **at least 100 qualify
 
 - **Branch:** `main`.
 - **Base before Mission 11 changes:** `d8c8c420d588508e50733f4272f9c1257dc7d2ec`; `origin/main` matched this base at the initial delivery check.
-- **Mission 11 commit/push:** not yet created at report drafting time; delivery is pending final review and the final verification below.
+- **Implementation commit:** `9156edc` (`Complete Mission 11 observer hardening`), containing the source changes, tests and initial version of this report; pushed to `origin/main`.
+- **Report delivery:** this final delivery-status update is included in a separate report-only follow-up commit, also pushed to `origin/main`.
 - **Scope:** nine modified application/test files plus this single report; ignored market-data/recovery artifacts are not to be staged.
-- **Delivery blockers:** none known yet; push must be confirmed after commit.
+- **Delivery blockers:** none known; remote `main` was verified at the expected base before push.
 
 ## 10. Final milestone matrix
 
@@ -208,4 +209,4 @@ Continue a consecutive predeclared observation horizon of **at least 100 qualify
 | Order-path isolation and safety lock | **COMPLETED** | Effective lock passed; source scan and tests show no order submission path. |
 | Real-session contract availability/freshness/signal behavior | **LIVE VERIFICATION REQUIRED** | Must be checked in tomorrow's supervised read-only session; 2026-10-13 snapshot had 2/4 contracts. |
 | Real-session reconnect/recovery | **LIVE VERIFICATION REQUIRED** | Mock coverage is not evidence of actual provider behavior. |
-| Mission 11 report and GitHub delivery | **PARTIAL** | This is the single master report; commit/push and clean-worktree confirmation are still pending. |
+| Mission 11 report and GitHub delivery | **COMPLETED** | The implementation/report and report-only status-update commits are pushed to `origin/main`; final branch and clean-worktree checks follow. |
