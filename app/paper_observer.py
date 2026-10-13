@@ -77,6 +77,14 @@ def _completed_session_bars(frame, trading_date, now):
     return bars
 
 
+def _missing_intervals(bars):
+    """Count absent five-minute buckets between the observed session bars."""
+    return sum(
+        max(0, int((right["timestamp"] - left["timestamp"]) / BAR) - 1)
+        for left, right in zip(bars, bars[1:])
+    )
+
+
 class GrowwPaperObserver:
     """One NIFTY session coordinator with exact daily contracts and recovery."""
 
@@ -93,8 +101,19 @@ class GrowwPaperObserver:
         self.state_dir.mkdir(parents=True, exist_ok=True)
         self.status = {
             "health": "INITIALIZED", "trading_date": None,
+            "authentication_status": "NOT_VERIFIED",
             "selected_expiry": None, "selected_contracts": [],
             "missing_contracts": [], "last_underlying_candle": None,
+            "contract_selection_timestamp": None, "contract_coverage": "0/4",
+            "underlying_reference_price": None,
+            "underlying_reference_candle_timestamp": None,
+            "underlying_candle_age_seconds": None,
+            "missing_underlying_intervals": 0,
+            "option_candle_age_seconds": {},
+            "duplicate_candles_suppressed": 0,
+            "invalid_data_events": 0,
+            "journal_status": "NOT_VERIFIED",
+            "reconnect_attempts": 0,
             "last_option_candles": {}, "signals": [], "paper_positions": {},
             "skipped": [], "errors": [], "execution_allowed": False,
             "paper_only": True, "kill_switch": bool(config.kill_switch),
@@ -147,10 +166,16 @@ class GrowwPaperObserver:
     def _record_observer_event(self, event_type, current, *, stream, symbol=None,
                                reason=None, error_type=None, last_completed_candle=None,
                                retry_after_seconds=None, suppressed_candle_count=None,
-                               missing_intervals=None):
+                               missing_intervals=None, selection_timestamp=None,
+                               underlying_reference_price=None,
+                               underlying_reference_candle_timestamp=None,
+                               contract_catalog_retrieved_at=None,
+                               selection_rationale=None, selected_contracts_json=None,
+                               expected_strikes_json=None, observed_strike_step=None):
         identity = "|".join(str(value or "") for value in (
             event_type, current.date().isoformat(), stream, symbol,
-            last_completed_candle, reason, self._reconnect_attempt if event_type.startswith("RECONNECT") else "",
+            last_completed_candle, reason, suppressed_candle_count,
+            self._reconnect_attempt if event_type.startswith("RECONNECT") else "",
         ))
         event_id = hashlib.sha256(identity.encode("utf-8")).hexdigest()
         record_id = hashlib.sha256(f"{event_id}|{event_type}".encode("utf-8")).hexdigest()
@@ -165,8 +190,50 @@ class GrowwPaperObserver:
             "retry_after_seconds": retry_after_seconds,
             "suppressed_candle_count": suppressed_candle_count,
             "missing_intervals": missing_intervals,
+            "selection_timestamp": selection_timestamp,
+            "underlying_reference_price": underlying_reference_price,
+            "underlying_reference_candle_timestamp": underlying_reference_candle_timestamp,
+            "contract_catalog_retrieved_at": contract_catalog_retrieved_at,
+            "selection_rationale": selection_rationale,
+            "selected_contracts_json": selected_contracts_json,
+            "expected_strikes_json": expected_strikes_json,
+            "observed_strike_step": observed_strike_step,
             "execution": "DISABLED", "paper_only": True,
         }, self._journal_path(current.date()), self.config.model_version)
+
+    def _record_observed_candle(self, candle, current, *, stream, contract=None):
+        symbol = contract.get("symbol") if contract else (
+            self.config.underlying if stream == "NIFTY" else None
+        )
+        candle_timestamp = _local(candle["timestamp"]).isoformat()
+        identity = "|".join((
+            "CANDLE_OBSERVED", current.date().isoformat(), stream,
+            str(symbol or ""), candle_timestamp,
+        ))
+        event_id = hashlib.sha256(identity.encode("utf-8")).hexdigest()
+        inserted = append_paper_record({
+            "record_id": hashlib.sha256(f"{event_id}|CANDLE_OBSERVED".encode()).hexdigest(),
+            "event_id": event_id, "setup_id": None, "event_type": "CANDLE_OBSERVED",
+            "strategy": "OBSERVER", "strategy_version": self.config.strategy_version,
+            "simulation_mode": "READ_ONLY_OBSERVATION",
+            "date": current.date().isoformat(), "timestamp": candle_timestamp,
+            "close_time": _local(candle["close_time"]).isoformat(),
+            "symbol": symbol, "expiry": contract.get("expiry") if contract else None,
+            "strike": contract.get("strike") if contract else None,
+            "option_type": contract.get("option_type") if contract else None,
+            "itm_rank": contract.get("itm_rank") if contract else None,
+            "open": float(candle["open"]), "high": float(candle["high"]),
+            "low": float(candle["low"]), "close": float(candle["close"]),
+            "data_provenance": "GROWW_READ_ONLY_HISTORICAL_CANDLES",
+            "source_retrieved_at": current.isoformat(),
+            "data_quality_status": "COMPLETED_CANDLE",
+            "execution": "DISABLED", "paper_only": True,
+        }, self._journal_path(current.date()), self.config.model_version)
+        if not inserted:
+            self.status["duplicate_candles_suppressed"] += 1
+        else:
+            self.status["journal_status"] = "WRITE_VERIFIED"
+        return inserted
 
     def run_once(self, now=None):
         """Fetch and process one safe snapshot; provider errors are sanitized."""
@@ -177,6 +244,8 @@ class GrowwPaperObserver:
             self.status["kill_switch"] = bool(self.config.kill_switch)
             self.status["errors"] = []
             self.status["skipped"] = []
+            self.status["missing_underlying_intervals"] = 0
+            self.status["option_candle_age_seconds"] = {}
             trading_date = current.date()
             self.status["trading_date"] = trading_date.isoformat()
             session = self.calendar.session_for(trading_date)
@@ -195,6 +264,13 @@ class GrowwPaperObserver:
                 self.status["paper_positions"] = {}
                 self.status["signals"] = []
                 self.status["last_underlying_candle"] = None
+                self.status["selected_expiry"] = None
+                self.status["selected_contracts"] = []
+                self.status["missing_contracts"] = []
+                self.status["contract_selection_timestamp"] = None
+                self.status["contract_coverage"] = "0/4"
+                self.status["underlying_reference_price"] = None
+                self.status["underlying_reference_candle_timestamp"] = None
             session_start = session_open
             request_end = min(current, session_close)
             if request_end < session_start + BAR:
@@ -214,6 +290,8 @@ class GrowwPaperObserver:
                 return self._finish_status(current)
 
             underlying_bars = _completed_session_bars(underlying_frame, trading_date, current)
+            for bar in underlying_bars:
+                self._record_observed_candle(bar, current, stream="NIFTY")
             expected_start = _latest_expected_bar_start(current, session_open, session_close)
             opening = next((bar for bar in underlying_bars
                             if bar["timestamp"].time().replace(tzinfo=None) == time(9, 15)), None)
@@ -225,6 +303,12 @@ class GrowwPaperObserver:
                     reason="completed 09:15 opening candle unavailable")
                 return self._finish_status(current)
             self.status["last_underlying_candle"] = underlying_bars[-1]["timestamp"].isoformat()
+            self.status["underlying_candle_age_seconds"] = max(
+                0.0,
+                (
+                    current - (underlying_bars[-1]["timestamp"].to_pydatetime() + BAR)
+                ).total_seconds(),
+            )
             if expected_start is not None and underlying_bars[-1]["timestamp"] < expected_start:
                 self.status["health"] = "DEGRADED_UNDERLYING_DATA"
                 self.status["skipped"] = [{"stream": "NIFTY", "reason": "latest completed candle is stale"}]
@@ -233,6 +317,24 @@ class GrowwPaperObserver:
                     reason="latest completed candle is stale",
                     last_completed_candle=self.status["last_underlying_candle"])
                 return self._finish_status(current)
+            underlying_gaps = _missing_intervals(underlying_bars)
+            self.status["missing_underlying_intervals"] = underlying_gaps
+            underlying_failures = []
+            if underlying_gaps:
+                underlying_failures.append({
+                    "stream": "NIFTY",
+                    "reason": "MISSING_CANDLE_INTERVALS",
+                    "missing_intervals": underlying_gaps,
+                })
+                self._record_observer_event(
+                    "CANDLE_GAP_DETECTED", current, stream="NIFTY",
+                    reason="missing intervals between completed underlying candles",
+                    last_completed_candle=self.status["last_underlying_candle"],
+                    missing_intervals=underlying_gaps)
+                LOG.warning(
+                    "Underlying candle stream has missing intervals (%s)",
+                    underlying_gaps,
+                )
 
             if self._selection_date != trading_date:
                 try:
@@ -244,6 +346,7 @@ class GrowwPaperObserver:
                     )
                 except Exception as exc:
                     self.status["health"] = "DEGRADED_CONTRACT_SELECTION"
+                    self.status["invalid_data_events"] += 1
                     self.status["errors"].append({"stream": "CONTRACT_CATALOG", "error_type": type(exc).__name__})
                     self._record_observer_event(
                         "CONTRACT_SELECTION_FAILED", current, stream="CONTRACT_CATALOG",
@@ -257,6 +360,32 @@ class GrowwPaperObserver:
                 self.status["missing_contracts"] = [
                     {"option_type": kind, "itm_rank": rank} for kind, rank in selection["missing"]
                 ]
+                self.status["contract_selection_timestamp"] = current.isoformat()
+                self.status["underlying_reference_price"] = float(opening["open"])
+                self.status["underlying_reference_candle_timestamp"] = _local(
+                    opening["close_time"]).isoformat()
+                self.status["contract_coverage"] = (
+                    f"{len(selection['contracts'])}/"
+                    f"{len(self.config.itm_ranks) * len(self.config.option_types)}"
+                )
+                self._record_observer_event(
+                    "DAILY_CONTRACTS_SELECTED", current, stream="CONTRACT_CATALOG",
+                    selection_timestamp=current.isoformat(),
+                    underlying_reference_price=float(opening["open"]),
+                    underlying_reference_candle_timestamp=_local(
+                        opening["close_time"]).isoformat(),
+                    contract_catalog_retrieved_at=current.isoformat(),
+                    selection_rationale=(
+                        "Earliest non-expired Groww expiry; exact catalog ITM2/ITM3 "
+                        "strike ladder; missing ranks are not substituted"
+                    ),
+                    selected_contracts_json=json.dumps(
+                        selection["contracts"], sort_keys=True, separators=(",", ":")),
+                    expected_strikes_json=json.dumps(
+                        selection.get("expected_strikes", {}), sort_keys=True,
+                        separators=(",", ":")),
+                    observed_strike_step=selection.get("observed_strike_step"),
+                )
                 for kind, rank in selection["missing"]:
                     self._record_observer_event(
                         "EXACT_CONTRACT_UNAVAILABLE", current, stream="CONTRACT_CATALOG",
@@ -280,6 +409,7 @@ class GrowwPaperObserver:
                     option_bars = _completed_session_bars(option_frame, trading_date, current)
                 except Exception as exc:
                     reason = type(exc).__name__
+                    self.status["invalid_data_events"] += 1
                     engine.mark_data_quality_issue("OPTION_STREAM_UNAVAILABLE")
                     option_failures.append({"symbol": symbol, "reason": reason})
                     self._record_observer_event(
@@ -296,6 +426,7 @@ class GrowwPaperObserver:
                     LOG.warning("Exact option contract skipped (%s, %s)", symbol, reason)
                     continue
                 if not option_bars:
+                    self.status["invalid_data_events"] += 1
                     engine.mark_data_quality_issue("NO_COMPLETED_OPTION_CANDLES")
                     option_failures.append({"symbol": symbol, "reason": "NO_COMPLETED_CANDLES"})
                     self._record_observer_event(
@@ -311,8 +442,19 @@ class GrowwPaperObserver:
                         "missing_intervals": engine.state.get("missing_intervals", 0),
                     }
                     continue
+                for bar in option_bars:
+                    self._record_observed_candle(
+                        bar, current, stream="OPTIONS", contract=contract,
+                    )
                 response_last = option_bars[-1]["timestamp"]
+                self.status["option_candle_age_seconds"][symbol] = max(
+                    0.0,
+                    (
+                        current - (response_last.to_pydatetime() + BAR)
+                    ).total_seconds(),
+                )
                 if expected_start is not None and response_last < pd.Timestamp(expected_start):
+                    self.status["invalid_data_events"] += 1
                     engine.mark_data_quality_issue("STALE_OPTION_CANDLES")
                     option_failures.append({"symbol": symbol, "reason": "STALE_COMPLETED_CANDLES"})
                     self._record_observer_event(
@@ -362,6 +504,7 @@ class GrowwPaperObserver:
                             event for event in events if event.get("event_type") == "SIGNAL")
                         self.status["signals"] = self.status["signals"][-50:]
                 except Exception as exc:
+                    self.status["invalid_data_events"] += 1
                     reason = f"INVALID_CANDLE_SEQUENCE_{type(exc).__name__}"
                     option_failures.append({"symbol": symbol, "reason": reason})
                     self.status["paper_positions"][symbol] = {
@@ -386,11 +529,16 @@ class GrowwPaperObserver:
                     "data_quality_status": engine.state.get("data_quality_status"),
                     "missing_intervals": engine.state.get("missing_intervals", 0),
                 }
-            self.status["skipped"] = option_failures + [
+            self.status["skipped"] = underlying_failures + option_failures + [
                 {"option_type": kind, "itm_rank": rank, "reason": "NO_EXACT_CATALOG_CONTRACT"}
                 for kind, rank in selection["missing"]
             ]
-            self.status["health"] = "DEGRADED_OPTION_DATA" if option_failures or selection["missing"] else "HEALTHY"
+            if option_failures or selection["missing"]:
+                self.status["health"] = "DEGRADED_OPTION_DATA"
+            elif underlying_failures:
+                self.status["health"] = "DEGRADED_UNDERLYING_DATA"
+            else:
+                self.status["health"] = "HEALTHY"
             if current >= session_close and self.status["health"] == "HEALTHY":
                 self.status["health"] = "SESSION_COMPLETE"
             return self._finish_status(current)
@@ -421,11 +569,14 @@ class GrowwPaperObserver:
         return json.loads(json.dumps(self.status, default=str))
 
     def run_forever(self, stop_requested=None, poll_seconds=60, max_backoff_seconds=300,
-                    now_fn=None, sleeper=None):
-        """Run until stopped/session close; transient provider failures back off and reconnect."""
+                    max_reconnect_attempts=5, now_fn=None, sleeper=None):
+        """Run until stopped/session close; stop after bounded reconnect failures."""
+        if max_reconnect_attempts < 1:
+            raise ValueError("max_reconnect_attempts must be positive")
         now_fn = now_fn or (lambda: datetime.now(IST))
         sleeper = sleeper or sleep_time.sleep
         backoff = max(1, int(poll_seconds))
+        reconnect_attempts = 0
         while not (stop_requested and stop_requested()):
             current = now_fn()
             current = current.replace(tzinfo=IST) if current.tzinfo is None else current.astimezone(IST)
@@ -451,6 +602,13 @@ class GrowwPaperObserver:
                 continue
             snapshot = self.run_once(current)
             if snapshot["health"].startswith("DEGRADED"):
+                if reconnect_attempts >= max_reconnect_attempts:
+                    self.status["health"] = "STOPPED_RECONNECT_LIMIT"
+                    self.status["updated_at"] = current.isoformat()
+                    self._persist_health()
+                    return self.health_status()
+                reconnect_attempts += 1
+                self.status["reconnect_attempts"] = reconnect_attempts
                 wait = min(backoff, max_backoff_seconds)
                 LOG.warning("Observer degraded; retrying with bounded backoff (%ss)", wait)
                 self._reconnect_attempt += 1
@@ -471,6 +629,8 @@ class GrowwPaperObserver:
                 backoff = min(max_backoff_seconds, max(backoff * 2, 1))
                 sleeper(wait)
             else:
+                reconnect_attempts = 0
+                self.status["reconnect_attempts"] = 0
                 backoff = max(1, int(poll_seconds))
                 if current >= session_close:
                     self._persist_health()
@@ -485,7 +645,15 @@ class GrowwPaperObserver:
 def authenticated_groww_factory(config=CFG):
     """Return a read-only Groww client factory without exposing credentials."""
     from .groww_auth import authenticate
-    return lambda: authenticate(config)
+
+    def create_authenticated_client():
+        client = authenticate(config)
+        profile = client.get_user_profile()
+        if not isinstance(profile, dict):
+            raise RuntimeError("Groww read-only profile verification returned an invalid response")
+        return client
+
+    return create_authenticated_client
 
 
 def main():
@@ -493,6 +661,7 @@ def main():
     factory = authenticated_groww_factory(CFG)
     try:
         observer = GrowwPaperObserver(factory(), CFG, groww_factory=factory)
+        observer.status["authentication_status"] = "READ_ONLY_PROFILE_VERIFIED"
     except Exception as exc:
         print(f"Paper observer startup failed ({type(exc).__name__}); credentials and provider details were not logged.")
         return 1
@@ -505,9 +674,15 @@ def main():
         print("Paper observer stopped by operator; no orders were sent.")
         return 0
     print(json.dumps({key: result.get(key) for key in (
-        "health", "trading_date", "selected_expiry", "selected_contracts",
-        "last_underlying_candle", "last_option_candles", "signals", "skipped",
-        "execution_allowed", "paper_only",
+        "health", "authentication_status", "trading_date", "selected_expiry",
+        "selected_contracts", "missing_contracts", "contract_coverage",
+        "contract_selection_timestamp", "underlying_reference_price",
+        "underlying_reference_candle_timestamp", "last_underlying_candle",
+        "underlying_candle_age_seconds", "option_candle_age_seconds",
+        "missing_underlying_intervals", "last_option_candles", "signals",
+        "duplicate_candles_suppressed", "invalid_data_events", "journal_status",
+        "reconnect_attempts", "paper_positions",
+        "skipped", "errors", "kill_switch", "execution_allowed", "paper_only",
     )}, sort_keys=True, default=str))
     return 0
 

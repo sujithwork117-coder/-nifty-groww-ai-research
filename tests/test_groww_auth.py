@@ -30,3 +30,14 @@ def test_authenticate_rejects_both_credential_modes():
 def test_authenticate_requires_credential_mode():
     with pytest.raises(RuntimeError, match="API_SECRET or GROWW_TOTP"):
         authenticate(config(api_secret=""))
+
+
+def test_authenticate_redacts_provider_exception_text():
+    with patch("app.groww_auth.GrowwAPI") as client:
+        client.get_access_token.side_effect = RuntimeError("sensitive-provider-response")
+
+        with pytest.raises(RuntimeError) as error:
+            authenticate(config())
+
+    assert "sensitive-provider-response" not in str(error.value)
+    assert error.value.__cause__ is None

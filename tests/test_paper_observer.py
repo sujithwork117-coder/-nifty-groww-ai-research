@@ -1,9 +1,14 @@
+import json
 from datetime import date, datetime
 from types import SimpleNamespace
+from unittest.mock import Mock, patch
 
 import pandas as pd
+import pytest
 
-from app.paper_observer import GrowwPaperObserver, _completed_session_bars
+from app.paper_observer import (
+    GrowwPaperObserver, _completed_session_bars, authenticated_groww_factory,
+)
 
 
 class FakeGroww:
@@ -79,20 +84,43 @@ def test_observer_selects_exact_daily_contracts_processes_closed_bars_and_recove
     assert status["health"] == "HEALTHY"
     assert status["selected_expiry"] == "2026-10-15"
     assert len(status["selected_contracts"]) == 4
+    assert status["contract_coverage"] == "4/4"
+    assert status["contract_selection_timestamp"] == now.isoformat()
+    assert status["underlying_reference_price"] == 10020
+    assert status["underlying_reference_candle_timestamp"].endswith("09:20:00+05:30")
     assert len(status["signals"]) == 4
     assert all(event["strategy_version"] == "observer-test-v1" for event in status["signals"])
     assert all(event["setup_id"] == event["event_id"] for event in status["signals"])
     assert all(event["close_time"].endswith("09:30:00+05:30") for event in status["signals"])
     assert all(value.endswith("09:25:00+05:30") for value in status["last_option_candles"].values())
-    assert observer.run_once(now)["signals"] == status["signals"]
+    assert status["underlying_candle_age_seconds"] == 120
+    assert set(status["option_candle_age_seconds"].values()) == {120}
+    assert status["journal_status"] == "WRITE_VERIFIED"
+    repeated = observer.run_once(now)
+    assert repeated["signals"] == status["signals"]
+    assert repeated["duplicate_candles_suppressed"] == 15
 
     restarted = GrowwPaperObserver(groww, make_config(), tmp_path)
     resumed = restarted.run_once(now)
     assert resumed["signals"] == []
     journal = list(tmp_path.rglob("paper_journal.jsonl"))[0]
-    records = [__import__("json").loads(line) for line in journal.read_text(encoding="utf-8").splitlines()]
+    records = [json.loads(line) for line in journal.read_text(encoding="utf-8").splitlines()]
     assert sum(record["event_type"] == "SIGNAL" for record in records) == 4
     assert sum(record["event_type"] == "DUPLICATE_CANDLES_SUPPRESSED" for record in records) == 4
+    selection_record = next(
+        record for record in records if record["event_type"] == "DAILY_CONTRACTS_SELECTED"
+    )
+    assert selection_record["underlying_reference_price"] == 10020
+    assert selection_record["observed_strike_step"] == 50
+    assert len(json.loads(selection_record["selected_contracts_json"])) == 4
+    observed_candles = [record for record in records if record["event_type"] == "CANDLE_OBSERVED"]
+    assert len(observed_candles) == 15
+    option_candle = next(record for record in observed_candles if record["symbol"].endswith("-CE"))
+    assert option_candle["data_provenance"] == "GROWW_READ_ONLY_HISTORICAL_CANDLES"
+    assert option_candle["close_time"].endswith("09:20:00+05:30")
+    assert option_candle["open"] == 100
+    assert option_candle["spread_points"] is None
+    assert option_candle["cost_points"] is None
 
 
 def test_observer_skips_failed_exact_contract_and_keeps_other_streams_running(tmp_path):
@@ -177,6 +205,57 @@ def test_observer_reports_internal_option_gaps_as_degraded_and_disables_entries(
                and record["symbol"] == gapped_symbol for record in records)
 
 
+def test_observer_reports_underlying_gaps_and_never_calls_order_methods(tmp_path):
+    class GappedUnderlyingGroww(FakeGroww):
+        def __init__(self):
+            super().__init__()
+            self.place_order = Mock(side_effect=AssertionError("order path reached"))
+            self.modify_order = Mock(side_effect=AssertionError("order path reached"))
+            self.cancel_order = Mock(side_effect=AssertionError("order path reached"))
+
+        def get_historical_candles(self, **kwargs):
+            payload = super().get_historical_candles(**kwargs)
+            if kwargs["groww_symbol"] == "NSE-NIFTY":
+                payload["candles"] = [
+                    candle for candle in payload["candles"]
+                    if candle[0] != "2026-10-12T09:20:00+05:30"
+                ]
+            return payload
+
+    groww = GappedUnderlyingGroww()
+    observer = GrowwPaperObserver(groww, make_config(), tmp_path)
+    status = observer.run_once(datetime.fromisoformat("2026-10-12T09:32:00+05:30"))
+
+    assert status["health"] == "DEGRADED_UNDERLYING_DATA"
+    assert status["missing_underlying_intervals"] == 1
+    assert any(item["stream"] == "NIFTY"
+               and item["reason"] == "MISSING_CANDLE_INTERVALS"
+               for item in status["skipped"])
+    groww.place_order.assert_not_called()
+    groww.modify_order.assert_not_called()
+    groww.cancel_order.assert_not_called()
+
+
+def test_authenticated_observer_client_verifies_read_only_profile():
+    client = Mock()
+    client.get_user_profile.return_value = {"active_segments": ["FNO"]}
+    with patch("app.groww_auth.authenticate", return_value=client) as authenticate:
+        factory = authenticated_groww_factory(make_config())
+        assert factory() is client
+
+    authenticate.assert_called_once()
+    client.get_user_profile.assert_called_once_with()
+
+
+def test_authenticated_observer_client_fails_closed_on_invalid_profile():
+    client = Mock()
+    client.get_user_profile.return_value = None
+    with patch("app.groww_auth.authenticate", return_value=client):
+        factory = authenticated_groww_factory(make_config())
+        with pytest.raises(RuntimeError, match="invalid response"):
+            factory()
+
+
 def test_observer_run_forever_reauthenticates_after_transient_failure(tmp_path):
     class FailOnceGroww(FakeGroww):
         def __init__(self):
@@ -218,3 +297,27 @@ def test_observer_run_forever_reauthenticates_after_transient_failure(tmp_path):
     events = [__import__("json").loads(line)["event_type"] for line in journal.read_text().splitlines()]
     assert "RECONNECT_ATTEMPT" in events
     assert "READ_ONLY_CLIENT_RECREATED" in events
+
+
+def test_observer_stops_after_bounded_reconnect_attempts(tmp_path):
+    class AlwaysFailGroww(FakeGroww):
+        def get_historical_candles(self, **kwargs):
+            if kwargs["groww_symbol"] == "NSE-NIFTY":
+                raise ConnectionError("unavailable")
+            return super().get_historical_candles(**kwargs)
+
+    reconnects = []
+    sleeps = []
+    observer = GrowwPaperObserver(
+        AlwaysFailGroww(), make_config(), tmp_path,
+        groww_factory=lambda: (reconnects.append(True) or AlwaysFailGroww()),
+    )
+    status = observer.run_forever(
+        poll_seconds=2, max_backoff_seconds=8, max_reconnect_attempts=2,
+        now_fn=lambda: datetime.fromisoformat("2026-10-12T09:32:00+05:30"),
+        sleeper=sleeps.append,
+    )
+
+    assert status["health"] == "STOPPED_RECONNECT_LIMIT"
+    assert reconnects == [True, True]
+    assert sleeps == [2, 4]

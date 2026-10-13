@@ -37,13 +37,15 @@ def _df(payload):
                          "oi":float(c[6]) if len(c)>6 and c[6] is not None else None})
     return pd.DataFrame(rows,columns=DATA_COLUMNS)
 
-def validate_candles(df):
+def validate_candles(df, *, reject_out_of_order=False):
     missing=[column for column in DATA_COLUMNS if column not in df]
     if missing: raise ValueError(f"Missing candle columns: {', '.join(missing)}")
     x=df.copy()
     x["timestamp"]=pd.to_datetime(x["timestamp"],utc=True,errors="coerce")
     if x["timestamp"].isna().any(): raise ValueError("Invalid candle timestamp")
     if x["timestamp"].duplicated().any(): raise ValueError("Duplicate candle timestamp")
+    if reject_out_of_order and not x["timestamp"].is_monotonic_increasing:
+        raise ValueError("Candles are not chronological")
     for column in OHLC_COLUMNS:
         x[column]=pd.to_numeric(x[column],errors="coerce")
     if x[OHLC_COLUMNS].isna().any().any(): raise ValueError("Invalid OHLC value")
@@ -66,7 +68,10 @@ def get_session_candles(groww,symbol,start,end,segment):
     """Fetch and validate one session's five-minute candles from Groww read-only API."""
     if start.date()!=end.date():
         raise ValueError("Live observer candle requests must stay within one trading date")
-    return validate_candles(_df(_fetch(groww,symbol,start,end,segment)))
+    return validate_candles(
+        _df(_fetch(groww,symbol,start,end,segment)),
+        reject_out_of_order=True,
+    )
 
 def get_historical(groww,symbol,start,end,chunk_days=14,segment=None):
     segment=segment or groww.SEGMENT_FNO

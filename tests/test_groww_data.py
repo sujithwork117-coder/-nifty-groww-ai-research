@@ -2,8 +2,13 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
+from datetime import datetime
+from types import SimpleNamespace
+from unittest.mock import patch
 
-from app.groww_data import _parse_timestamp, save_historical, validate_candles
+from app.groww_data import (
+    _parse_timestamp, get_session_candles, save_historical, validate_candles,
+)
 
 
 def candles():
@@ -18,6 +23,20 @@ def test_validate_candles_sorts_and_normalizes_timestamps():
 
     assert result["timestamp"].is_monotonic_increasing
     assert str(result.loc[0, "timestamp"]) == "2026-01-01 09:15:00+00:00"
+
+
+def test_live_session_candle_fetch_rejects_out_of_order_provider_rows():
+    groww = SimpleNamespace(EXCHANGE_NSE="NSE")
+    payload = [
+        ["2026-01-01T09:20:00+05:30", 101, 103, 100, 102],
+        ["2026-01-01T09:15:00+05:30", 99, 102, 98, 101],
+    ]
+    start = datetime.fromisoformat("2026-01-01T09:15:00+05:30")
+    end = datetime.fromisoformat("2026-01-01T09:30:00+05:30")
+
+    with patch("app.groww_data._fetch", return_value=payload):
+        with pytest.raises(ValueError, match="not chronological"):
+            get_session_candles(groww, "NIFTY", start, end, "CASH")
 
 
 def test_parse_timestamp_treats_naive_groww_time_as_ist():

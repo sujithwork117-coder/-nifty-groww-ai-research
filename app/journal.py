@@ -29,12 +29,20 @@ PAPER_RECORD_FIELDS = (
     "swing_high", "swing_high_timestamp", "breakout_timestamp", "breakout_candle_low",
     "status", "outcome", "mfe", "mae", "time_to_mfe_minutes", "time_to_mae_minutes",
     "holding_time_minutes",
+    "open", "high", "low", "close", "volume", "oi",
+    "data_provenance", "source_retrieved_at", "quote_timestamp", "bid", "ask",
+    "spread_points", "fill_assumption", "cost_points", "cost_provenance",
+    "stop_updates_json", "stop_update_timestamp", "stop_active_from_timestamp",
     "target_touch_timestamp", "time_to_target_minutes", "exit_timestamp",
     "exit_reason", "exit_price", "points_gained_lost", "structural_low_revisited",
     "breakout_candle_low_revisited", "opening_low_revisited", "target_and_candidate_low_same_candle",
     "realized_pnl", "data_quality_status", "missing_intervals", "execution", "paper_only",
     "stream", "reason", "error_type", "last_completed_candle", "retry_after_seconds",
     "suppressed_candle_count",
+    "selection_timestamp", "underlying_reference_price",
+    "underlying_reference_candle_timestamp", "contract_catalog_retrieved_at",
+    "selection_rationale", "selected_contracts_json", "expected_strikes_json",
+    "observed_strike_step",
 )
 
 

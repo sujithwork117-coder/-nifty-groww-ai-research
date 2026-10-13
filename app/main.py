@@ -10,9 +10,10 @@ def verify_read_only():
     ExecutionLock(CFG).assert_paper_only()
     groww=authenticate()
     profile=groww.get_user_profile()
+    if not isinstance(profile,dict):
+        raise RuntimeError("Groww read-only profile verification returned an invalid response")
     print("Groww authentication: SUCCESS")
-    print("Read-only API: SUCCESS")
-    print("Active segments:",profile.get("active_segments"))
+    print("Groww read-only profile: SUCCESS")
     print("Order execution: DISABLED")
 
 def smoke():

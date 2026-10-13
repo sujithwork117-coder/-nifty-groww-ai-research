@@ -19,7 +19,9 @@ def authenticate(config=CFG):
             totp=totp or None,
         )
     except Exception as exc:
-        raise RuntimeError(f"Groww authentication failed: {exc}") from exc
+        raise RuntimeError(
+            f"Groww authentication failed ({type(exc).__name__})"
+        ) from None
     if not token:
         raise RuntimeError("Groww authentication returned an empty access token")
     return GrowwAPI(token)
