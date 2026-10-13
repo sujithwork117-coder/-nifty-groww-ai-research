@@ -1,0 +1,568 @@
+URGENT TASK — TODAY’S SUPERVISED GROWW LIVE-MARKET OBSERVATION + END-TO-END PAPER TRADING VALIDATION
+
+1. Immediate objective
+
+Work in the existing nifty-groww-ai-research repository on the current branch.
+
+The current objective is to use the remaining portion of today’s NIFTY market session, if it is still open, to verify the corrected Groww observer against actual market data.
+
+Prioritize getting a safe, supervised live-data observation running as early as possible. Do not spend the entire remaining market session performing unrelated research, generating lengthy documentation, rerunning optimizations, or refactoring the project.
+
+The required sequence is:
+
+1. Inspect the existing implementation and current repository state.
+2. Run the minimum critical safety and regression checks.
+3. Verify the observer cannot submit actual orders.
+4. Fix any confirmed, narrowly scoped blocking defect.
+5. Run a bounded Groww connectivity and candle-validation test.
+6. If all safety checks pass, prepare the observer for manual supervised operation during the remaining market session.
+7. Collect actual market-data observations, signals, proposed order tickets and paper-trading events.
+8. Stop before the end of the supervised session and verify clean shutdown.
+9. Produce a concise report of what actually worked and what remains unverified.
+
+Do not claim that the observer is running unless the process has actually started and is confirmed to be running.
+
+Do not claim live market data was received unless an actual provider request succeeded.
+
+2. Time-sensitive execution policy
+
+The user reported that it was approximately 1:35 PM IST with roughly two hours remaining before market close.
+
+Treat that as the user’s earlier estimate, not as a guaranteed current time.
+
+First determine the current system time using the available environment and verify the actual NIFTY trading session status using the existing reliable market calendar or provider information if available.
+
+Use Asia/Kolkata for all session logic.
+
+Do not invent today’s market status, holidays, session end time or remaining duration.
+
+If the regular session is still open:
+
+* Prioritize the bounded live-data test.
+* Start the observer manually only after all required safety checks pass.
+* Keep the terminal visible and the run supervised.
+* Use a clear, manually controllable stop procedure.
+* Aim to finish the supervised test before the session closes.
+
+If the market is already closed:
+
+* Do not describe an after-hours test as live-session validation.
+* Run safe connectivity and offline tests if available.
+* Do not attempt to manufacture live candles or signals.
+* Report that actual-session validation must wait for the next market session.
+
+Do not let report generation or optional tests consume the remaining market window before the minimum safe preflight is complete.
+
+3. Mandatory safety constraints
+
+The following settings must remain unchanged throughout this task:
+
+* EXECUTION_ALLOWED=false
+* PAPER_ONLY=true
+* LIVE_ORDER_SUBMISSION_ENABLED=false
+
+No actual order may be placed, modified or cancelled.
+
+Never invoke a broker order-submission endpoint, even to test whether insufficient funds would cause rejection.
+
+Do not assume an account with zero visible funds or no pledged collateral guarantees rejection.
+
+Do not expose credentials, tokens, cookies, account identifiers or other secrets.
+
+Do not download additional historical market data.
+
+Do not chase unavailable 2025 data.
+
+Do not retrieve 2022–2024 data.
+
+Do not run a full optimization grid.
+
+Do not run unattended or continuous monitoring.
+
+Do not introduce new strategy rules.
+
+Do not reset the repository or discard existing user changes.
+
+Do not commit or push changes.
+
+If the read-only execution boundary cannot be verified, do not start the observer.
+
+If a required provider capability is unavailable, stop that test and record the exact blocker rather than repeatedly retrying.
+
+4. Phase A — Rapid repository inspection
+
+Inspect the current working tree before changing anything.
+
+Identify:
+
+* Current branch.
+* Pre-existing uncommitted changes.
+* Observer entry point.
+* Groww authentication implementation.
+* Market-data provider adapter.
+* Timestamp and final-candle filter.
+* Candle completion logic.
+* Contract selector.
+* L2L and Ekalayava signal engines.
+* Order-ticket builder, if present.
+* Paper simulator.
+* Stop-loss/target monitor.
+* Journal paths.
+* Safety flags and execution guard.
+* Existing focused tests.
+* Documented observer startup and shutdown commands.
+
+Read the latest existing observer-readiness and execution-audit reports if available, but verify findings against actual code.
+
+The earlier audit reported a timestamp-type defect in the final-bar filter that was reportedly fixed. Independently inspect the fix and its regression test.
+
+Do not repeat an entire historical research audit.
+
+Do not rerun the target optimization analysis.
+
+5. Phase B — Minimum critical safety preflight
+
+Before any live provider or observer test, verify:
+
+1. EXECUTION_ALLOWED=false.
+2. PAPER_ONLY=true.
+3. LIVE_ORDER_SUBMISSION_ENABLED=false.
+4. Observer startup cannot reach an order-submission function.
+5. Paper simulation is isolated from broker order methods.
+6. No error or reconnect path can enable order execution.
+7. Credentials are not printed or written to reports.
+8. Retry limits and request timeouts are bounded.
+9. The observer can be stopped manually.
+10. The configured journal paths are correct.
+
+Use static inspection, mocked call guards and existing tests. Never call an order function to test the safety boundary.
+
+If any critical item fails, stop the live integration test, fix only a clearly understood defect that can be corrected safely, rerun the relevant tests, and reassess.
+
+Do not bypass a failed safety check just to capture today’s market data.
+
+6. Phase C — Timestamp and candle validation
+
+Inspect the corrected timestamp filter.
+
+Verify:
+
+* Timestamp types are compatible.
+* Timezone handling is consistent.
+* Session logic uses Asia/Kolkata.
+* Completed candles are distinguished from incomplete candles.
+* The cutoff boundary behaves correctly.
+* Duplicate timestamps are handled safely.
+* Out-of-order candles do not corrupt state.
+* Missing candle intervals are recorded.
+* Empty responses fail safely.
+* Late candles do not generate duplicate signals.
+* No incomplete current candle is treated as a confirmed completed candle.
+
+Run the existing focused timestamp/candle tests and any small regression tests needed for a confirmed defect.
+
+Do not run the full repository suite first if doing so would unnecessarily delay the minimum safe live-session preflight. Run the full relevant suite after the time-sensitive test or when it is quick enough not to affect the session.
+
+7. Phase D — Bounded Groww connectivity test
+
+Inspect the existing documented Groww API integration.
+
+Use only the existing authentication and read-only market-data methods.
+
+If credentials and provider access are available:
+
+1. Authenticate.
+2. Make one bounded, documented market-data request.
+3. Verify response structure.
+4. Verify symbol and timestamp identity.
+5. Validate OHLC values.
+6. Confirm timestamps are ordered correctly.
+7. Check that the request did not invoke an order interface.
+8. Record sanitized results.
+9. Stop if the request fails or the response is invalid.
+
+Use explicit timeouts and a small bounded retry policy.
+
+Do not print tokens or other secrets.
+
+Do not request broad historical ranges.
+
+Do not download data for optimization.
+
+If the request fails, report the exact sanitized error category and whether it is caused by authentication, provider capability, network access, malformed data or another identifiable issue.
+
+Do not repeatedly retry.
+
+If the market is closed, label the result as an after-hours connectivity test.
+
+8. Phase E — Exact option contract selection
+
+Before allowing a strategy signal to become a valid paper-order ticket, verify the required contract identity.
+
+Use the existing documented selection logic for:
+
+* NIFTY underlying.
+* CE and PE.
+* ITM2 and ITM3.
+* Existing approved expiry-selection rule.
+* Correct underlying reference price.
+* Correct strike ordering for calls and puts.
+* Correct instrument identifier.
+* Current option-chain freshness.
+
+Never silently substitute another expiry, strike, instrument or ITM rank.
+
+If option-chain data is unavailable, stale or ambiguous:
+
+* Record the failure.
+* Do not generate a valid order ticket for that contract.
+* Continue cash-data validation if it is safe and useful.
+* Clearly mark option selection as blocked.
+
+Successful NIFTY cash-candle retrieval does not prove option-chain or option-candle access works.
+
+9. Phase F — Preserve and validate L2L
+
+Use the canonical L2L rules without modification.
+
+Entry
+
+1. First completed five-minute candle establishes Opening High and Opening Low.
+2. A qualifying completed red candle breaks below Opening Low.
+3. Wait for the first subsequent completed green candle.
+4. Enter at the green candle close.
+5. Entry window is 09:15–11:00 IST.
+
+Stop and target
+
+* Stop-loss = Opening Low −4 premium points.
+* Target = Opening High.
+* Skip entry if entry price is already at or beyond the target.
+* No forced end-of-day exit.
+* No arbitrary maximum holding period.
+
+Verify the engine implements these rules.
+
+Record:
+
+* Opening High/Low.
+* Breakdown candle timestamp.
+* Entry candle timestamp.
+* Contract identity.
+* Entry price.
+* Stop price.
+* Target price.
+* Signal validation result.
+* Any skipped-signal reason.
+
+Do not generate signals from incomplete candles or missing contracts.
+
+Do not create a trade merely to demonstrate that the system works. No qualifying setup is a valid observation outcome.
+
+10. Phase G — Preserve Ekalayava entry observations
+
+Keep Ekalayava separate from L2L.
+
+Preserve the documented entry definition:
+
+1. Opening range from the first completed five-minute candle.
+2. Premium trades below Opening Low.
+3. Recovery/base forms after the breakdown.
+4. A causally formed swing high is identified.
+5. Entry observation occurs on the swing-high breakout before Opening High.
+6. Entry does not require a close above Opening High.
+
+Verify that future candles are not used to create a retrospective signal.
+
+Record the contract, opening range, breakdown, recovery/base evidence, swing-high reference, breakout timestamp, signal price and data-quality status.
+
+Do not invent a canonical Ekalayava stop, target, trailing rule or forced exit.
+
+Existing experimental Ekalayava exit policies may be tracked separately, but do not select a new canonical policy during this task.
+
+11. Phase H — Proposed order tickets, not broker submissions
+
+For every valid signal, construct a proposed order ticket in the existing architecture, if supported.
+
+Include:
+
+* Unique signal ID.
+* Strategy and version.
+* Contract and instrument ID.
+* Expiry.
+* CE/PE and ITM rank.
+* Signal timestamp.
+* Proposed entry price.
+* Proposed quantity.
+* Order type.
+* Proposed stop-loss.
+* Proposed target.
+* Target/stop policy ID.
+* Price freshness.
+* Contract-validation status.
+* Risk-validation status.
+* Skip or rejection reason.
+* Execution mode.
+
+Do not invent lot sizes, tick sizes, quantities, margin requirements or order types.
+
+Validate these fields against existing documented provider metadata and configuration.
+
+If required values are unavailable, mark the ticket invalid.
+
+Do not submit it to the broker.
+
+Keep signal detection, ticket construction, validation and execution as separate operations.
+
+12. Phase I — Paper-order lifecycle
+
+For a valid signal, the paper simulator may create a hypothetical order and track its lifecycle using actual market data.
+
+Record:
+
+* Signal generated.
+* Ticket created.
+* Ticket validation passed or failed.
+* Simulated order created.
+* Hypothetical entry fill.
+* Subsequent price observations.
+* Stop-loss trigger.
+* Target trigger.
+* Same-candle ambiguity.
+* Missing-data incidents.
+* Simulated exit.
+* Final paper-journal status.
+
+Every hypothetical fill must identify its execution assumption.
+
+Do not label simulated entries as broker-accepted orders.
+
+Do not label hypothetical stop/target events as real broker fills.
+
+Use only post-entry candles for exit monitoring.
+
+Handle stop gaps, target gaps, same-candle collisions and missing candles conservatively.
+
+If the paper lifecycle requires a new strategy rule or an unapproved exit assumption, record the signal and leave the lifecycle unresolved instead of inventing a rule.
+
+13. Phase J — Paper journaling and persistence
+
+Verify that observations and paper events are persisted without overwriting historical research.
+
+Maintain distinct records for:
+
+* Market candles or observation references.
+* Strategy signals.
+* Proposed tickets.
+* Paper orders.
+* Paper positions.
+* Simulated exits.
+* Data-quality incidents.
+* Provider errors.
+* Reconnect events.
+
+Verify:
+
+* Stable identifiers.
+* Duplicate prevention.
+* Journal writes.
+* Correct timestamp ordering.
+* Safe handling of partial writes.
+* Restart recovery.
+* Separation of historical backtest and live-observer data.
+* Separation of L2L and Ekalayava records.
+
+If a persistence failure occurs, stop processing affected signals safely.
+
+Do not reconstruct missing prices or fills by guessing.
+
+14. Phase K — Supervised market-session run
+
+Proceed only after Phases A–E establish a safe observer path.
+
+The user must manually start the observer. Do not schedule a task or leave an unattended background process.
+
+Before starting:
+
+* Recheck all three safety flags.
+* Confirm the provider request is read-only.
+* Confirm option selection prerequisites.
+* Confirm the documented shutdown command.
+* Confirm the journal paths.
+* Confirm bounded retries and timeouts.
+
+During the run:
+
+* Record actual start time.
+* Record sanitized provider connectivity status.
+* Record selected contract identities.
+* Record completed candle timestamps.
+* Record candle freshness.
+* Record opening-range initialization.
+* Record L2L/Ekalayava signals and skipped setups.
+* Record proposed-ticket validation.
+* Record paper events.
+* Record persistence and provider errors.
+* Record reconnect behavior if it naturally occurs.
+
+Do not deliberately disrupt the provider to test reconnection during the time-sensitive market session. Use existing mocks for that.
+
+Do not force signals to occur.
+
+If no qualifying signal appears, record the session as a successful observation run only if the underlying data, contract selection and candle-processing requirements were genuinely verified.
+
+15. Phase L — Session stop and end-of-session handling
+
+The observer must remain supervised.
+
+Set a clear stopping deadline before the actual market close.
+
+If the test starts late:
+
+* Prioritize valid observations over collecting a large volume of data.
+* Do not skip safety checks to gain a few extra minutes.
+* Stop the observer before the configured supervised deadline.
+* Do not introduce a forced end-of-day strategy exit merely to close the observer.
+
+At shutdown:
+
+1. Stop the observer cleanly.
+2. Confirm the process has terminated.
+3. Verify that no background observer remains running.
+4. Flush or verify the persistence of buffered journal data.
+5. Confirm the safety flags are unchanged.
+6. Check the last processed completed candle.
+7. Reconcile generated signals against journal entries.
+8. Identify any missing, duplicated or unresolved records.
+9. Preserve logs and supporting artifacts.
+
+Do not claim that a paper position has been exited simply because the observer stopped. Keep unresolved positions explicitly unresolved.
+
+16. Phase M — Minimum test suite
+
+Run the minimum relevant tests before the market-session run:
+
+* Execution safety flags.
+* Observer read-only call paths.
+* Timestamp-filter regression.
+* Completed-candle processing.
+* Duplicate candle handling.
+* Contract-selection validation.
+* L2L entry state machine.
+* Ekalayava swing-high causality.
+* Proposed ticket validation.
+* Journal persistence.
+
+After the live-data run, execute any remaining relevant tests if time permits and then run the full relevant suite.
+
+Record exact commands, actual exit codes, pass/fail counts and skipped tests.
+
+Do not claim a test passed if it was not run.
+
+Do not let optional static analysis or broad regression work prevent a safe bounded live-data test once all critical preflight checks have passed.
+
+17. Phase N — Required report
+
+Create:
+
+GROWW_TODAY_SUPERVISED_LIVE_OBSERVATION_2026-10-13.md
+
+Include:
+
+1. Current date, time and verified market-session status.
+2. Repository branch and working-tree state.
+3. Safety flags before and after.
+4. Timestamp-filter defect and verification evidence.
+5. Read-only call-path inspection.
+6. Actual Groww connectivity result.
+7. Contract-selection result.
+8. Candle-validation result.
+9. L2L signal-validation result.
+10. Ekalayava signal-observation result.
+11. Proposed-order ticket validation.
+12. Paper-order lifecycle result.
+13. Journal persistence result.
+14. Test commands and results.
+15. Actual session start/stop timestamps.
+16. Whether the observer ran against real market data or only mocked/after-hours data.
+17. Missing data and skipped signals.
+18. Files changed.
+19. Remaining risks.
+20. The single recommended next action.
+
+Use the existing journal formats if available. Do not create duplicate competing schemas.
+
+Never include credentials or sensitive provider information.
+
+18. Required final status matrix
+
+Report each item with a status, evidence and blocker:
+
+* Read-only safety.
+* Groww authentication.
+* NIFTY market-data access.
+* Option-chain access.
+* CE ITM2 selection.
+* CE ITM3 selection.
+* PE ITM2 selection.
+* PE ITM3 selection.
+* Completed five-minute candles.
+* Asia/Kolkata handling.
+* L2L signal correctness.
+* Ekalayava signal correctness.
+* Proposed-ticket validation.
+* Paper lifecycle.
+* Stop/target monitoring.
+* Journal persistence.
+* Clean shutdown.
+* Live-session verification.
+
+Use only:
+
+* PASS
+* PARTIAL
+* BLOCKED
+* NOT RUN
+* FAIL
+
+Do not declare the observer ready if a critical safety or data-integrity requirement remains unverified.
+
+19. Completion criteria
+
+This task is complete when:
+
+* The timestamp-filter fix has been independently verified.
+* Critical safety checks pass.
+* The bounded Groww connectivity test is completed or its blocker is recorded.
+* Actual-session observation is completed if the market is open and safe to proceed.
+* Correct contract selection is verified or marked blocked.
+* Completed five-minute candles are handled correctly.
+* L2L and Ekalayava signals conform to their existing canonical entry definitions.
+* Proposed tickets are generated and validated without submission.
+* Paper lifecycle events are recorded with explicit simulation assumptions.
+* Journals are consistent.
+* The observer shuts down cleanly.
+* Relevant test results are reported honestly.
+* All execution flags remain disabled.
+* No actual order was submitted, modified or cancelled.
+* No historical optimization grid was rerun.
+* No unavailable historical data was downloaded.
+* No unattended monitoring was started.
+
+20. Final response
+
+When finished, answer concisely:
+
+1. Did the observer run against actual live-session Groww data?
+2. What exact data and contracts were successfully verified?
+3. Were any valid L2L or Ekalayava signals generated?
+4. Were proposed order tickets validated?
+5. Were paper entries, stop-losses and targets simulated correctly?
+6. Did journal persistence and shutdown work?
+7. Which tests passed or failed?
+8. What remains blocked?
+9. What is the single safest next step?
+
+Provide the report path and actual evidence.
+
+Do not claim profitability, live-order readiness, or successful real order execution. Keep all actual order submission disabled throughout this task.
